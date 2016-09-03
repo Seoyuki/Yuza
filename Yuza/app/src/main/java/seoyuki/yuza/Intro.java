@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 public class Intro extends AppCompatActivity {
@@ -23,6 +24,9 @@ public class Intro extends AppCompatActivity {
         // 액션바 숨기기
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+
+        // 스테이터스바 숨기기
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // 2초 후 인트로 제거
         Handler handler = new Handler();
