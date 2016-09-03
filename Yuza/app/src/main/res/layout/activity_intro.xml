@@ -15,7 +15,7 @@
         android:layout_height="225dp"
         android:id="@+id/intro_image"
         android:src="@drawable/intro"
-        android:scaleType="fitStart"
+        android:scaleType="fitCenter"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
