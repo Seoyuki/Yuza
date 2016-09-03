@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/intro_vertical_margin"
+    android:paddingLeft="@dimen/intro_horizontal_margin"
+    android:paddingRight="@dimen/intro_horizontal_margin"
+    android:paddingTop="@dimen/intro_vertical_margin"
+    android:id="@+id/intro_layout"
+    tools:context="seoyuki.yuza.Intro">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="225dp"
+        android:id="@+id/intro_image"
+        android:src="@drawable/intro"
+        android:scaleType="fitStart"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
