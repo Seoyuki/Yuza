@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/bubble_popup_bg" 
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+	   
+    <ImageView android:id="@+id/image_view"
+		android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+		android:scaleType="fitXY"
+		android:adjustViewBounds="true"/>  
+	
+		<!-- 
+		android:background="@drawable/ani1"
+		 -->
+</LinearLayout>
+
+
