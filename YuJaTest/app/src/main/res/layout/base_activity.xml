@@ -35,8 +35,15 @@
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
 			        android:orientation="horizontal" 
-			        android:layout_gravity="center_horizontal">	
-			        			 
+			        android:layout_gravity="center_horizontal">
+
+					<Button
+						android:id="@+id/btnGotoFaceBook"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/gotoFaceBook"
+						android:layout_weight="1"/>
+
 			        <Button
 				      android:id="@+id/btnOverlay"
 				      android:layout_width="wrap_content"
@@ -74,7 +81,7 @@
 				      android:layout_width="wrap_content"
 				      android:layout_height="wrap_content"
 				      android:text="@string/getLocationPoint" 
-				      android:layout_weight="1"/>			        		       	
+				      android:layout_weight="1"/>
 				</LinearLayout>
 					     
 			    <LinearLayout	   
@@ -149,7 +156,7 @@
 				       android:layout_width="wrap_content"
 				       android:layout_height="wrap_content"
 				       android:text="@string/getCenterPoint" 
-				       android:layout_weight="1"/>	       			   		       			      				 	
+				       android:layout_weight="1"/>
 			    </LinearLayout>    
 				    				
 				<LinearLayout

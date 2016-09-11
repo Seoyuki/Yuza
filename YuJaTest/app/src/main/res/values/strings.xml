@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SKP_TMAP_OPENAPI_SAMPLE</string>
-        
+    <string name="app_name">YuJa</string>
+
+	<string name="gotoFaceBook">페이스북 엑티비티로이동</string>
+	<string name="facebook_app_id">1112123538868081</string>
+	<string name="fb_login_protocol_scheme">1112123538868081</string>
+
 	<string name="overlay">구름 확인하기</string>
 	<string name="animateTo">범위그리기</string>
 	<string name="aroundus">ㅇㅇ</string>
