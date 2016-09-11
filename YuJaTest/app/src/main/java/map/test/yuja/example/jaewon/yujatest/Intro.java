@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,19 +26,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -77,7 +66,6 @@ public class Intro extends BaseActivity implements onLocationChangedCallback {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    private CallbackManager callbackManager;
 
     @Override
     public void onLocationChange(Location location) {
@@ -147,7 +135,6 @@ public class Intro extends BaseActivity implements onLocationChangedCallback {
             id.btnTimeMachine,
             id.btnTMapInstall,
             id.btnMarkerPoint2,
-            id.btnGotoFaceBook,
     };
 
     private int m_nCurrentZoomLevel = 0;
@@ -485,68 +472,7 @@ public class Intro extends BaseActivity implements onLocationChangedCallback {
             case id.btnMarkerPoint2:
                 showMarkerPoint2();
                 break;
-            case id.btnGotoFaceBook:
-                gotoFaceBook();
-                break;
         }
-    }
-
-    public void gotoFaceBook() {
-        callbackManager = CallbackManager.Factory.create();
-        // 페이스북 SDK 초기화
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
-
-        LoginManager.getInstance().logInWithReadPermissions(this,
-                Arrays.asList("public_profile", "email"));
-
-
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-
-            @Override
-            public void onSuccess(final LoginResult result) {
-
-                GraphRequest request;
-                request = GraphRequest.newMeRequest(result.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                    @Override
-                    public void onCompleted(JSONObject user, GraphResponse response) {
-                        if (response.getError() != null) {
-
-                        } else {
-                            Log.i("TAG", "user: " + user.toString());
-                            Log.i("TAG", "AccessToken: " + result.getAccessToken().getToken());
-                            setResult(RESULT_OK);
-                            finish();
-                            Intent intent = new Intent(
-                                    getApplicationContext(), // 현재 화면의 제어권자
-                                    SignInActivity.class); // 다음 넘어갈 클래스 지정
-                            startActivity(intent); // 다음 화면으로 넘어간다
-                        }
-                    }
-                });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Log.e("test", "Error: " + error);
-                finish();
-            }
-
-            @Override
-            public void onCancel() {
-                finish();
-            }
-        });
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     public TMapPoint randomTMapPoint() {
