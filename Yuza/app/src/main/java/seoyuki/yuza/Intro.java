@@ -34,7 +34,8 @@ public class Intro extends AppCompatActivity {
             @Override
             public void run() {
                 // 메인 액티비티로 넘어가기
-                Intent intent = new Intent(Intro.this, MainActivity.class);
+                // 일단 테스트로
+                Intent intent = new Intent(Intro.this, TestBtnActivity.class);
                 startActivity(intent);
 
                 finish(); // 인트로 종료
