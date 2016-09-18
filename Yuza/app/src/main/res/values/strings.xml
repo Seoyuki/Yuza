@@ -3,4 +3,68 @@
 
     <string name="facebook_app_id">1112123538868081</string>
     <string name="fb_login_protocol_scheme">1112123538868081</string>
+
+
+    <string name="overlay">구름 확인하기</string>
+    <string name="animateTo">범위그리기</string>
+    <string name="aroundus">ㅇㅇ</string>
+
+    <string name="setCenterPoint">Set Center Point</string>
+    <string name="setLocationPoint">축소</string>
+    <string name="getLocationPoint">확대</string>
+
+    <string name="setIcon">마커찍기</string>
+    <string name="setCompassMode">나침반 모드 설정</string>
+    <string name="getIsCompass">자전거길 표시하기</string>
+
+    <string name="zoomIn">줌 In</string>
+    <string name="zoomOut">줌 Out</string>
+    <string name="getZoomLevel">현재 줌 레벨</string>
+
+    <string name="setZoomLevel">줌 레벨 선택</string>
+    <string name="setMapType">지도 타입 선택</string>
+
+    <string name="getCenterPoint">화면 중심좌표</string>
+
+    <string name="setTrafficeInfo">실시간 교통정보 표출</string>
+    <string name="getIsTrafficeInfo">실시간 교통정보 표출상태</string>
+
+    <string name="setsightvisible">시야표출여부</string>
+    <string name="setTrackingMode">트래킹모드 설정</string>
+    <string name="getIstracking">트래킹모드 사용여부</string>
+
+    <string name="addCircle">서클 추가</string>
+    <string name="removeCircle">서클 제거</string>
+
+    <string name="drawLine">선 그리기</string>
+    <string name="eraseLine">선 지우기</string>
+    <string name="linesize">선 사이즈</string>
+
+    <string name="drawPolygon">폴리곤 그리기</string>
+    <string name="erasePolygon">폴리곤 지우기</string>
+
+    <string name="draw_map_path">경로</string>
+    <string name="remove_map_path">경로 제거</string>
+    <string name="displaymapinfo">Display Map Info</string>
+    <string name="naviguide">길안내</string>
+
+    <string name="car_path">자동차경로</string>
+    <string name="pedestrian_path">보행자경로</string>
+    <string name="bicycle_path">자전거경로</string>
+
+    <string name="showmarker2">마커 2</string>
+
+    <string name="showmarker">마커 표출</string>
+    <string name="removemarker">마커 제거</string>
+
+    <string name="movefrontmarker">맨 앞으로 마커이동</string>
+    <string name="movetomarker">맨 뒤로 마커이동</string>
+
+    <string name="findallpoi">통합검색</string>
+    <string name="convertToAddress">주소변환</string>
+    <string name="getBizCategory">업종데이터요청</string>
+    <string name="getAroundBizPoi">주변업종검색</string>
+
+    <string name="bicycleroad">자전거도로</string>
+    <string name="bicyclefacility">자전거시설물</string>
 </resources>

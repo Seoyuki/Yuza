@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<string-array name="a_zoomlevel">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+
+    </string-array>
+    
+	<string-array name="a_maptype">
+        <item>STANDARD</item>
+        <item>SATELLITE</item>
+        <item>HYBRID</item>
+        <item>TRAFFIC</item>
+    </string-array>
+    
+	<string-array name="a_tiletype">
+        <item>NORMALTILE</item>
+        <item>EXTENSIONTILE</item>
+        <item>HDTILE</item>
+        <item>ENGLISHTILE</item>
+        <item>CHINATILE</item>
+        <item>HIGHCONTRASTTILE</item>
+    </string-array>
+    
+	<string-array name="a_linesize">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+     </string-array>
+    <string-array name="ducksugung">
+        <item>37.565847</item>
+        <item>126.975069</item>
+        <item>덕수궁</item>
+        <item>덕수궁입니다</item>
+        <item>안녕하세요 덕수궁입니다</item>
+    </string-array>
+</resources>
