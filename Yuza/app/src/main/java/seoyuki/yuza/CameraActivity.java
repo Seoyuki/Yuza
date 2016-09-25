@@ -45,7 +45,8 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
-
+        // 스테이터스바 숨기기
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurf);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(surfaceListener);
@@ -136,9 +137,9 @@ public class CameraActivity extends Activity {
             camera = Camera.open();
             camera.stopPreview();
             camera.setDisplayOrientation(90); // potrait
-            camera.setDisplayOrientation(180); // landscape
+          //  camera.setDisplayOrientation(180); // landscape
             Camera.Parameters param = camera.getParameters();
-            param.setRotation(90);
+           // param.setRotation(90);
 
             camera.setParameters(param);
 
