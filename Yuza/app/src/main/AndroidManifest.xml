@@ -45,7 +45,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider1112123538868081"
+            android:authorities="com.facebook.app.${applicationId}.FacebookContentProvider1112123538868081"
             android:exported="true" />
         <activity android:name=".SplashActivity" />
         <activity android:name=".SignInActivity"></activity>
