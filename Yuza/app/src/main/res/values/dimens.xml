@@ -3,6 +3,9 @@
     <dimen name="intro_horizontal_margin">0dp</dimen>
     <dimen name="intro_vertical_margin">0dp</dimen>
 
+    <dimen name="activity_main_horizontal_margin">0dp</dimen>
+    <dimen name="activity_main_vertical_margin">0dp</dimen>
+
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>
