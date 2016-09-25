@@ -13,22 +13,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.skp.Tmap.TMapCircle;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapGpsManager;
+import com.skp.Tmap.TMapGpsManager.onLocationChangedCallback;
 import com.skp.Tmap.TMapInfo;
 import com.skp.Tmap.TMapLabelInfo;
 import com.skp.Tmap.TMapMarkerItem;
@@ -39,7 +31,6 @@ import com.skp.Tmap.TMapPolyLine;
 import com.skp.Tmap.TMapTapi;
 import com.skp.Tmap.TMapView;
 
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,11 +39,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-
-import com.skp.Tmap.TMapGpsManager.onLocationChangedCallback;
 
 
 
@@ -81,58 +69,58 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public static String mApiKey = "66800ce1-b178-3464-b52b-74cb4998e20a"; // 발급받은 appKey
     public static String mBizAppID; // 발급받은 BizAppID (TMapTapi로 TMap앱 연동을 할 때 BizAppID 꼭 필요)
 
-    private static final int[] mArrayMapButton = {
-            R.id.btnOverlay,
-            R.id.btnAnimateTo,
-            R.id.btnZoomIn,
-            R.id.btnZoomOut,
-            R.id.btnGetZoomLevel,
-            R.id.btnSetZoomLevel,
-            R.id.btnSetMapType,
-            R.id.btnGetLocationPoint,
-            R.id.btnSetLocationPoint,
-            R.id.btnSetIcon,
-            R.id.btnSetCompassMode,
-            R.id.btnGetIsCompass,
-            R.id.btnSetTrafficInfo,
-            R.id.btnGetIsTrafficeInfo,
-            R.id.btnSetSightVisible,
-            R.id.btnSetTrackIngMode,
-            R.id.btnGetIsTracking,
-            R.id.btnAddTMapCircle,
-            R.id.btnRemoveTMapCircle,
-            R.id.btnMarkerPoint,
-            R.id.btnRemoveMarker,
-            R.id.btnMoveFrontMarker,
-            R.id.btnMoveBackMarker,
-            R.id.btnDrawPolyLine,
-            R.id.btnErasePolyLine,
-            R.id.btnDrawPolygon,
-            R.id.btnErasePolygon,
-            R.id.btnBicycle,
-            R.id.btnBicycleFacility,
-            R.id.btnMapPath,
-            R.id.btnRemoveMapPath,
-            R.id.btnDisplayMapInfo,
-            R.id.btnNaviGuide,
-            R.id.btnCarPath,
-            R.id.btnPedestrian_Path,
-            R.id.btnBicycle_Path,
-            R.id.btnGetCenterPoint,
-            R.id.btnFindAllPoi,
-            R.id.btnConvertToAddress,
-            R.id.btnGetBizCategory,
-            R.id.btnGetAroundBizPoi,
-            R.id.btnTileType,
-            R.id.btnCapture,
-            R.id.btnDisalbeZoom,
-            R.id.btnInvokeRoute,
-            R.id.btnInvokeSetLocation,
-            R.id.btnInvokeSearchPortal,
-            R.id.btnTimeMachine,
-            R.id.btnTMapInstall,
-            R.id.btnMarkerPoint2,
-    };
+//    private static final int[] mArrayMapButton = {
+//            R.id.btnOverlay,
+//            R.id.btnAnimateTo,
+//            R.id.btnZoomIn,
+//            R.id.btnZoomOut,
+//            R.id.btnGetZoomLevel,
+//            R.id.btnSetZoomLevel,
+//            R.id.btnSetMapType,
+//            R.id.btnGetLocationPoint,
+//            R.id.btnSetLocationPoint,
+//            R.id.btnSetIcon,
+//            R.id.btnSetCompassMode,
+//            R.id.btnGetIsCompass,
+//            R.id.btnSetTrafficInfo,
+//            R.id.btnGetIsTrafficeInfo,
+//            R.id.btnSetSightVisible,
+//            R.id.btnSetTrackIngMode,
+//            R.id.btnGetIsTracking,
+//            R.id.btnAddTMapCircle,
+//            R.id.btnRemoveTMapCircle,
+//            R.id.btnMarkerPoint,
+//            R.id.btnRemoveMarker,
+//            R.id.btnMoveFrontMarker,
+//            R.id.btnMoveBackMarker,
+//            R.id.btnDrawPolyLine,
+//            R.id.btnErasePolyLine,
+//            R.id.btnDrawPolygon,
+//            R.id.btnErasePolygon,
+//            R.id.btnBicycle,
+//            R.id.btnBicycleFacility,
+//            R.id.btnMapPath,
+//            R.id.btnRemoveMapPath,
+//            R.id.btnDisplayMapInfo,
+//            R.id.btnNaviGuide,
+//            R.id.btnCarPath,
+//            R.id.btnPedestrian_Path,
+//            R.id.btnBicycle_Path,
+//            R.id.btnGetCenterPoint,
+//            R.id.btnFindAllPoi,
+//            R.id.btnConvertToAddress,
+//            R.id.btnGetBizCategory,
+//            R.id.btnGetAroundBizPoi,
+//            R.id.btnTileType,
+//            R.id.btnCapture,
+//            R.id.btnDisalbeZoom,
+//            R.id.btnInvokeRoute,
+//            R.id.btnInvokeSetLocation,
+//            R.id.btnInvokeSearchPortal,
+//            R.id.btnTimeMachine,
+//            R.id.btnTMapInstall,
+//            R.id.btnMarkerPoint2,
+//    };
 
     private int m_nCurrentZoomLevel = 0;
     private double m_Latitude = 0;
@@ -160,7 +148,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private static int mMarkerID;
 
     TMapGpsManager gps = null;
-
 
     /**
      * onCreate()
@@ -204,8 +191,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMapView.setBicycleFacilityInfo(true);
         drawMapPath();
 
-
-
     }
 
     /**
@@ -222,10 +207,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      * initView - 버튼에 대한 리스너를 등록한다.
      */
     private void initView() {
-        for (int btnMapView : mArrayMapButton) {
-            Button ViewButton = (Button) findViewById(btnMapView);
-            ViewButton.setOnClickListener(this);
-        }
+//        for (int btnMapView : mArrayMapButton) {
+//            Button ViewButton = (Button) findViewById(btnMapView);
+//            ViewButton.setOnClickListener(this);
+//        }
 
         mMapView.setOnApiKeyListener(new TMapView.OnApiKeyListenerCallback() {
             @Override
@@ -346,128 +331,128 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnOverlay:
-                overlay();
-                break;
-            case R.id.btnAnimateTo:
-                animateTo();
-                break;
-            case R.id.btnZoomIn:
-                mapZoomIn();
-                break;
-            case R.id.btnZoomOut:
-                mapZoomOut();
-                break;
-            case R.id.btnGetZoomLevel:
-                getZoomLevel();
-                break;
-            case R.id.btnSetZoomLevel:
-                setZoomLevel();
-                break;
-            case R.id.btnSetMapType:
-                setMapType();
-                break;
-            case R.id.btnGetLocationPoint:
-                getLocationPoint();
-                break;
-            case R.id.btnSetLocationPoint:
-                setLocationPoint();
-                break;
-            case R.id.btnSetIcon:
-                setMapIcon();
-                break;
-            case R.id.btnSetCompassMode:
-                setCompassMode();
-                break;
-            case R.id.btnGetIsCompass:
-                getIsCompass();
-                break;
-            case R.id.btnSetTrafficInfo:
-                setTrafficeInfo();
-                break;
-            case R.id.btnGetIsTrafficeInfo:
-                getIsTrafficeInfo();
-                break;
-            case R.id.btnSetTrackIngMode:
-                setTrackingMode();
-                break;
-            case R.id.btnGetIsTracking:
-                getIsTracking();
-                break;
-            case R.id.btnAddTMapCircle:
-                addTMapCircle();
-                break;
-            case R.id.btnRemoveTMapCircle:
-                removeTMapCircle();
-                break;
-            case R.id.btnMarkerPoint:
-                showMarkerPoint();
-                break;
-            case R.id.btnRemoveMarker:
-                removeMarker();
-                break;
-            case R.id.btnMoveFrontMarker:
-                moveFrontMarker();
-                break;
-            case R.id.btnMoveBackMarker:
-                moveBackMarker();
-                break;
-            case R.id.btnMapPath:
-                drawMapPath();
-                break;
-            case R.id.btnRemoveMapPath:
-                removeMapPath();
-                break;
-            case R.id.btnDisplayMapInfo:
-                displayMapInfo();
-                break;
-            case R.id.btnNaviGuide:
-                naviGuide();
-                break;
-            case R.id.btnPedestrian_Path:
-                drawPedestrianPath();
-                break;
-            case R.id.btnBicycle_Path:
-                drawBicyclePath();
-                break;
-            case R.id.btnConvertToAddress:
-                convertToAddress();
-                break;
-            case R.id.btnTileType:
-                setTileType();
-                break;
-            case R.id.btnInvokeRoute:
-                invokeRoute();
-                break;
-            case R.id.btnInvokeSetLocation:
-                invokeSetLocation();
-                break;
-            case R.id.btnInvokeSearchPortal:
-                invokeSearchProtal();
-                break;
-            case R.id.btnBicycle:
-                setBicycle();
-                break;
-            case R.id.btnBicycleFacility:
-                setBicycleFacility();
-                break;
-            case R.id.btnCapture:
-                captureImage();
-                break;
-            case R.id.btnDisalbeZoom:
-                disableZoom();
-                break;
-            case R.id.btnTimeMachine:
-                timeMachine();
-                break;
-            case R.id.btnTMapInstall:
-                tmapInstall();
-                break;
-            case R.id.btnMarkerPoint2:
-                showMarkerPoint2();
-                break;
-        }
+//        switch (v.getId()) {
+//            case R.id.btnOverlay:
+//                overlay();
+//                break;
+//            case R.id.btnAnimateTo:
+//                animateTo();
+//                break;
+//            case R.id.btnZoomIn:
+//                mapZoomIn();
+//                break;
+//            case R.id.btnZoomOut:
+//                mapZoomOut();
+//                break;
+//            case R.id.btnGetZoomLevel:
+//                getZoomLevel();
+//                break;
+//            case R.id.btnSetZoomLevel:
+//                setZoomLevel();
+//                break;
+//            case R.id.btnSetMapType:
+//                setMapType();
+//                break;
+//            case R.id.btnGetLocationPoint:
+//                getLocationPoint();
+//                break;
+//            case R.id.btnSetLocationPoint:
+//                setLocationPoint();
+//                break;
+//            case R.id.btnSetIcon:
+//                setMapIcon();
+//                break;
+//            case R.id.btnSetCompassMode:
+//                setCompassMode();
+//                break;
+//            case R.id.btnGetIsCompass:
+//                getIsCompass();
+//                break;
+//            case R.id.btnSetTrafficInfo:
+//                setTrafficeInfo();
+//                break;
+//            case R.id.btnGetIsTrafficeInfo:
+//                getIsTrafficeInfo();
+//                break;
+//            case R.id.btnSetTrackIngMode:
+//                setTrackingMode();
+//                break;
+//            case R.id.btnGetIsTracking:
+//                getIsTracking();
+//                break;
+//            case R.id.btnAddTMapCircle:
+//                addTMapCircle();
+//                break;
+//            case R.id.btnRemoveTMapCircle:
+//                removeTMapCircle();
+//                break;
+//            case R.id.btnMarkerPoint:
+//                showMarkerPoint();
+//                break;
+//            case R.id.btnRemoveMarker:
+//                removeMarker();
+//                break;
+//            case R.id.btnMoveFrontMarker:
+//                moveFrontMarker();
+//                break;
+//            case R.id.btnMoveBackMarker:
+//                moveBackMarker();
+//                break;
+//            case R.id.btnMapPath:
+//                drawMapPath();
+//                break;
+//            case R.id.btnRemoveMapPath:
+//                removeMapPath();
+//                break;
+//            case R.id.btnDisplayMapInfo:
+//                displayMapInfo();
+//                break;
+//            case R.id.btnNaviGuide:
+//                naviGuide();
+//                break;
+//            case R.id.btnPedestrian_Path:
+//                drawPedestrianPath();
+//                break;
+//            case R.id.btnBicycle_Path:
+//                drawBicyclePath();
+//                break;
+//            case R.id.btnConvertToAddress:
+//                convertToAddress();
+//                break;
+//            case R.id.btnTileType:
+//                setTileType();
+//                break;
+//            case R.id.btnInvokeRoute:
+//                invokeRoute();
+//                break;
+//            case R.id.btnInvokeSetLocation:
+//                invokeSetLocation();
+//                break;
+//            case R.id.btnInvokeSearchPortal:
+//                invokeSearchProtal();
+//                break;
+//            case R.id.btnBicycle:
+//                setBicycle();
+//                break;
+//            case R.id.btnBicycleFacility:
+//                setBicycleFacility();
+//                break;
+//            case R.id.btnCapture:
+//                captureImage();
+//                break;
+//            case R.id.btnDisalbeZoom:
+//                disableZoom();
+//                break;
+//            case R.id.btnTimeMachine:
+//                timeMachine();
+//                break;
+//            case R.id.btnTMapInstall:
+//                tmapInstall();
+//                break;
+//            case R.id.btnMarkerPoint2:
+//                showMarkerPoint2();
+//                break;
+//        }
     }
 
 
