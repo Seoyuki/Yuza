@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
 	android:orientation="vertical"
-	android:background="@android:color/background_light">
+	android:background="@android:color/black">
 
 	<RelativeLayout
 		android:id="@+id/contentView"
@@ -16,44 +16,501 @@
 	
 	
 	<LinearLayout
-		android:layout_width="match_parent"
+		android:layout_width="fill_parent"
 		android:paddingTop="2dip"
-		android:layout_height="90dp"
+		android:layout_height="150dip"
 		android:orientation="vertical">
+		
+      	<ScrollView  
+      	    android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:fillViewport="true" 
+   			android:scrollbarStyle="outsideOverlay">   			
+			<LinearLayout 
+			    android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:orientation="vertical">		
+				
+			    <LinearLayout
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:orientation="horizontal" 
+			        android:layout_gravity="center_horizontal">
 
-		<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent">
-
-			<ImageView
-				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/searchImageView"
-				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:src="@drawable/search"
-				android:scaleType="center" />
-
-			<ImageView
-				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/achievementImageView"
-				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:src="@drawable/archive"
-				android:scaleType="center" />
-
-			<ImageView
-				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/settingImageView"
-				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:scaleType="center"
-				android:src="@drawable/setting" />
-		</LinearLayout>
-	</LinearLayout>
+			        <Button
+				      android:id="@+id/btnOverlay"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/overlay" 
+				      android:layout_weight="1"/>
+			        <Button
+				      android:id="@+id/btnAnimateTo"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/animateTo" 
+				      android:layout_weight="1"/>		        		       	
+				</LinearLayout>
+				
+			    <LinearLayout
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:orientation="horizontal" 
+			        android:layout_gravity="center_horizontal">	
+			        			 
+			        <Button
+				      android:id="@+id/btnAroundus"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/aroundus" 
+				      android:layout_weight="1"/>
+			        <Button
+				      android:id="@+id/btnSetLocationPoint"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/setLocationPoint" 
+				      android:layout_weight="1"/>
+			       <Button
+				      android:id="@+id/btnGetLocationPoint"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/getLocationPoint" 
+				      android:layout_weight="1"/>
+				</LinearLayout>
+					     
+			    <LinearLayout	   
+			        android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				            
+		          <Button
+				     android:id="@+id/btnSetIcon"
+				     android:layout_width="wrap_content"
+				     android:layout_height="wrap_content"
+				     android:text="@string/setIcon" 
+				     android:layout_weight="1"/>	
+				  <Button
+				     android:id="@+id/btnSetCompassMode"
+				     android:layout_width="wrap_content"
+				     android:layout_height="wrap_content"
+				     android:text="@string/setCompassMode" 
+				     android:layout_weight="1"/>			
+				  <Button
+				     android:id="@+id/btnGetIsCompass"
+				     android:layout_width="wrap_content"
+				     android:layout_height="wrap_content"
+				     android:text="@string/getIsCompass" 
+				     android:layout_weight="1"/>					     	 
+		        </LinearLayout>    
+			    
+			    <LinearLayout		     
+			        android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">						
+					<Button
+		        		android:id="@+id/btnZoomIn"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/zoomIn" 
+				        android:layout_weight="1"/>				 
+				    <Button
+				        android:id="@+id/btnZoomOut"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/zoomOut" 
+				        android:layout_weight="1"/>				 
+				    <Button
+				        android:id="@+id/btnGetZoomLevel"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/getZoomLevel" 
+				        android:layout_weight="1"/>    			
+					</LinearLayout>
+					
+			    <LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				    
+			       	<Button
+				        android:id="@+id/btnSetZoomLevel"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/setZoomLevel" 
+				        android:layout_weight="1"/>				 
+			       	<Button
+				       android:id="@+id/btnSetMapType"
+				       android:layout_width="wrap_content"
+				       android:layout_height="wrap_content"
+				       android:text="@string/setMapType" 
+				       android:layout_weight="1"/>	
+					<Button
+				       android:id="@+id/btnGetCenterPoint"
+				       android:layout_width="wrap_content"
+				       android:layout_height="wrap_content"
+				       android:text="@string/getCenterPoint" 
+				       android:layout_weight="1"/>
+			    </LinearLayout>    
+				    				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">					
+				   	<Button
+				        android:id="@+id/btnSetTrafficInfo"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/setTrafficeInfo" 
+				        android:layout_weight="1"/>						      
+				    <Button
+				        android:id="@+id/btnGetIsTrafficeInfo"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/getIsTrafficeInfo" 
+				        android:layout_weight="1"/>	
+		        	
+				    <Button
+				        android:id="@+id/btnTileType"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="Tile Type" 
+				        android:layout_weight="1"/>					    					           	
+			    </LinearLayout>	
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">					            
+				    <Button
+				        android:id="@+id/btnSetSightVisible"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/setsightvisible" 
+				        android:layout_weight="1"/>					        
+				    <Button
+				        android:id="@+id/btnSetTrackIngMode"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/setTrackingMode" 
+				        android:layout_weight="1"/>
+				    <Button
+				        android:id="@+id/btnGetIsTracking"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/getIstracking" 
+				        android:layout_weight="1"/> 				    				         
+				 </LinearLayout>   
+				 
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">		
+		            
+				    <Button
+				        android:id="@+id/btnAddTMapCircle"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/addCircle" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnRemoveTMapCircle"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/removeCircle" 
+				        android:layout_weight="1"/>						         				        		    
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				            
+				    <Button
+				        android:id="@+id/btnDrawPolyLine"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/drawLine" 
+				        android:layout_weight="1"/>					  
+				    <Button
+				        android:id="@+id/btnErasePolyLine"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/eraseLine" 
+				        android:layout_weight="1"/>						  
+				</LinearLayout>	    
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				            
+				    <Button
+				        android:id="@+id/btnDrawPolygon"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/drawPolygon" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnErasePolygon"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/erasePolygon" 
+				        android:layout_weight="1"/>					 				  
+				</LinearLayout>	   
+				
+			   <LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">		
+				   <Button
+				      android:id="@+id/btnBicycle"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/bicycleroad" 
+				      android:layout_weight="1"/>
+				   
+				   <Button
+				      android:id="@+id/btnBicycleFacility"
+				      android:layout_width="wrap_content"
+				      android:layout_height="wrap_content"
+				      android:text="@string/bicyclefacility" 
+				      android:layout_weight="1"/>
+				   
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">
+				    <Button
+				        android:id="@+id/btnMapPath"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/draw_map_path" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnRemoveMapPath"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/remove_map_path" 
+				        android:layout_weight="1"/>	
+				        
+				    <Button
+				        android:id="@+id/btnDisplayMapInfo"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/displaymapinfo" 
+				        android:layout_weight="1"/>		
+				    
+				    <Button
+				        android:id="@+id/btnNaviGuide"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/naviguide" 
+				        android:layout_weight="1"/>		
+				   			        				    				 				
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">		
+		            
+				    <Button
+				        android:id="@+id/btnCarPath"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/car_path" 
+				        android:layout_weight="1"/>		
+				    
+				    <Button
+				        android:id="@+id/btnPedestrian_Path"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/pedestrian_path" 
+				        android:layout_weight="1"/>		
+				    
+				    <Button
+				        android:id="@+id/btnBicycle_Path"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/bicycle_path" 
+				        android:layout_weight="1"/>		
+				        
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				            
+				    <Button
+				        android:id="@+id/btnMarkerPoint2"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/showmarker2" 
+				        android:layout_weight="1"/>	
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">				            
+				    <Button
+				        android:id="@+id/btnMarkerPoint"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/showmarker" 
+				        android:layout_weight="1"/>	
+				    
+				    <Button
+				        android:id="@+id/btnRemoveMarker"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/removemarker" 
+				        android:layout_weight="1"/>	
+				        
+				    <Button
+				        android:id="@+id/btnMoveFrontMarker"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/movefrontmarker" 
+				        android:layout_weight="1"/>	
+				        
+				    <Button
+				        android:id="@+id/btnMoveBackMarker"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/movetomarker" 
+				        android:layout_weight="1"/>	
+				        			
+				    		        
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">			            			            
+				    <Button
+				        android:id="@+id/btnFindAllPoi"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/findallpoi" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnConvertToAddress"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/convertToAddress" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnGetBizCategory"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/getBizCategory" 
+				        android:layout_weight="1"/>	
+				    <Button
+				        android:id="@+id/btnGetAroundBizPoi"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/getAroundBizPoi" 
+				        android:layout_weight="1"/>					    				     					       				        				        
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">		
+		            
+				    <Button
+				        android:id="@+id/btnInvokeRoute"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="T map 길안내" 
+				        android:layout_weight="1"/>	
+				    
+				    <Button
+				        android:id="@+id/btnInvokeSetLocation"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="T map 위치이동" 
+				        android:layout_weight="1"/>
+				  				    	
+				    <Button
+				        android:id="@+id/btnInvokeSearchPortal"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="T map 통합검색"  
+				        android:layout_weight="1"/> 
+				        
+				    <Button 
+				        android:id="@+id/btnTMapInstall"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="T map 설치"  
+				        android:layout_weight="1"/>
+				  					  					    					    
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">
+					
+				    <Button
+				        android:id="@+id/btnCapture"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="화면 캡처"  
+				        android:layout_weight="1"/> 
+				    
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">
+					
+				    <Button
+				        android:id="@+id/btnDisalbeZoom"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="Disable Zoom"  
+				        android:layout_weight="1"/> 
+				    
+				</LinearLayout>
+				
+				<LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal" 
+		            android:layout_gravity="center_horizontal">
+					
+				    <Button
+				        android:id="@+id/btnTimeMachine"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="타임머신"  
+				        android:layout_weight="1"/> 
+				    
+				</LinearLayout>
+															   
+			 </LinearLayout>
+		 
+		 </ScrollView>
+		 
+     </LinearLayout>
 	 
 		
 </LinearLayout>
