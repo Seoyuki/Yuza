@@ -14,16 +14,33 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ResultActivity extends Activity {
     String photoPath ="";
     Bitmap bitMap;
+    private CallbackManager callbackManager;
+    ShareDialog shareDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,8 +80,71 @@ public class ResultActivity extends Activity {
         faceBookBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                callbackManager = CallbackManager.Factory.create();
+                // 페이스북 SDK 초기화
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
 
+                LoginManager.getInstance().logInWithReadPermissions(ResultActivity.this,Arrays.asList("public_profile", "email"));
+                LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
+                    @Override
+                    public void onSuccess(final LoginResult result) {
+
+                        GraphRequest request;
+                        request = GraphRequest.newMeRequest(result.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                            @Override
+                            public void onCompleted(JSONObject user, GraphResponse response) {
+                                if (response.getError() != null) {
+                                    Log.i("yuja", "user: " + user.toString());
+                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+
+                                } else {
+                                    Log.i("yuja", "user: " + user.toString());
+                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                                    setResult(RESULT_OK);
+                                    finish();
+                                  /*  Intent intent = new Intent(
+                                            getApplicationContext(), // 현재 화면의 제어권자
+                                            SignInActivity.class); // 다음 넘어갈 클래스 지정
+                                    startActivity(intent); // 다음 화면으로 넘어간다*/
+
+                                    saveBitmaptoPng(bitMap);
+                                    SharePhoto photo = new SharePhoto.Builder()
+                                            .setUserGenerated(true)
+                                            .setBitmap(bitMap)
+                                            .setCaption("Latest score 하하하하하하")
+                                            .build();
+                                    SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
+                                            .build();
+
+                                    if (shareDialog.canShow(SharePhotoContent.class)){
+                                        shareDialog.show(content);
+                                    }
+                                    else{
+                                        Log.d("Activity", "you cannot share photos :(");
+                                    }
+                                }
+                            }
+                        });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email,gender,birthday");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.e("yuja", "Error: " + error);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        finish();
+                    }
+                });
             }
         });
 
