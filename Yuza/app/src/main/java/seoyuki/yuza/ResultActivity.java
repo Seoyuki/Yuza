@@ -32,7 +32,7 @@ public class ResultActivity extends Activity {
 
         Bitmap stemp = BitmapFactory.decodeResource(getResources(), R.drawable.stemp);
 
-        Bitmap bitMap = overlayMark(adjustedBitmap , stemp);
+        Bitmap bitMap = overlayMark(adjustedBitmap ,resizeBitmap(stemp,150));
 
         ImageView img = (ImageView) findViewById(R.id.cameraView);
         img.setImageBitmap(bitMap);
@@ -83,5 +83,17 @@ public class ResultActivity extends Activity {
 
         return bmOverlay;
 
+    }
+
+    //비트맵 사이즈 조절
+    static public Bitmap resizeBitmap(Bitmap original,int resizeWidth) {
+
+        double aspectRatio = (double) original.getHeight() / (double) original.getWidth();
+        int targetHeight = (int) (resizeWidth * aspectRatio);
+        Bitmap result = Bitmap.createScaledBitmap(original, resizeWidth, targetHeight, false);
+        if (result != original) {
+            original.recycle();
+        }
+        return result;
     }
 }
