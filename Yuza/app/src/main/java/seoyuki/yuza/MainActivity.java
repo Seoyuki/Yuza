@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     TMapGpsManager gps = null;
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
-        Intent   intent  = new Intent(MainActivity.this,Test.class);
+        Intent   intent  = new Intent(MainActivity.this,MainActivity.class);
        switch (markerItem.getName()){
            case "chunggunsas":
                intent.putExtra("what",markerItem.getName());
