@@ -31,6 +31,5 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile files('libs/android-support-v4.jar')
     compile files('libs/com.skp.Tmap_1.0.43.jar')
-    compile 'com.android.support:cardview-v7:24.2.1'
-    compile 'com.google.android.gms:play-services-maps:9.6.1'
+    compile 'com.google.android.gms:play-services:8.1.0'
 }

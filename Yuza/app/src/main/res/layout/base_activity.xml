@@ -44,6 +44,13 @@
 				android:src="@drawable/archive"
 				android:scaleType="center" />
 
+			<TextView
+				android:text="TextView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/textView2"
+				android:layout_weight="1" />
+
 			<ImageView
 				android:layout_width="match_parent"
 				android:layout_height="90dp"
@@ -52,6 +59,13 @@
 				android:background="@drawable/imageviewframe"
 				android:scaleType="center"
 				android:src="@drawable/setting" />
+			<ToggleButton
+				android:id="@+id/toggle1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textOff="위치정보수신시작"
+				android:textOn="위치정보수신종료"/>
+
 		</LinearLayout>
 	</LinearLayout>
 	 

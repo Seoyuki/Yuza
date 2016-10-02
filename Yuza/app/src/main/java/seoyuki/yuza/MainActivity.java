@@ -1,6 +1,7 @@
 package seoyuki.yuza;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,13 +11,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.skp.Tmap.TMapCircle;
@@ -46,11 +49,13 @@ import java.util.HashMap;
 
 
 
-public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback {
+
+public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener   {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+
     TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
 
@@ -58,7 +63,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     @Override
     public void onLocationChange(Location location) {
-
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
     }
 
     private TMapView mMapView = null;
@@ -69,7 +75,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     public static String mApiKey = "66800ce1-b178-3464-b52b-74cb4998e20a"; // 발급받은 appKey
     public static String mBizAppID; // 발급받은 BizAppID (TMapTapi로 TMap앱 연동을 할 때 BizAppID 꼭 필요)
-
 
 
     private int m_nCurrentZoomLevel = 0;
@@ -97,30 +102,37 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     ArrayList<String> mArrayMarkerID;
     private static int mMarkerID;
     String[] item = new String[3];
+    LocationManager mLocMan;
+    String mProvider;
+    int mCount;
 
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
-        Intent   intent  = new Intent(MainActivity.this,MainActivity.class);
-       switch (markerItem.getName()){
-           case "chunggunsas":
-               intent.putExtra("what",markerItem.getName());
-               startActivity(intent);
-               break;
-           case "서울타워":
-               intent.putExtra("what",markerItem.getName());
-               startActivity(intent);
-               break;
-           default :LogManager.printLog("이게뭐냐 이게");
-       }
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        switch (markerItem.getName()) {
+            case "chunggunsas":
+                intent.putExtra("what", markerItem.getName());
+                startActivity(intent);
+                break;
+            case "서울타워":
+                intent.putExtra("what", markerItem.getName());
+                startActivity(intent);
+                break;
+            default:
+                LogManager.printLog("이게뭐냐 이게");
+        }
     }
+    PendingIntent mPending;
     /**
      * onCreate()
      */
+    private LocationManager locationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
 
         mContext = this;
 
@@ -129,13 +141,13 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         configureMapView();
 
-        ImageView img1 = (ImageView)findViewById(R.id.achievementImageView) ;
-        ImageView img2 = (ImageView)findViewById(R.id.searchImageView) ;
-        ImageView img3 = (ImageView)findViewById(R.id.settingImageView) ;
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(MainActivity.this,TestBtnActivity.class);
+                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
                 startActivity(intent);
             }
         });
@@ -169,15 +181,78 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mArrayMarkerID = new ArrayList<String>();
         mMarkerID = 0;
-
+        Double latitude =0.0;
+        Double longitude =0.0;
 
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
         drawMapPath();
-        setLocationPoint();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        try {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
+            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation != null) {
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
+                Toast.makeText(getApplicationContext(), "마지막 위치 latitude" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+
+        }
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 1000;
+        float minDistance = 0;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,Goal.class);
+        mPending = PendingIntent.getBroadcast(this,0,intent,0);
+        Location location;
+        double s = mMapView.getLatitude();
+        double d = mMapView.getLongitude();
+        LogManager.printLog("setLocationPointss " + s + " " + d);
+        mMapView.setIconVisibility(true);
+        mMapView.setCenterPoint(longitude, latitude);
 
     }
+    public void onResume(){
+        super.onResume();
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+    }
+    public void onPause(){
+        super.onPause();
+        locationManager.removeProximityAlert(mPending);
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        String msg = "New Latitude: " + location.getLatitude()
+                + "New Longitude: " + location.getLongitude();
+
+        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+        LogManager.printLog(msg+"안녕하세요");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(getBaseContext(), "Gps is turned on!! ",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+
+
+
+
+
 //    @Override
 //    Public void onLocationChange(Location location){
 //        double lat = location.getLatitude();
@@ -213,19 +288,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 LogManager.printLog("IntroActivity SKPMapApikeyFailed " + errorMsg);
             }
         });
-
-//		mMapView.setOnBizAppIdListener(new TMapView.OnBizAppIdListenerCallback() {
-//			@Override
-//			public void SKPMapBizAppIdSucceed() {
-//				LogManager.printLog("IntroActivity SKPMapBizAppIdSucceed");
-//			}
-//
-//			@Override
-//			public void SKPMapBizAppIdFailed(String errorMsg) {
-//				LogManager.printLog("IntroActivity SKPMapBizAppIdFailed " + errorMsg);
-//			}
-//		});
-
 
         mMapView.setOnEnableScrollWithZoomLevelListener(new TMapView.OnEnableScrollWithZoomLevelCallback() {
             @Override
@@ -296,16 +358,16 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         m_bSightVisible = false;
         m_bTrackingMode = false;
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
 
     @Override
     protected void onDestroy() {
@@ -1107,6 +1169,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Date currentTime = new Date();
         tmapdata.findTimeMachineCarPath(pathInfo, currentTime, null);
     }
+
 
 
 }
