@@ -58,8 +58,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     @Override
     public void onLocationChange(Location location) {
-        double lat = location.getLatitude();
-        double lon = location.getLongtitude();
+        LogManager.printLog("onLocationChange " + location.getLatitude() + " " + location.getLongitude() + " " + location.getSpeed() + " " + location.getAccuracy());
+        if (m_bTrackingMode) {
+            mMapView.setLocationPoint(location.getLongitude(), location.getLatitude());
+        }
     }
 
     private TMapView mMapView = null;
@@ -176,11 +178,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
         drawMapPath();
-        TMapGpsManager gps = new TMapGpsManager(this);
-        gps.setMinTime = 1000
-        gps.setMinDistance = 5;
-        gps.setProvider(gps.GPS_PROVIDER);
-        gps.OpenGps();
+
 
 
     }
