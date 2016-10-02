@@ -15,11 +15,11 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="카메라찍기"
             android:id="@+id/cameraCaptureBtn"
         android:layout_gravity="right|bottom"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/ic_menu_camera" />
 
 
 </RelativeLayout>

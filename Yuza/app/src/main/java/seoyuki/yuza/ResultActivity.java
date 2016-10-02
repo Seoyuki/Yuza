@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
@@ -52,7 +54,7 @@ public class ResultActivity extends Activity {
         photoPath = intent.getStringExtra("strParamName");
         Log.d("youja", "test@@@@@@"+photoPath);
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
+       // options.inSampleSize = 4;
         final Bitmap bmp = BitmapFactory.decodeFile(photoPath, options);
 
         Matrix matrix = new Matrix();
@@ -60,12 +62,16 @@ public class ResultActivity extends Activity {
         Bitmap adjustedBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
                 bmp.getHeight(), matrix, true);
 
-        Bitmap stemp = BitmapFactory.decodeResource(getResources(), R.drawable.stamp);
+        Bitmap stamp = BitmapFactory.decodeResource(getResources(), R.drawable.stamp);
 
-        bitMap = overlayMark(adjustedBitmap ,resizeBitmap(stemp,150));
+        //크기 리사이징 후 겹치기
+        bitMap = overlayMark(adjustedBitmap ,resizeBitmap(stamp,500));
 
         ImageView img = (ImageView) findViewById(R.id.cameraView);
         img.setImageBitmap(bitMap);
+
+
+
 
 
         Button cancelBtn = (Button) findViewById(R.id.cancelBtn);
@@ -104,16 +110,19 @@ public class ResultActivity extends Activity {
                                     Log.i("yuja", "user: " + user.toString());
                                     Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
                                     setResult(RESULT_OK);
-                                    finish();
-                                  /*  Intent intent = new Intent(
-                                            getApplicationContext(), // 현재 화면의 제어권자
-                                            SignInActivity.class); // 다음 넘어갈 클래스 지정
-                                    startActivity(intent); // 다음 화면으로 넘어간다*/
+                                    String filePath =  saveBitmaptoPng(bitMap);
 
-                                    saveBitmaptoPng(bitMap);
+                                    Log.i("yuja", "filePath: " + filePath);
+                                 // finish();
+                                    shareDialog = new ShareDialog(ResultActivity.this);
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    // options.inSampleSize = 4;
+                                    final Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
+
+
                                     SharePhoto photo = new SharePhoto.Builder()
                                             .setUserGenerated(true)
-                                            .setBitmap(bitMap)
+                                            .setBitmap(bmp)
                                             .setCaption("Latest score 하하하하하하")
                                             .build();
                                     SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
@@ -123,8 +132,9 @@ public class ResultActivity extends Activity {
                                         shareDialog.show(content);
                                     }
                                     else{
-                                        Log.d("Activity", "you cannot share photos :(");
+                                        Log.d("youja", "you cannot share photos :(");
                                     }
+
                                 }
                             }
                         });
@@ -168,36 +178,6 @@ public class ResultActivity extends Activity {
         super.onBackPressed();
     }
 
-    //isVerticalMode = true를 주면 세로로, false를주면 가로로 합친다. 리턴은 Bitmap
-    private Bitmap combineImage(Bitmap first, Bitmap second, boolean isVerticalMode){
-        BitmapFactory.Options option = new BitmapFactory.Options();
-        option.inDither = true;
-        option.inPurgeable = true;
-
-        Bitmap bitmap = null;
-        if(isVerticalMode)
-            bitmap = Bitmap.createScaledBitmap(first, first.getWidth(), first.getHeight()+second.getHeight(), true);
-        else
-            bitmap = Bitmap.createScaledBitmap(first, first.getWidth()+second.getWidth(), first.getHeight(), true);
-
-        Paint p = new Paint();
-        p.setDither(true);
-        p.setFlags(Paint.ANTI_ALIAS_FLAG);
-
-        Canvas c = new Canvas(bitmap);
-        c.drawBitmap(first, 0, 0, p);
-        if(isVerticalMode)
-            c.drawBitmap(second, 0, first.getHeight(), p);
-        else
-            c.drawBitmap(second, first.getWidth(), 0, p);
-
-        first.recycle();
-        second.recycle();
-
-        return bitmap;
-    }
-
-
     //비트맵 겹치기
     private Bitmap overlayMark(Bitmap bmp1, Bitmap bmp2)
 
@@ -228,33 +208,38 @@ public class ResultActivity extends Activity {
     }
 
     //비트맵 사진저장
-    public static void saveBitmaptoPng(Bitmap bitmap){
+    public  String saveBitmaptoPng(Bitmap bitmap){
+        File file_path;
+
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "youja");
 
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
                 Log.d("youja", "failed to create directory");
-
             }
         }
         String file_name  = String.format(mediaStorageDir.getPath()+"/youja%d.png",
                 System.currentTimeMillis());
 
-
-        File file_path;
         try{
             file_path = new File(file_name);
 
             FileOutputStream out = new FileOutputStream(file_path);
-
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.close();
-
+            return file_name;
         }catch(FileNotFoundException exception){
             Log.e("FileNotFoundException", exception.getMessage());
         }catch(IOException exception){
             Log.e("IOException", exception.getMessage());
         }
+       return file_name;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
 }
