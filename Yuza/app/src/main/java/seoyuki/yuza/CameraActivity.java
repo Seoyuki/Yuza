@@ -128,7 +128,11 @@ public class CameraActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
     }
+    @Override
+    public void onBackPressed() {
 
+        super.onBackPressed();
+    }
     @Override
     public void onPause(){
         super.onPause();
@@ -140,7 +144,10 @@ public class CameraActivity extends Activity {
         public void surfaceCreated(SurfaceHolder holder) {
             try {
                  mCamera = getCameraInstance();
-                 mCamera.stopPreview();
+                if(mCamera != null){
+                    mCamera.stopPreview();
+                }
+
                 Camera.Parameters parameters = mCamera.getParameters();
                 if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
                     parameters.set("orientation", "portrait");
