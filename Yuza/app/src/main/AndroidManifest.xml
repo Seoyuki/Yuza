@@ -2,30 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="seoyuki.yuza">
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_OWNER_DATA"></uses-permission>
-    <uses-permission android:name="android.permission.READ_OWNER_DATA"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_OWNER_DATA" />
+    <uses-permission android:name="android.permission.READ_OWNER_DATA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:screenOrientation="portrait"> <!-- 세로화면 고정시키기 -->
+        android:theme="@style/AppTheme"> <!-- 세로화면 고정시키기 -->
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
 
         <activity android:name=".Intro">
             <intent-filter>
@@ -34,29 +33,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".TestBtnActivity"></activity>
-
-
+        <activity android:name=".TestBtnActivity" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-
             android:label="@string/app_name" />
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.${applicationId}.FacebookContentProvider1112123538868081"
             android:exported="true" />
+
         <activity android:name=".SplashActivity" />
-        <activity android:name=".SignInActivity"></activity>
-        <activity android:name=".CameraActivity"></activity>
-        <activity android:name=".ResultActivity"></activity>
-        <activity android:name=".Test"></activity>
-
-        <activity android:name=".MainActivity"></activity>
-
-
+        <activity android:name=".SignInActivity" />
+        <activity android:name=".CameraActivity" />
+        <activity android:name=".ResultActivity" />
+        <activity android:name=".Test" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".SearchActivity"></activity>
     </application>
 
 </manifest>
