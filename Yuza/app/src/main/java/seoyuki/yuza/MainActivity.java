@@ -487,7 +487,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void setLocationPoint() {
 
         TMapGpsManager tmapgps = new TMapGpsManager(this);
-        tmapgps.setProvider(TMapGpsManager.NETWORK_PROVIDER );
+        tmapgps.setProvider(TMapGpsManager.GPS_PROVIDER );
         tmapgps.OpenGps();
         TMapPoint point = tmapgps.getLocation();
         double Latitude =   point.getLatitude();
