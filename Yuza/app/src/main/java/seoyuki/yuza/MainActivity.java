@@ -58,10 +58,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     @Override
     public void onLocationChange(Location location) {
-        LogManager.printLog("onLocationChange " + location.getLatitude() + " " + location.getLongitude() + " " + location.getSpeed() + " " + location.getAccuracy());
-        if (m_bTrackingMode) {
-            mMapView.setLocationPoint(location.getLongitude(), location.getLatitude());
-        }
+
     }
 
     private TMapView mMapView = null;
@@ -178,8 +175,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
         drawMapPath();
-
-
+        setLocationPoint();
 
     }
 //    @Override
@@ -489,10 +485,15 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      * 현재위치로 표시될 좌표의 위도,경도를 설정한다.
      */
     public void setLocationPoint() {
-        double Latitude = 37.508623;
-        double Longitude = 127.049011;
 
+        TMapGpsManager tmapgps = new TMapGpsManager(this);
+        tmapgps.setProvider(TMapGpsManager.NETWORK_PROVIDER );
+        tmapgps.OpenGps();
+        TMapPoint point = tmapgps.getLocation();
+        double Latitude =   point.getLatitude();
+        double Longitude = point.getLongitude();
         LogManager.printLog("setLocationPoint " + Latitude + " " + Longitude);
+
 
         mMapView.setLocationPoint(Longitude, Latitude);
         mMapView.MapZoomOut();
