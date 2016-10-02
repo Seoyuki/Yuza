@@ -43,6 +43,7 @@
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
+<<<<<<< HEAD
   <component name="SvnConfiguration">
     <configuration>C:\Users\guitarhyo\AppData\Roaming\Subversion</configuration>
   </component>
@@ -73,4 +74,6 @@
       </state>
     </states>
   </component>
+=======
+>>>>>>> origin/master
 </project>
