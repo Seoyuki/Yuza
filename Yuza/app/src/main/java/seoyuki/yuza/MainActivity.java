@@ -53,14 +53,13 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      */
     TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
+
     private CallbackManager callbackManager;
 
     @Override
     public void onLocationChange(Location location) {
-        LogManager.printLog("onLocationChange " + location.getLatitude() + " " + location.getLongitude() + " " + location.getSpeed() + " " + location.getAccuracy());
-        if (m_bTrackingMode) {
-            mMapView.setLocationPoint(location.getLongitude(), location.getLatitude());
-        }
+        double lat = location.getLatitude();
+        double lon = location.getLongtitude();
     }
 
     private TMapView mMapView = null;
@@ -99,7 +98,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     ArrayList<String> mArrayMarkerID;
     private static int mMarkerID;
     String[] item = new String[3];
-    TMapGpsManager gps = null;
+
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         Intent   intent  = new Intent(MainActivity.this,MainActivity.class);
@@ -177,9 +176,19 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
         drawMapPath();
+        TMapGpsManager gps = new TMapGpsManager(this);
+        gps.setMinTime = 1000
+        gps.setMinDistance = 5;
+        gps.setProvider(gps.GPS_PROVIDER);
+        gps.OpenGps();
+
 
     }
-
+//    @Override
+//    Public void onLocationChange(Location location){
+//        double lat = location.getLatitude();
+//        double lon = location.getLongtitude();
+//    }
     /**
      * setSKPMapApiKey()에 ApiKey를 입력 한다.
      * setSKPMapBizappId()에 mBizAppID를 입력한다.
