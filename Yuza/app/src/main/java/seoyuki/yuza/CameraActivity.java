@@ -3,41 +3,38 @@ package seoyuki.yuza;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 
 public class CameraActivity extends Activity {
 
     @SuppressWarnings("deprecation")
-    Camera camera;
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
+    Camera mCamera;
     Button button;
     String str;
-
+    private CameraPreview mPreview;
+    private Context mContext = this;
+    private SurfaceHolder mHolder;
+    SurfaceView surfaceView;
     @SuppressWarnings("deprecation")
     Camera.PictureCallback jpegCallback;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +44,34 @@ public class CameraActivity extends Activity {
         getWindow().setFormat(PixelFormat.UNKNOWN);
         // 스테이터스바 숨기기
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurf);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(surfaceListener);
-       // surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-
+        mHolder = surfaceView.getHolder();
+        mHolder.addCallback(surfaceListener);
 
         jpegCallback = new Camera.PictureCallback() {
-
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 FileOutputStream outStream = null;
                 try {
-                    str = String.format("/sdcard/%d.jpg",
+                    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), "youja");
+                    Toast.makeText(getApplicationContext(),
+                            mediaStorageDir.getPath(), Toast.LENGTH_LONG).show();
+                    if (! mediaStorageDir.exists()){
+                        if (! mediaStorageDir.mkdirs()){
+                            Log.d("youja", "failed to create directory");
+
+                        }
+                    }
+
+                    str = String.format(mediaStorageDir.getPath()+"/youja%d.png",
                             System.currentTimeMillis());
-                    outStream = new FileOutputStream(str);
+
+                    File mediaFile;
+                    Log.d("youja", str);
+                    mediaFile = new File(str);
+                    outStream = new FileOutputStream(mediaFile);
 
                     outStream.write(data);
                     outStream.close();
@@ -81,7 +90,8 @@ public class CameraActivity extends Activity {
 
                 Toast.makeText(getApplicationContext(),
                         "Picture Saved", Toast.LENGTH_LONG).show();
-                refreshCamera();
+
+                mCamera.stopPreview();
 
                 Intent intent = new Intent(CameraActivity.this,
                         ResultActivity.class);
@@ -94,36 +104,24 @@ public class CameraActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(camera != null){
-                    camera.takePicture(null, null, jpegCallback);
+                if(mCamera != null){
+                    mCamera.takePicture(null, null, jpegCallback);
                 }else{
-                    Log.d("yuja","testddddd");
+                    Log.d("youja","testddddd");
                 }
 
             }
         });
     }
-
-
-
-    public void refreshCamera() {
-        if (surfaceHolder.getSurface() == null) {
-            return;
-        }
-
+    /** 카메라 인스턴스를 안전하게 획득합니다 */
+    public static Camera getCameraInstance(){
+        Camera c = null;
         try {
-            camera.stopPreview();
+            c = Camera.open();
         }
-
-        catch (Exception e) {
+        catch (Exception e){
         }
-
-        try {
-            camera.setPreviewDisplay(surfaceHolder);
-            camera.startPreview();
-        }
-        catch (Exception e) {
-        }
+        return c;
     }
 
     @Override
@@ -131,39 +129,96 @@ public class CameraActivity extends Activity {
         super.onDestroy();
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        // 보통 안쓰는 객체는 onDestroy에서 해제 되지만 카메라는 확실히 제거해주는게 안전하다.
+    }
+
     private SurfaceHolder.Callback surfaceListener = new SurfaceHolder.Callback() {
+        @Override
         public void surfaceCreated(SurfaceHolder holder) {
-
-            camera = Camera.open();
-            camera.stopPreview();
-            camera.setDisplayOrientation(90); // potrait
-          //  camera.setDisplayOrientation(180); // landscape
-            Camera.Parameters param = camera.getParameters();
-           // param.setRotation(90);
-
-            camera.setParameters(param);
-
             try {
+                 mCamera = getCameraInstance();
+                 mCamera.stopPreview();
+                Camera.Parameters parameters = mCamera.getParameters();
+                if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                    parameters.set("orientation", "portrait");
+                    mCamera.setDisplayOrientation(90);
+                    parameters.setRotation(90);
+                } else {
+                    parameters.set("orientation", "landscape");
+                    mCamera.setDisplayOrientation(0);
+                    parameters.setRotation(0);
+                }
+                mCamera.setParameters(parameters);
 
-                camera.setPreviewDisplay(surfaceHolder);
-                camera.startPreview();
-            } catch (Exception e) {
-                System.err.println(e);
-                return;
+                mCamera.setPreviewDisplay(holder);
+                mCamera.startPreview();
+            } catch (IOException e) {
+                Log.d("youja", "Error setting camera preview: " + e.getMessage());
             }
         }
 
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            // 프리뷰를 회전시키거나 변경시 처리를 여기서 해준다.
+            // 프리뷰 변경시에는 먼저 프리뷰를 멈춘다음 변경해야한다.
+            if (mHolder.getSurface() == null){
+                // 프리뷰가 존재하지 않을때
+                return;
+            }
+            // 우선 멈춘다
+            try {
+                mCamera.stopPreview();
+            } catch (Exception e){
+                // 프리뷰가 존재조차 하지 않는 경우다
+            }
 
-        public void surfaceChanged(SurfaceHolder holder,
-                                   int format, int width, int height) {
-            refreshCamera();
+            Camera.Parameters parameters = mCamera.getParameters();
+            Camera.Size size = getBestPreviewSize(width, height);
+            parameters.setPreviewSize(size.width, size.height);
+            mCamera.setParameters(parameters);
+            // 프리뷰 변경, 처리 등을 여기서 해준다.
+
+            // 새로 변경된 설정으로 프리뷰를 재생성한다
+            try {
+                mCamera.setPreviewDisplay(mHolder);
+                mCamera.startPreview();
+
+            } catch (Exception e){
+                Log.d("youja", "Error starting camera preview: " + e.getMessage());
+            }
         }
+        private Camera.Size getBestPreviewSize(int width, int height)
+        {
+            Camera.Size result=null;
+            Camera.Parameters p = mCamera.getParameters();
+            for (Camera.Size size : p.getSupportedPreviewSizes()) {
+                if (size.width<=width && size.height<=height) {
+                    if (result==null) {
+                        result=size;
+                    } else {
+                        int resultArea=result.width*result.height;
+                        int newArea=size.width*size.height;
 
+                        if (newArea>resultArea) {
+                            result=size;
+                        }
+                    }
+                }
+            }
+            return result;
 
+        }
+        @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            camera.stopPreview();
-            camera.release();
-            camera = null;
+            // 프리뷰 제거시 카메라 사용도 끝났다고 간주하여 리소스를 전부 반환한다
+            if (mCamera != null) {
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = null;
+            }
         }
     };
 }
