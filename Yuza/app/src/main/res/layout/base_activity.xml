@@ -9,12 +9,12 @@
 	<RelativeLayout
 		android:id="@+id/contentView"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
-		android:layout_weight="1" 
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
 		android:background="@android:color/white">
 	</RelativeLayout>
-	
-	
+
+
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:paddingTop="2dip"
@@ -26,48 +26,93 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
-			<ImageView
+			<RelativeLayout
+				android:orientation="vertical"
 				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/searchImageView"
+				android:layout_height="match_parent"
 				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:src="@drawable/search"
-				android:scaleType="center" />
+				android:id="@+id/search"
+				android:background="@drawable/imageviewframe">
 
-			<ImageView
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/searchImageView"
+					android:layout_weight="1"
+					android:src="@drawable/search"
+					android:scaleType="center"
+					android:layout_centerVertical="true"
+					android:layout_centerHorizontal="true" />
+
+				<TextView
+					android:text="마음 속 유적"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/searchText"
+					android:layout_alignBottom="@+id/searchImageView"
+					android:layout_centerHorizontal="true"
+					android:textColor="@color/wallet_bright_foreground_holo_light" />
+			</RelativeLayout>
+
+			<RelativeLayout
+				android:orientation="vertical"
 				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/achievementImageView"
+				android:layout_height="match_parent"
 				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:src="@drawable/archive"
-				android:scaleType="center" />
+				android:id="@+id/archive"
+				android:background="@drawable/imageviewframe">
 
-			<TextView
-				android:text="TextView"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/textView2"
-				android:layout_weight="1" />
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/achievementImageView"
+					android:layout_weight="1"
+					android:src="@drawable/archive"
+					android:scaleType="center"
+					android:layout_centerVertical="true"
+					android:layout_centerHorizontal="true" />
 
-			<ImageView
+				<TextView
+					android:text="나의 여정"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/archiveText"
+					android:layout_alignBottom="@+id/achievementImageView"
+					android:layout_centerHorizontal="true"
+					android:textColor="@color/wallet_bright_foreground_holo_light" />
+			</RelativeLayout>
+
+			<RelativeLayout
+				android:orientation="vertical"
 				android:layout_width="match_parent"
-				android:layout_height="90dp"
-				android:id="@+id/settingImageView"
+				android:layout_height="match_parent"
 				android:layout_weight="1"
-				android:background="@drawable/imageviewframe"
-				android:scaleType="center"
-				android:src="@drawable/setting" />
-			<ToggleButton
-				android:id="@+id/toggle1"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textOff="위치정보수신시작"
-				android:textOn="위치정보수신종료"/>
+				android:id="@+id/setting"
+				android:background="@drawable/imageviewframe">
+
+				<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/settingImageView"
+					android:layout_weight="1"
+					android:scaleType="center"
+					android:src="@drawable/setting"
+					android:layout_centerVertical="true"
+					android:layout_centerHorizontal="true" />
+
+				<TextView
+					android:text="설정 바꾸기"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/settingText"
+					android:layout_alignBottom="@+id/settingImageView"
+					android:layout_centerHorizontal="true"
+					android:textColor="@color/wallet_bright_foreground_holo_light" />
+			</RelativeLayout>
 
 		</LinearLayout>
+
 	</LinearLayout>
-	 
-		
+
+
 </LinearLayout>
