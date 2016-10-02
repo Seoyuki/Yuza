@@ -28,6 +28,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         // Surface가 생성되었으니 프리뷰를 어디에 띄울지 지정해준다. (holder 로 받은 SurfaceHolder에 뿌려준다. 
         try {
+          //  mCamera = Camera.open();
+          //  mCamera.stopPreview();
 			Camera.Parameters parameters = mCamera.getParameters();
 			if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
 				parameters.set("orientation", "portrait");
