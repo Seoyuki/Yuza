@@ -45,8 +45,12 @@
             android:label="@string/app_name" />
 =======
             android:label="@string/app_name"
+<<<<<<< HEAD
              />
 >>>>>>> origin/master
+=======
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+>>>>>>> parent of ac67b94... 검색테스트용입니다
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.${applicationId}.FacebookContentProvider1112123538868081"
@@ -55,7 +59,7 @@
         <activity android:name=".SignInActivity"></activity>
         <activity android:name=".CameraActivity"></activity>
         <activity android:name=".ResultActivity"></activity>
-        <activity android:name=".Test"></activity>
+
 
         <activity android:name=".MainActivity"></activity>
 

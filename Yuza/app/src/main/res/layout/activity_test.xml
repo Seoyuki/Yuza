@@ -32,5 +32,4 @@
         android:id="@+id/cameraBtn"
         android:layout_below="@+id/faceBookBtn"
         android:layout_alignParentStart="true" />
-
 </RelativeLayout>

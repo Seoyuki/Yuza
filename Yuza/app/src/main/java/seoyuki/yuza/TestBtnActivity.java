@@ -56,7 +56,7 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             //메인으로가기
             case R.id.mainBtn:
                 Log.d("yuja", "main start: ");
-                intent = new Intent(getApplicationContext(), Test.class);
+                intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 break;
 

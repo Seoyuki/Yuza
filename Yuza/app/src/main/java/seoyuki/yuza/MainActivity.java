@@ -14,9 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.facebook.CallbackManager;
 import com.skp.Tmap.TMapCircle;
@@ -46,13 +44,12 @@ import java.util.HashMap;
 
 
 
-public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback {
+public class MainActivity extends BaseActivity implements onLocationChangedCallback {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    TMapMarkerItem item1 = new TMapMarkerItem();
-    TMapMarkerItem item2 = new TMapMarkerItem();
+
     private CallbackManager callbackManager;
 
     @Override
@@ -72,7 +69,58 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public static String mApiKey = "66800ce1-b178-3464-b52b-74cb4998e20a"; // 발급받은 appKey
     public static String mBizAppID; // 발급받은 BizAppID (TMapTapi로 TMap앱 연동을 할 때 BizAppID 꼭 필요)
 
-
+//    private static final int[] mArrayMapButton = {
+//            R.id.btnOverlay,
+//            R.id.btnAnimateTo,
+//            R.id.btnZoomIn,
+//            R.id.btnZoomOut,
+//            R.id.btnGetZoomLevel,
+//            R.id.btnSetZoomLevel,
+//            R.id.btnSetMapType,
+//            R.id.btnGetLocationPoint,
+//            R.id.btnSetLocationPoint,
+//            R.id.btnSetIcon,
+//            R.id.btnSetCompassMode,
+//            R.id.btnGetIsCompass,
+//            R.id.btnSetTrafficInfo,
+//            R.id.btnGetIsTrafficeInfo,
+//            R.id.btnSetSightVisible,
+//            R.id.btnSetTrackIngMode,
+//            R.id.btnGetIsTracking,
+//            R.id.btnAddTMapCircle,
+//            R.id.btnRemoveTMapCircle,
+//            R.id.btnMarkerPoint,
+//            R.id.btnRemoveMarker,
+//            R.id.btnMoveFrontMarker,
+//            R.id.btnMoveBackMarker,
+//            R.id.btnDrawPolyLine,
+//            R.id.btnErasePolyLine,
+//            R.id.btnDrawPolygon,
+//            R.id.btnErasePolygon,
+//            R.id.btnBicycle,
+//            R.id.btnBicycleFacility,
+//            R.id.btnMapPath,
+//            R.id.btnRemoveMapPath,
+//            R.id.btnDisplayMapInfo,
+//            R.id.btnNaviGuide,
+//            R.id.btnCarPath,
+//            R.id.btnPedestrian_Path,
+//            R.id.btnBicycle_Path,
+//            R.id.btnGetCenterPoint,
+//            R.id.btnFindAllPoi,
+//            R.id.btnConvertToAddress,
+//            R.id.btnGetBizCategory,
+//            R.id.btnGetAroundBizPoi,
+//            R.id.btnTileType,
+//            R.id.btnCapture,
+//            R.id.btnDisalbeZoom,
+//            R.id.btnInvokeRoute,
+//            R.id.btnInvokeSetLocation,
+//            R.id.btnInvokeSearchPortal,
+//            R.id.btnTimeMachine,
+//            R.id.btnTMapInstall,
+//            R.id.btnMarkerPoint2,
+//    };
 
     private int m_nCurrentZoomLevel = 0;
     private double m_Latitude = 0;
@@ -98,8 +146,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     ArrayList<String> mArrayMarkerID;
     private static int mMarkerID;
-    String[] item = new String[3];
+
     TMapGpsManager gps = null;
+<<<<<<< HEAD
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         Intent   intent  = new Intent(MainActivity.this,MainActivity.class);
@@ -115,6 +164,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
            default :LogManager.printLog("이게뭐냐 이게");
        }
     }
+=======
+
+>>>>>>> parent of ac67b94... 검색테스트용입니다
     /**
      * onCreate()
      */
@@ -131,33 +183,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         configureMapView();
 
-        ImageView img1 = (ImageView)findViewById(R.id.achievementImageView) ;
-        ImageView img2 = (ImageView)findViewById(R.id.searchImageView) ;
-        ImageView img3 = (ImageView)findViewById(R.id.settingImageView) ;
-        img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent  = new Intent(MainActivity.this,TestBtnActivity.class);
-                startActivity(intent);
-            }
-        });
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.VISIBLE);
-                item2.setVisible(TMapMarkerItem.VISIBLE);
+        initView();
 
-
-            }
-        });
-        img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.HIDDEN);
-                item2.setVisible(TMapMarkerItem.HIDDEN);
-
-            }
-        });
         mArrayID = new ArrayList<String>();
 
         mArrayCircleID = new ArrayList<String>();
@@ -172,7 +199,11 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mArrayMarkerID = new ArrayList<String>();
         mMarkerID = 0;
 
-
+//		gps = new TMapGpsManager(IntroActivity.this);
+//		gps.setMinTime(1000);
+//		gps.setMinDistance(5);
+//		gps.setProvider(gps.NETWORK_PROVIDER);
+//		gps.OpenGps();
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
@@ -269,7 +300,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMapView.setOnCalloutRightButtonClickListener(new TMapView.OnCalloutRightButtonClickCallback() {
             @Override
             public void onCalloutRightButton(TMapMarkerItem markerItem) {
-                String strMessage = "dddddd";
+                String strMessage = "";
                 strMessage = "ID: " + markerItem.getID() + " " + "Title " + markerItem.getCalloutTitle();
                 Common.showAlertDialog(MainActivity.this, "Callout Right Button", strMessage);
             }
@@ -313,7 +344,134 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         }
     }
 
-
+    /**
+     * onClick Event
+     */
+    @Override
+    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.btnOverlay:
+//                overlay();
+//                break;
+//            case R.id.btnAnimateTo:
+//                animateTo();
+//                break;
+//            case R.id.btnZoomIn:
+//                mapZoomIn();
+//                break;
+//            case R.id.btnZoomOut:
+//                mapZoomOut();
+//                break;
+//            case R.id.btnGetZoomLevel:
+//                getZoomLevel();
+//                break;
+//            case R.id.btnSetZoomLevel:
+//                setZoomLevel();
+//                break;
+//            case R.id.btnSetMapType:
+//                setMapType();
+//                break;
+//            case R.id.btnGetLocationPoint:
+//                getLocationPoint();
+//                break;
+//            case R.id.btnSetLocationPoint:
+//                setLocationPoint();
+//                break;
+//            case R.id.btnSetIcon:
+//                setMapIcon();
+//                break;
+//            case R.id.btnSetCompassMode:
+//                setCompassMode();
+//                break;
+//            case R.id.btnGetIsCompass:
+//                getIsCompass();
+//                break;
+//            case R.id.btnSetTrafficInfo:
+//                setTrafficeInfo();
+//                break;
+//            case R.id.btnGetIsTrafficeInfo:
+//                getIsTrafficeInfo();
+//                break;
+//            case R.id.btnSetTrackIngMode:
+//                setTrackingMode();
+//                break;
+//            case R.id.btnGetIsTracking:
+//                getIsTracking();
+//                break;
+//            case R.id.btnAddTMapCircle:
+//                addTMapCircle();
+//                break;
+//            case R.id.btnRemoveTMapCircle:
+//                removeTMapCircle();
+//                break;
+//            case R.id.btnMarkerPoint:
+//                showMarkerPoint();
+//                break;
+//            case R.id.btnRemoveMarker:
+//                removeMarker();
+//                break;
+//            case R.id.btnMoveFrontMarker:
+//                moveFrontMarker();
+//                break;
+//            case R.id.btnMoveBackMarker:
+//                moveBackMarker();
+//                break;
+//            case R.id.btnMapPath:
+//                drawMapPath();
+//                break;
+//            case R.id.btnRemoveMapPath:
+//                removeMapPath();
+//                break;
+//            case R.id.btnDisplayMapInfo:
+//                displayMapInfo();
+//                break;
+//            case R.id.btnNaviGuide:
+//                naviGuide();
+//                break;
+//            case R.id.btnPedestrian_Path:
+//                drawPedestrianPath();
+//                break;
+//            case R.id.btnBicycle_Path:
+//                drawBicyclePath();
+//                break;
+//            case R.id.btnConvertToAddress:
+//                convertToAddress();
+//                break;
+//            case R.id.btnTileType:
+//                setTileType();
+//                break;
+//            case R.id.btnInvokeRoute:
+//                invokeRoute();
+//                break;
+//            case R.id.btnInvokeSetLocation:
+//                invokeSetLocation();
+//                break;
+//            case R.id.btnInvokeSearchPortal:
+//                invokeSearchProtal();
+//                break;
+//            case R.id.btnBicycle:
+//                setBicycle();
+//                break;
+//            case R.id.btnBicycleFacility:
+//                setBicycleFacility();
+//                break;
+//            case R.id.btnCapture:
+//                captureImage();
+//                break;
+//            case R.id.btnDisalbeZoom:
+//                disableZoom();
+//                break;
+//            case R.id.btnTimeMachine:
+//                timeMachine();
+//                break;
+//            case R.id.btnTMapInstall:
+//                tmapInstall();
+//                break;
+//            case R.id.btnMarkerPoint2:
+//                showMarkerPoint2();
+//                break;
+//        }
+    }
 
 
     public TMapPoint randomTMapPoint() {
@@ -655,33 +813,54 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////
         final String[] arrString = getResources().getStringArray(R.array.ducksugung);
+        LogManager.printLog(arrString[0] + "test");
+        LogManager.printLog(arrString[1] + "test");
+        LogManager.printLog(arrString[2] + "test");
+        LogManager.printLog(arrString[3] + "test");
         TMapPoint point = new TMapPoint(37.565847, 126.975069);
 
-
+        TMapMarkerItem item1 = new TMapMarkerItem();
 
         bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.i_location);
 
+        item1.setTMapPoint(point);
+        item1.setName(arrString[3]);
+        item1.setVisible(TMapMarkerItem.VISIBLE);
+        item1.setIcon(bitmap);
+        LogManager.printLog("bitmap " + bitmap.getWidth() + " " + bitmap.getHeight());
+        tmapview.bringMarkerToFront(item1);
 
+        item1.setCalloutTitle("덕수궁");
+        item1.setCalloutSubTitle(arrString[4]);
+        item1.setCanShowCallout(true);
+        item1.setAutoCalloutVisible(true);
+        Bitmap bitmaps = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        item1.setCalloutLeftImage(bitmaps);
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+
+        item1.setCalloutRightButtonImage(bitmap_i);
+
         String strID = String.format("pmarker%d", mMarkerID++);
 
-
+        mMapView.addMarkerItem(strID, item1);
+        mArrayMarkerID.add(strID);
+        LogManager.printLog("strID " + strID);
 
         point = new TMapPoint(37.55102510077652, 126.98789834976196);
-
+        TMapMarkerItem item2 = new TMapMarkerItem();
 
         item2.setTMapPoint(point);
-        item2.setName("서울타워");
+        item2.setName("N서울타워");
         item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("청호타워");
+        item2.setCalloutTitle("청호타워 4층");
 
         item2.setCanShowCallout(true);
 
         bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         item2.setCalloutRightButtonImage(bitmap_i);
 
-//        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.pin_tevent);
-//        item2.setIcon(bitmap);
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.pin_tevent);
+        item2.setIcon(bitmap);
 
         strID = String.format("pmarker%d", mMarkerID++);
 
@@ -693,9 +872,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         item2 = new TMapMarkerItem();
 
         item2.setTMapPoint(point);
-        item2.setName("chunggunsas");
+        item2.setName("N서울타워");
         item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("chunggunsas");
+        item2.setCalloutTitle("창덕궁 청호타워 4층");
 
         item2.setCalloutSubTitle("을지로입구역 500M");
         item2.setCanShowCallout(true);
@@ -716,7 +895,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         item2 = new TMapMarkerItem();
 
         item2.setTMapPoint(point);
-        item2.setName("대학로");
+        item2.setName("N서울타워");
         item2.setVisible(item2.VISIBLE);
         item2.setCalloutTitle("대학로 혜화역111111");
 
