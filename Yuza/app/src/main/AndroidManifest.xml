@@ -41,13 +41,14 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.${applicationId}.FacebookContentProvider1112123538868081"
+            android:authorities="com.facebook.app.FacebookContentProvider1112123538868081"
             android:exported="true" />
 
         <activity android:name=".SplashActivity" />
         <activity android:name=".SignInActivity" />
         <activity android:name=".CameraActivity" />
         <activity android:name=".ResultActivity" />
+        <activity android:name=".FaceBookActivity" />
         <activity android:name=".Test" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SearchActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
