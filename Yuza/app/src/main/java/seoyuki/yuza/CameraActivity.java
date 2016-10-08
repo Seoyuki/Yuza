@@ -13,7 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class CameraActivity extends Activity {
 
     @SuppressWarnings("deprecation")
     Camera mCamera;
-    Button button;
+    ImageView imageBtn; // 카메라 버튼(ImageView 인스턴스)
     String str;
     private CameraPreview mPreview;
     private Context mContext = this;
@@ -100,8 +100,8 @@ public class CameraActivity extends Activity {
             }
         };
 
-        button = (Button) findViewById(R.id.cameraCaptureBtn);
-        button.setOnClickListener(new View.OnClickListener() {
+        imageBtn = (ImageView) findViewById(R.id.cameraCaptureImageBtn);
+        imageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mCamera != null){
