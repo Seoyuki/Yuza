@@ -130,9 +130,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         intent.putExtra("content",markerItem.getName());
         intent.putExtra("address",markerItem.getCalloutSubTitle());
         intent.putExtra("name",markerItem.getCalloutTitle());
-        intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())].getImage());
+        intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())-1].getImage());
         startActivity(intent);
-        LogManager.printLog(markerItem.getID()+"를 불러옴옴");
+        LogManager.printLog(markerItem.getID()+"를 불러옴옴d");
     }
     PendingIntent mPending;
     /**
