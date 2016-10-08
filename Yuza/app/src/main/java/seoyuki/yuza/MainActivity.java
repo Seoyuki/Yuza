@@ -103,9 +103,11 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private static int mMarkerID;
     String[] item = new String[3];
     LocationManager mLocMan;
+    Goal receiver;
     String mProvider;
     int mCount;
-
+    double s ;
+    double d ;
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
@@ -154,8 +156,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.VISIBLE);
-                item2.setVisible(TMapMarkerItem.VISIBLE);
+                drawMapPath();
 
 
             }
@@ -163,8 +164,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.HIDDEN);
-                item2.setVisible(TMapMarkerItem.HIDDEN);
+                mapZoomOut();
 
             }
         });
@@ -187,7 +187,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
-        drawMapPath();
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try {
 //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
@@ -207,6 +207,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this,Goal.class);
         mPending = PendingIntent.getBroadcast(this,0,intent,0);
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
         Location location;
         double s = mMapView.getLatitude();
         double d = mMapView.getLongitude();
@@ -860,10 +861,22 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void drawMapPath() {
 //		TMapPoint point1 = mMapView.getCenterPoint();
 //		TMapPoint point2 = randomTMapPoint();
-        TMapPoint point1 = randomTMapPoint();
-        TMapPoint point2 = new TMapPoint(37.565847, 126.975069);
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 1000;
+        float minDistance = 0;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,Goal.class);
+        mPending = PendingIntent.getBroadcast(this,0,intent,0);
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+        Location location;
+        double s = mMapView.getLatitude();
+        double d = mMapView.getLongitude();
+        LogManager.printLog("setLocationPointss " + s + " " + d);
+        TMapPoint point1 = new TMapPoint(37.565847,126.975069);
+        TMapPoint point2 = new TMapPoint(s, d);
         TMapData tmapdata = new TMapData();
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point1, point2,
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH,point2,point1,
                 new TMapData.FindPathDataListenerCallback() {
                     @Override
                     public void onFindPathData(TMapPolyLine polyLine) {
