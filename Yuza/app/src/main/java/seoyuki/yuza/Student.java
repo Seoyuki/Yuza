@@ -9,19 +9,24 @@ public class Student {
     String address;
     String content;
     String image;
+    String wido;
+    String kyungdo;
+
 
     public Student()
     {
         super();
     }
 
-    public Student(String name, String address, String image, String content)
+    public Student(String name, String address, String image, String content,String wido,String kyungdo)
     {
         super();
         this.name = name;
         this.address = address;
         this.image = image;
         this.content = content;
+        this.wido = wido;
+        this.kyungdo = kyungdo;
     }
     public String getImage() { return image; }
 
@@ -39,15 +44,31 @@ public class Student {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getContent() {
         return content;
     }
-
-    public void setContent(String content) {
-        this.content = content;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public void setWido(String wido) {
+        this.wido = wido;
+    }
+    public String getWido() {
+        return wido;
+    }
+
+    public void setKyungdo(String kyungdo) {
+        this.kyungdo = kyungdo;
+    }
+
+    public String getKyungdo() {
+        return kyungdo;
+    }
+
+
 }
