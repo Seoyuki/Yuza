@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -159,14 +160,15 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
-                startActivity(intent);
+                drawMapPath();
             }
         });
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawMapPath();
+                 Log.d("yuja", "searchBtn start: ");
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
 
 
             }
@@ -174,8 +176,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapZoomOut();
 
+                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
+                startActivity(intent);
             }
         });
         mArrayID = new ArrayList<String>();
