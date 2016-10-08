@@ -24,10 +24,11 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-public class SearchActivity extends AppCompatActivity implements TextWatcher {
+public class SearchActivity extends AppCompatActivity{
     ArrayList<Student> list;
     ListView listView;
     EditText editText;
+    ArrayAdapter<String> arrad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +42,30 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
         for(int i=0;i<list.size();i++) {
             data[i] = list.get(i).getName();
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                android.R.layout.simple_list_item_1,
-                data);
-        listView.setAdapter(adapter);
 
+        arrad = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+        listView.setAdapter(arrad);
+
+
+
+        listView.setAdapter(arrad);
+        listView.setTextFilterEnabled(true);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                SearchActivity.this.arrad.getFilter().filter(s);
+            }
+        });
         listView.setOnItemClickListener(mItemClickListener);
     }
     /*  ListView의 아이템 중 하나가 클릭될 때 호출되는 메소드
@@ -62,17 +82,13 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
             extras.putString("address", data.getAddress());
             extras.putString("content", data.getContent());
             extras.putString("image", data.getImage());
-            Log.d("test", extras.toString());
             // 인텐트를 생성한다.
             // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
             Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-            Log.d("test", "test1");
             // 위에서 만든 Bundle을 인텐트에 넣는다.
             intent.putExtras(extras);
-            Log.d("test", "test2");
             // 액티비티를 생성한다.
             startActivity(intent);
-            Log.d("test", "test3");
         }
     };
 
@@ -130,20 +146,4 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher {
         return arrayList;
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        listView.setFilterText(editText.getText().toString());
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        if(editText.getText().length() == 0) {
-            listView.clearTextFilter();
-        }
-    }
 }
