@@ -36,6 +36,8 @@ public class SearchActivity extends AppCompatActivity{
         setContentView(R.layout.activity_search);
 
         listView = (ListView)findViewById(R.id.listView);
+        editText = (EditText)findViewById(R.id.editText);
+        
         list = xmlParser();
         String[] data = new String[list.size()];
 
