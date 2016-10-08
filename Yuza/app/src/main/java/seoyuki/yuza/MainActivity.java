@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
+import com.facebook.internal.ImageDownloader;
 import com.skp.Tmap.TMapCircle;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapGpsManager;
@@ -50,10 +52,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.R.id.content;
 
 
 public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener   {
@@ -64,7 +69,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
-
+    String decodeStr;
+    Bitmap mIcon = null;
+    int placenumber;
+    Student student = null;
+    List<Student> marker ;
+    Student[] stu;
     private CallbackManager callbackManager;
 
     @Override
@@ -116,19 +126,13 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     double d ;
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
-        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-        switch (markerItem.getName()) {
-            case "chunggunsas":
-                intent.putExtra("what", markerItem.getName());
-                startActivity(intent);
-                break;
-            case "서울타워":
-                intent.putExtra("what", markerItem.getName());
-                startActivity(intent);
-                break;
-            default:
-                LogManager.printLog("이게뭐냐 이게");
-        }
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra("content",markerItem.getName());
+        intent.putExtra("address",markerItem.getCalloutSubTitle());
+        intent.putExtra("name",markerItem.getCalloutTitle());
+        intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())].getImage());
+        startActivity(intent);
+        LogManager.printLog(markerItem.getID()+"를 불러옴옴");
     }
     PendingIntent mPending;
     /**
@@ -722,7 +726,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         });
     }
     //xmlParser를 사용해 xml 파싱하기
-    private ArrayList<Student> xmlParser()  {
+     ArrayList<Student> xmlParser()  {
         ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser
@@ -731,7 +735,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             XmlPullParser parser = factory.newPullParser();
             parser.setInput(new InputStreamReader(is, "UTF-8"));
             int eventType = parser.getEventType();
-            Student student = null;
+
 
             while(eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
@@ -757,6 +761,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                         }
                         if(startTag.equals("kyungdo")) {
                             student.setKyungdo(parser.nextText());
+                        }
+                        if(startTag.equals("id")) {
+                            student.setId(Integer.parseInt(parser.nextText()));
                         }
                         break;
                     case XmlPullParser.END_TAG:
@@ -794,7 +801,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //
 //
 //
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.i_location);
+
 
 
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
@@ -864,8 +871,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //            mMapView.addMarkerItem(strID, item2);
 //            mArrayMarkerID.add(strID);
 //        }
-        List<Student> marker = xmlParser();
-        Student[] stu = new Student[marker.size()];
+        marker = xmlParser();
+        stu = new Student[marker.size()];
         Double wi;
         Double kyung;
 
@@ -874,6 +881,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         }
         for(int count = 0 ; count <marker.size();count++){
+
             stu[count] = marker.get(count);
             LogManager.printLog(stu[count].getName().toString()+"test");
             wi = Double.parseDouble(stu[count].getWido());
@@ -883,13 +891,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             item2 = new TMapMarkerItem();
 
             item2.setTMapPoint(point);
-            item2.setName(stu[count].getName());
+            item2.setName(stu[count].getContent());
             item2.setVisible(item2.VISIBLE);
             item2.setCalloutTitle(stu[count].getName());
-
+            item2.setCalloutSubTitle(stu[count].getAddress());
             item2.setCanShowCallout(true);
+            String imsy = stu[count].getImage();
+            item2.setID(imsy);
 
-            item2.setCalloutLeftImage(bitmap);
 
             bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
             item2.setCalloutRightButtonImage(bitmap_i);
@@ -898,13 +907,17 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
             item2.setIcon(bitmap);
 
-            strID = String.format("pmarker%d", mMarkerID++);
+            strID = String.format(stu[count].getId()+"", mMarkerID++);
 
             mMapView.addMarkerItem(strID, item2);
             mArrayMarkerID.add(strID);
 
 
-        }
+
+       }
+
+
+
     }
 
     public void removeMarker() {

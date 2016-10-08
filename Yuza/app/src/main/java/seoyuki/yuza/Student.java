@@ -11,14 +11,14 @@ public class Student {
     String image;
     String wido;
     String kyungdo;
-
+    int id;
 
     public Student()
     {
         super();
     }
 
-    public Student(String name, String address, String image, String content,String wido,String kyungdo)
+    public Student(String name, String address, String image, String content,String wido,String kyungdo,int id)
     {
         super();
         this.name = name;
@@ -27,6 +27,7 @@ public class Student {
         this.content = content;
         this.wido = wido;
         this.kyungdo = kyungdo;
+        this.id = id;
     }
     public String getImage() { return image; }
 
@@ -68,6 +69,13 @@ public class Student {
 
     public String getKyungdo() {
         return kyungdo;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
 

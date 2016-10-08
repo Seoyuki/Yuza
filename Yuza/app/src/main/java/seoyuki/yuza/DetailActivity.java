@@ -36,7 +36,7 @@ public class DetailActivity extends Activity {
         //넘어온 데이터를 String값으로 받아온다.
     try {
             decodeStr = URLDecoder.decode(image, "UTF-8");
-        //image를 디코딩한다.
+            //image를 디코딩한다.
         } catch(Exception e) {
 
         }
