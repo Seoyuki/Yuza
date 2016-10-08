@@ -124,9 +124,9 @@ public class SearchActivity extends AppCompatActivity{
                         if (startTag.equals("historic")) {
                             student = new Student();
                         }
-                        if (startTag.equals("id")) {
-                        student.setId(parser.nextText());
-                       }
+                       // if (startTag.equals("id")) {
+                       // student.setId(parser.nextText());
+                       //}
                         if (startTag.equals("name")) {
                             student.setName(parser.nextText());
                         }
