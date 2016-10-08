@@ -1,6 +1,7 @@
 package seoyuki.yuza;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,15 +11,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
+import com.facebook.internal.ImageDownloader;
 import com.skp.Tmap.TMapCircle;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapGpsManager;
@@ -36,29 +42,46 @@ import com.skp.Tmap.TMapView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
+import static android.R.id.content;
 
 
-
-public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback {
+public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener   {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+
     TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
-
+    String decodeStr;
+    Bitmap mIcon = null;
+    int placenumber;
+    Student student = null;
+    List<Student> marker ;
+    Student[] stu;
     private CallbackManager callbackManager;
 
     @Override
     public void onLocationChange(Location location) {
-
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
     }
 
     private TMapView mMapView = null;
@@ -69,7 +92,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     public static String mApiKey = "66800ce1-b178-3464-b52b-74cb4998e20a"; // 발급받은 appKey
     public static String mBizAppID; // 발급받은 BizAppID (TMapTapi로 TMap앱 연동을 할 때 BizAppID 꼭 필요)
-
 
 
     private int m_nCurrentZoomLevel = 0;
@@ -97,30 +119,33 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     ArrayList<String> mArrayMarkerID;
     private static int mMarkerID;
     String[] item = new String[3];
-
+    LocationManager mLocMan;
+    Goal receiver;
+    String mProvider;
+    int mCount;
+    double s ;
+    double d ;
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
-        Intent   intent  = new Intent(MainActivity.this,MainActivity.class);
-       switch (markerItem.getName()){
-           case "chunggunsas":
-               intent.putExtra("what",markerItem.getName());
-               startActivity(intent);
-               break;
-           case "서울타워":
-               intent.putExtra("what",markerItem.getName());
-               startActivity(intent);
-               break;
-           default :LogManager.printLog("이게뭐냐 이게");
-       }
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra("content",markerItem.getName());
+        intent.putExtra("address",markerItem.getCalloutSubTitle());
+        intent.putExtra("name",markerItem.getCalloutTitle());
+        intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())-1].getImage());
+        startActivity(intent);
+        LogManager.printLog(markerItem.getID()+"를 불러옴옴d");
     }
+    PendingIntent mPending;
     /**
      * onCreate()
      */
+    private LocationManager locationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
 
         mContext = this;
 
@@ -129,21 +154,21 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         configureMapView();
 
-        ImageView img1 = (ImageView)findViewById(R.id.achievementImageView) ;
-        ImageView img2 = (ImageView)findViewById(R.id.searchImageView) ;
-        ImageView img3 = (ImageView)findViewById(R.id.settingImageView) ;
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(MainActivity.this,TestBtnActivity.class);
-                startActivity(intent);
+                drawMapPath();
             }
         });
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.VISIBLE);
-                item2.setVisible(TMapMarkerItem.VISIBLE);
+                 Log.d("yuja", "searchBtn start: ");
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
 
 
             }
@@ -151,9 +176,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item1.setVisible(TMapMarkerItem.HIDDEN);
-                item2.setVisible(TMapMarkerItem.HIDDEN);
 
+                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
+                startActivity(intent);
             }
         });
         mArrayID = new ArrayList<String>();
@@ -169,15 +194,79 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mArrayMarkerID = new ArrayList<String>();
         mMarkerID = 0;
-
+        Double latitude =0.0;
+        Double longitude =0.0;
 
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
-        drawMapPath();
-        setLocationPoint();
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        try {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
+            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastLocation != null) {
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
+                Toast.makeText(getApplicationContext(), "마지막 위치 latitude" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+
+        }
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 1000;
+        float minDistance = 0;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,Goal.class);
+        mPending = PendingIntent.getBroadcast(this,0,intent,0);
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+        Location location;
+        double s = mMapView.getLatitude();
+        double d = mMapView.getLongitude();
+        LogManager.printLog("setLocationPointss " + s + " " + d);
+        mMapView.setIconVisibility(true);
+        mMapView.setCenterPoint(longitude, latitude);
 
     }
+    public void onResume(){
+        super.onResume();
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+    }
+    public void onPause(){
+        super.onPause();
+        locationManager.removeProximityAlert(mPending);
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        String msg = "New Latitude: " + location.getLatitude()
+                + "New Longitude: " + location.getLongitude();
+
+        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+        LogManager.printLog(msg+"안녕하세요");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Toast.makeText(getBaseContext(), "Gps is turned on!! ",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+
+
+
+
+
 //    @Override
 //    Public void onLocationChange(Location location){
 //        double lat = location.getLatitude();
@@ -213,19 +302,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 LogManager.printLog("IntroActivity SKPMapApikeyFailed " + errorMsg);
             }
         });
-
-//		mMapView.setOnBizAppIdListener(new TMapView.OnBizAppIdListenerCallback() {
-//			@Override
-//			public void SKPMapBizAppIdSucceed() {
-//				LogManager.printLog("IntroActivity SKPMapBizAppIdSucceed");
-//			}
-//
-//			@Override
-//			public void SKPMapBizAppIdFailed(String errorMsg) {
-//				LogManager.printLog("IntroActivity SKPMapBizAppIdFailed " + errorMsg);
-//			}
-//		});
-
 
         mMapView.setOnEnableScrollWithZoomLevelListener(new TMapView.OnEnableScrollWithZoomLevelCallback() {
             @Override
@@ -296,16 +372,16 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         m_bSightVisible = false;
         m_bTrackingMode = false;
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
 
     @Override
     protected void onDestroy() {
@@ -652,7 +728,68 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
+    //xmlParser를 사용해 xml 파싱하기
+     ArrayList<Student> xmlParser()  {
+        ArrayList<Student> arrayList = new ArrayList<Student>();
+        InputStream is = getResources().openRawResource(R.raw.testvalues);
+        // xmlPullParser
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = factory.newPullParser();
+            parser.setInput(new InputStreamReader(is, "UTF-8"));
+            int eventType = parser.getEventType();
 
+
+            while(eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
+                    case XmlPullParser.START_TAG:
+                        String startTag = parser.getName();
+                        if(startTag.equals("historic")) {
+                            student = new Student();
+                        }
+                        if(startTag.equals("name")) {
+                            student.setName(parser.nextText());
+                        }
+                        if(startTag.equals("content")) {
+                            student.setContent(parser.nextText());
+                        }
+                        if(startTag.equals("address")) {
+                            student.setAddress(parser.nextText());
+                        }
+                        if(startTag.equals("image")) {
+                            student.setImage(parser.nextText());
+                        }
+                        if(startTag.equals("wido")) {
+                            student.setWido(parser.nextText());
+                        }
+                        if(startTag.equals("kyungdo")) {
+                            student.setKyungdo(parser.nextText());
+                        }
+                        if(startTag.equals("id")) {
+                            student.setId(Integer.parseInt(parser.nextText()));
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        String endTag = parser.getName();
+                        if(endTag.equals("historic")) {
+                            arrayList.add(student);
+                        }
+                        break;
+                }
+                eventType = parser.next();
+            }
+
+
+        }catch(XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return arrayList;
+    }
     /**
      * showMarkerPoint
      * 지도에 마커를 표출한다.
@@ -662,29 +799,29 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Bitmap bitmap = null;
 ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////
-        final String[] arrString = getResources().getStringArray(R.array.ducksugung);
+//        final String[] arrString = getResources().getStringArray(R.array.ducksugung);
         TMapPoint point = new TMapPoint(37.565847, 126.975069);
+//
+//
+//
 
-
-
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.i_location);
 
 
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         String strID = String.format("pmarker%d", mMarkerID++);
-
-
-
+//
+//
+//
         point = new TMapPoint(37.55102510077652, 126.98789834976196);
-
-
-        item2.setTMapPoint(point);
-        item2.setName("서울타워");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("청호타워");
-
-        item2.setCanShowCallout(true);
-
+//
+//
+//        item2.setTMapPoint(point);
+//        item2.setName("서울타워");
+//        item2.setVisible(item2.VISIBLE);
+//        item2.setCalloutTitle("청호타워");
+//
+//        item2.setCanShowCallout(true);
+//
         bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         item2.setCalloutRightButtonImage(bitmap_i);
 
@@ -695,70 +832,95 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mMapView.addMarkerItem(strID, item2);
         mArrayMarkerID.add(strID);
+//
+//
+//        point = new TMapPoint(37.58102510077652, 126.98789834976196);
+//        item2 = new TMapMarkerItem();
+//
+//        item2.setTMapPoint(point);
+//        item2.setName("chunggunsas");
+//        item2.setVisible(item2.VISIBLE);
+//        item2.setCalloutTitle("chunggunsas");
+//
+//        item2.setCalloutSubTitle("을지로입구역 500M");
+//        item2.setCanShowCallout(true);
+//
+//
+//        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+//        item2.setCalloutRightButtonImage(bitmap_i);
+//
+//        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.map_pin_red);
+//        item2.setIcon(bitmap);
+//
+//        strID = String.format("pmarker%d", mMarkerID++);
+//
+//        mMapView.addMarkerItem(strID, item2);
+//        mArrayMarkerID.add(strID);
 
 
-        point = new TMapPoint(37.58102510077652, 126.98789834976196);
-        item2 = new TMapMarkerItem();
+//
+//        for (int i = 4; i < 10; i++) {
+//            TMapMarkerItem item3 = new TMapMarkerItem();
+//
+//            item3.setID(strID);
+//            item3.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.map_pin_red));
+//
+//            item3.setTMapPoint(randomTMapPoint());
+//            item3.setCalloutTitle(">>>>" + strID + "<<<<<");
+//            item3.setCanShowCallout(true);
+//
+//            strID = String.format("pmarker%d", mMarkerID++);
+//
+//            mMapView.addMarkerItem(strID, item2);
+//            mArrayMarkerID.add(strID);
+//        }
+        marker = xmlParser();
+        stu = new Student[marker.size()];
+        Double wi;
+        Double kyung;
 
-        item2.setTMapPoint(point);
-        item2.setName("chunggunsas");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("chunggunsas");
+        for(int count = 0 ; count <marker.size();count++){
+            TMapMarkerItem item = new TMapMarkerItem();
 
-        item2.setCalloutSubTitle("을지로입구역 500M");
-        item2.setCanShowCallout(true);
+        }
+        for(int count = 0 ; count <marker.size();count++){
 
+            stu[count] = marker.get(count);
+            LogManager.printLog(stu[count].getName().toString()+"test");
+            wi = Double.parseDouble(stu[count].getWido());
+            kyung = Double.parseDouble(stu[count].getKyungdo());
 
-        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
-        item2.setCalloutRightButtonImage(bitmap_i);
+            point = new TMapPoint(wi, kyung);
+            item2 = new TMapMarkerItem();
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.map_pin_red);
-        item2.setIcon(bitmap);
-
-        strID = String.format("pmarker%d", mMarkerID++);
-
-        mMapView.addMarkerItem(strID, item2);
-        mArrayMarkerID.add(strID);
-
-        point = new TMapPoint(37.58102510077652, 126.99789834976196);
-        item2 = new TMapMarkerItem();
-
-        item2.setTMapPoint(point);
-        item2.setName("대학로");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("대학로 혜화역111111");
-
-        item2.setCanShowCallout(true);
-
-        item2.setCalloutLeftImage(bitmap);
-
-        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
-        item2.setCalloutRightButtonImage(bitmap_i);
+            item2.setTMapPoint(point);
+            item2.setName(stu[count].getContent());
+            item2.setVisible(item2.VISIBLE);
+            item2.setCalloutTitle(stu[count].getName());
+            item2.setCalloutSubTitle(stu[count].getAddress());
+            item2.setCanShowCallout(true);
+            String imsy = stu[count].getImage();
+            item2.setID(imsy);
 
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
-        item2.setIcon(bitmap);
+            bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+            item2.setCalloutRightButtonImage(bitmap_i);
 
-        strID = String.format("pmarker%d", mMarkerID++);
 
-        mMapView.addMarkerItem(strID, item2);
-        mArrayMarkerID.add(strID);
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
+            item2.setIcon(bitmap);
 
-        for (int i = 4; i < 10; i++) {
-            TMapMarkerItem item3 = new TMapMarkerItem();
-
-            item3.setID(strID);
-            item3.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.map_pin_red));
-
-            item3.setTMapPoint(randomTMapPoint());
-            item3.setCalloutTitle(">>>>" + strID + "<<<<<");
-            item3.setCanShowCallout(true);
-
-            strID = String.format("pmarker%d", mMarkerID++);
+            strID = String.format(stu[count].getId()+"", mMarkerID++);
 
             mMapView.addMarkerItem(strID, item2);
             mArrayMarkerID.add(strID);
-        }
+
+
+
+       }
+
+
+
     }
 
     public void removeMarker() {
@@ -798,10 +960,22 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void drawMapPath() {
 //		TMapPoint point1 = mMapView.getCenterPoint();
 //		TMapPoint point2 = randomTMapPoint();
-        TMapPoint point1 = randomTMapPoint();
-        TMapPoint point2 = new TMapPoint(37.565847, 126.975069);
+        GPSListener gpsListener = new GPSListener();
+        long minTime = 1000;
+        float minDistance = 0;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
+        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,Goal.class);
+        mPending = PendingIntent.getBroadcast(this,0,intent,0);
+        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+        Location location;
+        double s = mMapView.getLatitude();
+        double d = mMapView.getLongitude();
+        LogManager.printLog("setLocationPointss " + s + " " + d);
+        TMapPoint point1 = new TMapPoint(37.565847,126.975069);
+        TMapPoint point2 = new TMapPoint(s, d);
         TMapData tmapdata = new TMapData();
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point1, point2,
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH,point2,point1,
                 new TMapData.FindPathDataListenerCallback() {
                     @Override
                     public void onFindPathData(TMapPolyLine polyLine) {
@@ -1107,6 +1281,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Date currentTime = new Date();
         tmapdata.findTimeMachineCarPath(pathInfo, currentTime, null);
     }
+
 
 
 }
