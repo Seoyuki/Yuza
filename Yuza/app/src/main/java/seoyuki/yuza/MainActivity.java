@@ -39,15 +39,21 @@ import com.skp.Tmap.TMapView;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-
-
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener   {
@@ -715,7 +721,65 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
+    //xmlParser를 사용해 xml 파싱하기
+    private ArrayList<Student> xmlParser()  {
+        ArrayList<Student> arrayList = new ArrayList<Student>();
+        InputStream is = getResources().openRawResource(R.raw.testvalues);
+        // xmlPullParser
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = factory.newPullParser();
+            parser.setInput(new InputStreamReader(is, "UTF-8"));
+            int eventType = parser.getEventType();
+            Student student = null;
 
+            while(eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
+                    case XmlPullParser.START_TAG:
+                        String startTag = parser.getName();
+                        if(startTag.equals("historic")) {
+                            student = new Student();
+                        }
+                        if(startTag.equals("name")) {
+                            student.setName(parser.nextText());
+                        }
+                        if(startTag.equals("content")) {
+                            student.setContent(parser.nextText());
+                        }
+                        if(startTag.equals("address")) {
+                            student.setAddress(parser.nextText());
+                        }
+                        if(startTag.equals("image")) {
+                            student.setImage(parser.nextText());
+                        }
+                        if(startTag.equals("wido")) {
+                            student.setWido(parser.nextText());
+                        }
+                        if(startTag.equals("kyungdo")) {
+                            student.setKyungdo(parser.nextText());
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        String endTag = parser.getName();
+                        if(endTag.equals("historic")) {
+                            arrayList.add(student);
+                        }
+                        break;
+                }
+                eventType = parser.next();
+            }
+
+
+        }catch(XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return arrayList;
+    }
     /**
      * showMarkerPoint
      * 지도에 마커를 표출한다.
@@ -725,29 +789,29 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Bitmap bitmap = null;
 ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////
-        final String[] arrString = getResources().getStringArray(R.array.ducksugung);
+//        final String[] arrString = getResources().getStringArray(R.array.ducksugung);
         TMapPoint point = new TMapPoint(37.565847, 126.975069);
-
-
-
+//
+//
+//
         bitmap = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.i_location);
 
 
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         String strID = String.format("pmarker%d", mMarkerID++);
-
-
-
+//
+//
+//
         point = new TMapPoint(37.55102510077652, 126.98789834976196);
-
-
-        item2.setTMapPoint(point);
-        item2.setName("서울타워");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("청호타워");
-
-        item2.setCanShowCallout(true);
-
+//
+//
+//        item2.setTMapPoint(point);
+//        item2.setName("서울타워");
+//        item2.setVisible(item2.VISIBLE);
+//        item2.setCalloutTitle("청호타워");
+//
+//        item2.setCanShowCallout(true);
+//
         bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         item2.setCalloutRightButtonImage(bitmap_i);
 
@@ -758,69 +822,88 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mMapView.addMarkerItem(strID, item2);
         mArrayMarkerID.add(strID);
+//
+//
+//        point = new TMapPoint(37.58102510077652, 126.98789834976196);
+//        item2 = new TMapMarkerItem();
+//
+//        item2.setTMapPoint(point);
+//        item2.setName("chunggunsas");
+//        item2.setVisible(item2.VISIBLE);
+//        item2.setCalloutTitle("chunggunsas");
+//
+//        item2.setCalloutSubTitle("을지로입구역 500M");
+//        item2.setCanShowCallout(true);
+//
+//
+//        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+//        item2.setCalloutRightButtonImage(bitmap_i);
+//
+//        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.map_pin_red);
+//        item2.setIcon(bitmap);
+//
+//        strID = String.format("pmarker%d", mMarkerID++);
+//
+//        mMapView.addMarkerItem(strID, item2);
+//        mArrayMarkerID.add(strID);
 
 
-        point = new TMapPoint(37.58102510077652, 126.98789834976196);
-        item2 = new TMapMarkerItem();
+//
+//        for (int i = 4; i < 10; i++) {
+//            TMapMarkerItem item3 = new TMapMarkerItem();
+//
+//            item3.setID(strID);
+//            item3.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.map_pin_red));
+//
+//            item3.setTMapPoint(randomTMapPoint());
+//            item3.setCalloutTitle(">>>>" + strID + "<<<<<");
+//            item3.setCanShowCallout(true);
+//
+//            strID = String.format("pmarker%d", mMarkerID++);
+//
+//            mMapView.addMarkerItem(strID, item2);
+//            mArrayMarkerID.add(strID);
+//        }
+        List<Student> marker = xmlParser();
+        Student[] stu = new Student[marker.size()];
+        Double wi;
+        Double kyung;
 
-        item2.setTMapPoint(point);
-        item2.setName("chunggunsas");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("chunggunsas");
+        for(int count = 0 ; count <marker.size();count++){
+            TMapMarkerItem item = new TMapMarkerItem();
 
-        item2.setCalloutSubTitle("을지로입구역 500M");
-        item2.setCanShowCallout(true);
+        }
+        for(int count = 0 ; count <marker.size();count++){
+            stu[count] = marker.get(count);
+            LogManager.printLog(stu[count].getName().toString()+"test");
+            wi = Double.parseDouble(stu[count].getWido());
+            kyung = Double.parseDouble(stu[count].getKyungdo());
 
+            point = new TMapPoint(wi, kyung);
+            item2 = new TMapMarkerItem();
 
-        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
-        item2.setCalloutRightButtonImage(bitmap_i);
+            item2.setTMapPoint(point);
+            item2.setName(stu[count].getName());
+            item2.setVisible(item2.VISIBLE);
+            item2.setCalloutTitle(stu[count].getName());
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.map_pin_red);
-        item2.setIcon(bitmap);
+            item2.setCanShowCallout(true);
 
-        strID = String.format("pmarker%d", mMarkerID++);
+            item2.setCalloutLeftImage(bitmap);
 
-        mMapView.addMarkerItem(strID, item2);
-        mArrayMarkerID.add(strID);
-
-        point = new TMapPoint(37.58102510077652, 126.99789834976196);
-        item2 = new TMapMarkerItem();
-
-        item2.setTMapPoint(point);
-        item2.setName("대학로");
-        item2.setVisible(item2.VISIBLE);
-        item2.setCalloutTitle("대학로 혜화역111111");
-
-        item2.setCanShowCallout(true);
-
-        item2.setCalloutLeftImage(bitmap);
-
-        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
-        item2.setCalloutRightButtonImage(bitmap_i);
+            bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+            item2.setCalloutRightButtonImage(bitmap_i);
 
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
-        item2.setIcon(bitmap);
-
-        strID = String.format("pmarker%d", mMarkerID++);
-
-        mMapView.addMarkerItem(strID, item2);
-        mArrayMarkerID.add(strID);
-
-        for (int i = 4; i < 10; i++) {
-            TMapMarkerItem item3 = new TMapMarkerItem();
-
-            item3.setID(strID);
-            item3.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.map_pin_red));
-
-            item3.setTMapPoint(randomTMapPoint());
-            item3.setCalloutTitle(">>>>" + strID + "<<<<<");
-            item3.setCanShowCallout(true);
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
+            item2.setIcon(bitmap);
 
             strID = String.format("pmarker%d", mMarkerID++);
 
             mMapView.addMarkerItem(strID, item2);
             mArrayMarkerID.add(strID);
+
+
         }
     }
 
