@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -23,13 +24,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SearchActivity extends AppCompatActivity{
     ArrayList<Student> list;
     ListView listView;
     EditText editText;
     ArrayAdapter<String> arrad;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,41 +39,48 @@ public class SearchActivity extends AppCompatActivity{
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        listView = (ListView)findViewById(R.id.listView);
-        editText = (EditText)findViewById(R.id.editText);
+        listView = (ListView) findViewById(R.id.listView);
+        editText = (EditText) findViewById(R.id.editText);
 
         list = xmlParser();
         String[] data = new String[list.size()];
+        String[] recommend = new String[list.size()];
 
-        for(int i=0;i<list.size();i++) {
-            data[i] = list.get(i).getName();
+            for (int i = 0; i < list.size(); i++) {
+                data[i] = list.get(i).getName();
+            }
+
+            arrad = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+
+        listView.setAdapter(arrad);
+
+            listView.setTextFilterEnabled(true);
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    SearchActivity.this.arrad.getFilter().filter(s);
+                }
+            });
+        listView.setOnItemClickListener(mItemClickListener);
         }
 
-        arrad = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
-        listView.setAdapter(arrad);
-
-
-
-        listView.setAdapter(arrad);
-        listView.setTextFilterEnabled(true);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                SearchActivity.this.arrad.getFilter().filter(s);
-            }
-        });
-        listView.setOnItemClickListener(mItemClickListener);
+    public void textonClick(View v) {
+        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
+        toast.show();
+        //listView.setAdapter(arrad);
     }
+
     /*  ListView의 아이템 중 하나가 클릭될 때 호출되는 메소드
       첫번째  : 클릭된 아이템을 보여주고 있는 AdapterView 객체(여기서는 ListView객체)
       두번째  : 클릭된 아이템 뷰
@@ -98,7 +106,7 @@ public class SearchActivity extends AppCompatActivity{
     };
 
     //xmlParser를 사용해 xml 파싱하기
-    private ArrayList<Student> xmlParser()  {
+    private ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser
@@ -109,29 +117,32 @@ public class SearchActivity extends AppCompatActivity{
             int eventType = parser.getEventType();
             Student student = null;
 
-            while(eventType != XmlPullParser.END_DOCUMENT) {
+            while (eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
                         String startTag = parser.getName();
-                        if(startTag.equals("historic")) {
+                        if (startTag.equals("historic")) {
                             student = new Student();
                         }
-                        if(startTag.equals("name")) {
+                        if (startTag.equals("id")) {
+                        student.setId(parser.nextText());
+                       }
+                        if (startTag.equals("name")) {
                             student.setName(parser.nextText());
                         }
-                        if(startTag.equals("content")) {
+                        if (startTag.equals("content")) {
                             student.setContent(parser.nextText());
                         }
-                        if(startTag.equals("address")) {
+                        if (startTag.equals("address")) {
                             student.setAddress(parser.nextText());
                         }
-                        if(startTag.equals("image")) {
+                        if (startTag.equals("image")) {
                             student.setImage(parser.nextText());
                         }
                         break;
                     case XmlPullParser.END_TAG:
                         String endTag = parser.getName();
-                        if(endTag.equals("historic")) {
+                        if (endTag.equals("historic")) {
                             arrayList.add(student);
                         }
                         break;
@@ -140,7 +151,7 @@ public class SearchActivity extends AppCompatActivity{
             }
 
 
-        }catch(XmlPullParserException e) {
+        } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

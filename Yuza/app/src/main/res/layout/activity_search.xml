@@ -4,21 +4,26 @@
     android:layout_height="match_parent"
     >
 
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:hint="검색어를 입력하세요"
+<EditText
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:id="@+id/editText"
+android:layout_alignParentTop="true"
+android:layout_alignParentStart="true"
+android:onClick="textonClick"
 
-
-        />
+    />
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/listView2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/editText" />
 
-</RelativeLayout>
+<ListView
+android:id="@+id/listView"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:layout_below="@+id/editText" />
+
+    </RelativeLayout>
