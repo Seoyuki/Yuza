@@ -5,17 +5,20 @@
     >
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:hint="검색어를 입력하세요"
+
+
+        />
 
     <ListView
-        android:background="#314eac"
         android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="439dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/editText" />
+
 </RelativeLayout>

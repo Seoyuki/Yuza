@@ -35,9 +35,12 @@ public class SearchActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
         listView = (ListView)findViewById(R.id.listView);
         editText = (EditText)findViewById(R.id.editText);
-        
+
         list = xmlParser();
         String[] data = new String[list.size()];
 
