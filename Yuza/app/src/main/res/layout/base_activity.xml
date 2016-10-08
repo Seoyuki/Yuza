@@ -42,7 +42,8 @@
 					android:src="@drawable/search"
 					android:scaleType="center"
 					android:layout_centerVertical="true"
-					android:layout_centerHorizontal="true" />
+					android:layout_centerHorizontal="true"
+					android:onClick="moveSearch" />
 
 				<TextView
 					android:text="마음 속 유적"

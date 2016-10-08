@@ -8,6 +8,24 @@ public class Student {
     String name;
     String address;
     String content;
+    String image;
+
+    public Student()
+    {
+        super();
+    }
+
+    public Student(String name, String address, String image, String content)
+    {
+        super();
+        this.name = name;
+        this.address = address;
+        this.image = image;
+        this.content = content;
+    }
+    public String getImage() { return image; }
+
+    public void setImage(String image) {this.image = image;}
 
     public String getAddress() {
         return address;
