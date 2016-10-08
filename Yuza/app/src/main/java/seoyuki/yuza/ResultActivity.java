@@ -6,14 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.facebook.CallbackManager;
@@ -24,7 +21,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
@@ -74,7 +70,7 @@ public class ResultActivity extends Activity {
 
 
 
-        Button cancelBtn = (Button) findViewById(R.id.cancelBtn);
+        ImageView cancelBtn = (ImageView) findViewById(R.id.cancelBtn);
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +78,7 @@ public class ResultActivity extends Activity {
             }
         });
 
-        Button faceBookBtn1 = (Button) findViewById(R.id.faceBookBtn1);
+        ImageView faceBookBtn1 = (ImageView) findViewById(R.id.faceBookBtn1);
         faceBookBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +154,7 @@ public class ResultActivity extends Activity {
             }
         });
 
-        Button saveBtn = (Button) findViewById(R.id.saveBtn);
+        ImageView saveBtn = (ImageView) findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
