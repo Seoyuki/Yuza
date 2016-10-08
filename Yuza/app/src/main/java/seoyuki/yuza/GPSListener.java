@@ -19,7 +19,6 @@ public class GPSListener implements LocationListener {
         Double longitude = location.getLongitude();
         String msg = "Latitude :"+latitude+"\nLongitude:"+longitude;
         Log.i("GPSListener",msg);
-        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
 
