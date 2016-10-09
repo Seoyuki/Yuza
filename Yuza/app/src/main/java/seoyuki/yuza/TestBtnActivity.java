@@ -38,7 +38,8 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             R.id.mainBtn,
             R.id.faceBookBtn,
             R.id.cameraBtn,
-            R.id.searchBtn
+            R.id.searchBtn,
+            R.id.settingBtn
     };
 
     /**
@@ -127,6 +128,13 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             case R.id.searchBtn:
                 Log.d("yuja", "searchBtn start: ");
                 intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+
+                break;
+            //설정화면
+            case R.id.settingBtn:
+                Log.d("yuja", "settingBtn start: ");
+                intent = new Intent(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
 
                 break;
