@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.facebook.CallbackManager;
@@ -70,7 +71,7 @@ public class ResultActivity extends Activity {
 
 
 
-        ImageView cancelBtn = (ImageView) findViewById(R.id.cancelBtn);
+        Button cancelBtn = (Button) findViewById(R.id.cancelBtn);
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +79,7 @@ public class ResultActivity extends Activity {
             }
         });
 
-        ImageView faceBookBtn1 = (ImageView) findViewById(R.id.faceBookBtn1);
+        Button faceBookBtn1 = (Button) findViewById(R.id.faceBookBtn1);
         faceBookBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,7 +155,7 @@ public class ResultActivity extends Activity {
             }
         });
 
-        ImageView saveBtn = (ImageView) findViewById(R.id.saveBtn);
+        Button saveBtn = (Button) findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
