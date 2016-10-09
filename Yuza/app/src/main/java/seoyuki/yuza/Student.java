@@ -5,13 +5,13 @@ package seoyuki.yuza;
  */
 public class Student {
 
-    String name;
-    String address;
-    String content;
-    String image;
-    String wido;
-    String kyungdo;
-    int id;
+    private String name;
+    private String address;
+    private String content;
+    private String image;
+    private String wido;
+    private String kyungdo;
+    private int id;
 
     public Student()
     {
@@ -78,5 +78,8 @@ public class Student {
         return id;
     }
 
-
+    @Override
+    public String toString() {
+        return name + "\n" + address;
+    }
 }

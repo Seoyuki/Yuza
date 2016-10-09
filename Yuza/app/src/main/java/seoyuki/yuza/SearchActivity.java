@@ -43,12 +43,12 @@ public class SearchActivity extends AppCompatActivity{
         editText = (EditText) findViewById(R.id.editText);
 
         list = xmlParser();
-        String[] data = new String[list.size()];
-        String[] recommend = new String[list.size()];
 
+        String[] data = new String[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 data[i] = list.get(i).getName();
             }
+//        Log.d(data.,  "로그");
 
             arrad = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
 
@@ -86,20 +86,20 @@ public class SearchActivity extends AppCompatActivity{
       두번째  : 클릭된 아이템 뷰
       세번째  : 클릭된 아이템의 위치(ListView이 첫번째 아이템(가장위쪽)부터 차례대로 0,1,2,3.....)
       네번재  : 클릭된 아이템의 아이디(특별한 설정이 없다면 세번째 파라이터인 position과 같은 값)*/
-    AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Student data = list.get(position);
-            // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
-            Bundle extras = new Bundle();
-            extras.putString("name", data.getName());
-            extras.putString("address", data.getAddress());
-            extras.putString("content", data.getContent());
-            extras.putString("image", data.getImage());
-            // 인텐트를 생성한다.
-            // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
-            Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-            // 위에서 만든 Bundle을 인텐트에 넣는다.
-            intent.putExtras(extras);
+            AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Student data = list.get(position);
+                    // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
+                    Bundle extras = new Bundle();
+                    extras.putString("name", data.getName());
+                    extras.putString("address", data.getAddress());
+                    extras.putString("content", data.getContent());
+                    extras.putString("image", data.getImage());
+                    // 인텐트를 생성한다.
+                    // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
+                    Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
+                    // 위에서 만든 Bundle을 인텐트에 넣는다.
+                    intent.putExtras(extras);
             // 액티비티를 생성한다.
             startActivity(intent);
         }
@@ -110,13 +110,13 @@ public class SearchActivity extends AppCompatActivity{
         ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser
+
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = factory.newPullParser();
-            parser.setInput(new InputStreamReader(is, "UTF-8"));
+            parser.setInput(is, "UTF-8");
             int eventType = parser.getEventType();
             Student student = null;
-
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
@@ -124,17 +124,23 @@ public class SearchActivity extends AppCompatActivity{
                         if (startTag.equals("historic")) {
                             student = new Student();
                         }
-                       // if (startTag.equals("id")) {
-                       // student.setId(parser.nextText());
-                       //}
+                        if (startTag.equals("id")) {
+                        student.setId(parser.next());
+                       }
                         if (startTag.equals("name")) {
                             student.setName(parser.nextText());
+                        }
+                        if (startTag.equals("address")) {
+                            student.setAddress(parser.nextText());
                         }
                         if (startTag.equals("content")) {
                             student.setContent(parser.nextText());
                         }
-                        if (startTag.equals("address")) {
-                            student.setAddress(parser.nextText());
+                        if (startTag.equals("wido")) {
+                            student.setWido(parser.nextText());
+                        }
+                        if (startTag.equals("kyungdo")) {
+                            student.setKyungdo(parser.nextText());
                         }
                         if (startTag.equals("image")) {
                             student.setImage(parser.nextText());
@@ -158,7 +164,6 @@ public class SearchActivity extends AppCompatActivity{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return arrayList;
     }
 
