@@ -147,9 +147,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         setContentView(R.layout.activity_main);
 
 
-        mContext = getBaseContext();
+        mContext = this;
 
-        mMapView = new TMapView(mContext);
+        mMapView = new TMapView(this);
         addView(mMapView);
 
         configureMapView();
