@@ -48,9 +48,8 @@ public class SearchActivity extends Activity {
         searchText = (TextView)findViewById(R.id.editText);
 
         mAdapter = new ListViewAdapter(this);
-        mListView.setAdapter(mAdapter);
 
-      
+
         list = xmlParser();
         String[] data = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
@@ -78,6 +77,7 @@ public class SearchActivity extends Activity {
             }
         });
 
+                //listView.setAdapter(arrad);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -101,7 +101,11 @@ public class SearchActivity extends Activity {
         });
 
     }
-
+    public void textonClick(View v) {
+        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
+        toast.show();
+        mListView.setAdapter(mAdapter);
+    }
     private class ViewHolder {
         public ImageView mIcon;
 
