@@ -1,24 +1,26 @@
 package seoyuki.yuza;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by jaewon on 2016-10-02.
  */
 public class Student {
 
-    private String name;
-    private String address;
-    private String content;
-    private String image;
-    private String wido;
-    private String kyungdo;
-    private int id;
-
+    public String name;
+    public String address;
+    public String content;
+    public String image;
+    public String wido;
+    public String kyungdo;
+    public int id;
+    public Drawable imgId; // 이미지
     public Student()
     {
         super();
     }
 
-    public Student(String name, String address, String image, String content,String wido,String kyungdo,int id)
+    public Student(int id)
     {
         super();
         this.name = name;
@@ -28,10 +30,13 @@ public class Student {
         this.wido = wido;
         this.kyungdo = kyungdo;
         this.id = id;
+        this.imgId = imgId;
     }
     public String getImage() { return image; }
 
     public void setImage(String image) {this.image = image;}
+
+
 
     public String getAddress() {
         return address;
