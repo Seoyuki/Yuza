@@ -19,8 +19,8 @@ public class SqlLiteYuzaOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
         // SQLiteOpenHelper 가 최초 실행 되었을 때
-        String sql = "create table yuza (" +
-                "_id integer primary key autoincrement, " +
+        String sql = "create table yuzaranking (" +
+                "tid integer primary key autoincrement, " +
                 "yuza_id integer, " +
                 "name text, " +
                 "ret_time text, " +
@@ -41,7 +41,7 @@ public class SqlLiteYuzaOpenHelper extends SQLiteOpenHelper {
          * 테스트에서는 기존의 데이터를 모두 지우고 다시 만드는 형태로 하겠다.
          */
 
-        String sql = "drop table if exists student";
+        String sql = "drop table if exists yuzaranking";
         db.execSQL(sql);
 
         onCreate(db); // 테이블을 지웠으므로 다시 테이블을 만들어주는 과정

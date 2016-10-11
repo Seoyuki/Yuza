@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -17,7 +17,7 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
     SQLiteDatabase db;
     SqlLiteYuzaOpenHelper helper;
     List<YuzaRanking> yuzaRanking;
-
+    public TextView sqlText;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sql);
@@ -28,7 +28,8 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
                 1); // 버전 번호
 
         // 1. 데이터 저장
-        //insert("유저1", 18, "경기도");
+        this.insert(1,"유적지",100,"2016-10-10 20:00");
+        this.insert(2,"유적지2",100,"2016-10-10 20:00");
         //insert("유저2", 28, "각기도");
         //insert("유저3", 28, "각도기");
 
@@ -40,7 +41,15 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
         delete("유저2");
 
         // 4. 조회하기
-        select();
+        List<YuzaRanking> list =   select();
+        String listStr = "";
+        for (int i=0 ; i < yuzaRanking.size() ; i++){
+            listStr += "\n tid: " + yuzaRanking.get(i).getTid() + ", name : "
+                    + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
+                    + ", time : " + yuzaRanking.get(i).getRet_km();
+        }
+        sqlText = (TextView) findViewById(R.id.textSql);
+        sqlText.setText(listStr);
     }
 
     // insert
@@ -54,7 +63,7 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
         values.put("name", name);
         values.put("ret_km", km);
         values.put("ret_time", time);
-        db.insert("student", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 
@@ -80,17 +89,17 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
     // delete
     public void delete (String yuzaid) {
         db = helper.getWritableDatabase();
-        db.delete("student", "yuza_id=?", new String[]{yuzaid});
+        db.delete("yuzaranking", "yuza_id=?", new String[]{yuzaid});
         Log.i("db", yuzaid + "정상적으로 삭제 되었습니다.");
     }
 
     // select
-    public void select() {
+    public List<YuzaRanking>  select() {
 
         // 1) db의 데이터를 읽어와서, 2) 결과 저장, 3)해당 데이터를 꺼내 사용
 
         db = helper.getReadableDatabase(); // db객체를 얻어온다. 읽기 전용
-        Cursor c = db.query("student", null, null, null, null, null, null);
+        Cursor c = db.query("yuzaranking", null, null, null, null, null, null);
 
         /*
          * 위 결과는 select * from student 가 된다. Cursor는 DB결과를 저장한다. public Cursor
@@ -100,17 +109,26 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
         yuzaRanking = new ArrayList<YuzaRanking>();
         while (c.moveToNext()) {
             // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
-            int _id = c.getInt(c.getColumnIndex("_id"));
+            int tid = c.getInt(c.getColumnIndex("tid"));
             String name = c.getString(c.getColumnIndex("name"));
-            int yuzaid = c.getInt(c.getColumnIndex("yuzaid"));
-            String time = c.getString(c.getColumnIndex("time"));
-            float km = c.getInt(c.getColumnIndex("km"));
-            Log.i("db", "id: " + _id + ", name : " + name + ", yuzaid : " + yuzaid
-                    + ", time : " + time);
-            YuzaRanking tmp = new YuzaRanking();
+            int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+            String time = c.getString(c.getColumnIndex("ret_time"));
+            float km = c.getInt(c.getColumnIndex("ret_km"));
 
-           // yuzaRanking.add()
+            YuzaRanking tmp = new YuzaRanking();
+            tmp.setTid(tid);
+            tmp.setName(name);
+            tmp.setRet_km(km);
+            tmp.setRet_time(time);
+            yuzaRanking.add(tmp);
 
         }
+
+        for (int i=0 ; i < yuzaRanking.size() ; i++) {
+            Log.i("db", "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
+                    + ", time : " + yuzaRanking.get(i).getRet_km());
+
+        }
+        return yuzaRanking;
     }
 }

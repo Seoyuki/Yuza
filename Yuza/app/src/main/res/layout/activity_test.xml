@@ -49,4 +49,12 @@
         android:layout_alignEnd="@+id/searchBtn"
         android:id="@+id/settingBtn" />
 
+    <Button
+        android:text="Sql라이트 확인"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingBtn"
+        android:layout_alignEnd="@+id/settingBtn"
+        android:id="@+id/sqlBtn" />
+
 </RelativeLayout>

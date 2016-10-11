@@ -39,7 +39,8 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             R.id.faceBookBtn,
             R.id.cameraBtn,
             R.id.searchBtn,
-            R.id.settingBtn
+            R.id.settingBtn,
+            R.id.sqlBtn
     };
 
     /**
@@ -138,6 +139,13 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
                 startActivity(intent);
 
                 break;
+            case R.id.sqlBtn:
+                Log.d("yuja", "sqlBtn start: ");
+                intent = new Intent(getApplicationContext(), SqlLiteYuzaActivity.class);
+                startActivity(intent);
+
+                break;
+
         }
     }
 
