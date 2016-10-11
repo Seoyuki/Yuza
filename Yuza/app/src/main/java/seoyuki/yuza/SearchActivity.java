@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,13 +32,16 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 public class SearchActivity extends Activity {
     ArrayList<Student> list;
     private ListView mListView = null;
     private ListViewAdapter mAdapter = null;
     private TextView searchText;
-    ArrayAdapter<String> arrad;
+    ArrayList<Student> tempList;
+    ArrayList<Student> mlist;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,7 @@ public class SearchActivity extends Activity {
 
         mListView = (ListView) findViewById(R.id.listView);
         searchText = (TextView)findViewById(R.id.editText);
-
-        mAdapter = new ListViewAdapter(this);
+        mAdapter = new ListViewAdapter(this, mlist);
 
 
         list = xmlParser();
@@ -58,7 +62,6 @@ public class SearchActivity extends Activity {
                     list.get(i).getName(),
                     list.get(i).getAddress());
         }
-        arrad = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
         mListView.setTextFilterEnabled(true);
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -68,14 +71,18 @@ public class SearchActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (s.toString().trim().equalsIgnoreCase("")) {
+                    mlist = (ArrayList<Student>) tempList.clone();
+                } else {
+                    SearchActivity.this.mAdapter.getFilter().filter(s);
+                }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-                SearchActivity.this.arrad.getFilter().filter(s);
+                setVisibiltyList();
             }
         });
+
 
                 //listView.setAdapter(arrad);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,6 +108,14 @@ public class SearchActivity extends Activity {
         });
 
     }
+    public void setVisibiltyList() {
+        if (searchText.getText().toString().equals("")) {
+            mListView.setVisibility(View.GONE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void textonClick(View v) {
         Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
         toast.show();
@@ -114,13 +129,15 @@ public class SearchActivity extends Activity {
         public TextView mDate;
     }
 
-    private class ListViewAdapter extends BaseAdapter {
+    private class ListViewAdapter extends BaseAdapter implements Filterable {
         private Context mContext = null;
         private ArrayList<Student> mListData = new ArrayList<Student>();
+        Activity context;
 
-        public ListViewAdapter(Context mContext) {
+        public ListViewAdapter(Activity context, ArrayList<Student> list) {
             super();
-            this.mContext = mContext;
+            this.context = context;
+            mlist = list;
         }
 
         @Override
@@ -163,7 +180,7 @@ public class SearchActivity extends Activity {
             if (convertView == null) {
                 holder = new ViewHolder();
 
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.listview_item, null);
 
                 holder.mIcon = (ImageView) convertView.findViewById(R.id.mImage);
@@ -189,6 +206,48 @@ public class SearchActivity extends Activity {
 
             return convertView;
         }
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint,
+                                              Filter.FilterResults results) {
+                    mlist = (ArrayList<Student>) results.values;
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();
+                    ArrayList<Student> FilteredList = new ArrayList<Student>();
+                    if (constraint == null || constraint.length() == 0) {
+                        // No filter implemented we return all the list
+                        results.values = mlist;
+                        results.count = mlist.size();
+
+                    } else {
+
+                        for (int i = 0; i < mlist.size(); i++) {
+                            String data = mlist.get(i).name;
+
+                            if (data.toLowerCase().contains(
+                                    constraint.toString().toLowerCase())) {
+                                FilteredList.add(mlist.get(i));
+                            }
+                        }
+                        results.values = FilteredList;
+                        results.count = FilteredList.size();
+                    }
+
+                    return results;
+                }
+            };
+
+            return filter;
+        }
+
+
     }
     //xmlParser를 사용해 xml 파싱하기
     private ArrayList<Student> xmlParser() {
