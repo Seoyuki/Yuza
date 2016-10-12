@@ -7,7 +7,48 @@
     android:layout_height="match_parent"
     tools:context="seoyuki.yuza.SettingActivity">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <Button
+        android:text="Button"
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="63dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:id="@+id/settingSampleBtn"
+        android:textSize="24sp"
+        android:background="@color/cardview_light_background"
+        android:textColor="@color/colorPrimary" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="395dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="7dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:background="@color/cardview_light_background"
+        android:animationCache="true">
+
+        <TextView
+            android:id="@+id/settingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SettingSample"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp"
+            android:layout_weight="2"
+            android:elevation="24dp"
+            android:layout_alignParentEnd="true"
+            tools:layout_editor_absoluteY="26dp"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <ToggleButton
+            android:text="ToggleButton"
+            android:layout_width="99dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteY="16dp"
+            tools:layout_editor_absoluteX="307dp"
+            android:id="@+id/toggleButton"
+            android:background="@color/colorPrimary"
+            android:textSize="24sp" />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
