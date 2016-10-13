@@ -1,10 +1,16 @@
 package seoyuki.yuza;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ToggleButton;
 
 public class SettingActivity extends AppCompatActivity {
+
+    SettingOnClickListener settingOnClickListener = new SettingOnClickListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,16 +20,58 @@ public class SettingActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("설정 바꾸기");
 
-//리스트뷰 참고 : http://recipes4dev.tistory.com/43
-//        ListView listview ;
-//        ListViewAdapter adapter;
-//
-//        // Adapter 생성
-//        adapter = new ListViewAdapter() ;
-//
-//        // 리스트뷰 참조 및 Adapter달기
-//        listview = (ListView) findViewById(R.id.listview1);
-//        listview.setAdapter(adapter);
+        initSettingBtn();
+        initSettingToggleBtn();
 
+    }
+
+
+    private static final int[] mArraySettingBtn = { // 버튼 ID 배열
+            R.id.settingBtn1,
+            R.id.settingBtn2
+    };
+
+    private static final int[] mArraySettingToggleBtn = { // 토글 ID 배열
+            R.id.settingToggleBtn1
+    };
+
+    private void initSettingBtn() {
+        for (int SettingBtn : mArraySettingBtn) {
+            Button settingButton = (Button) findViewById(SettingBtn);
+            settingButton.setOnClickListener(settingOnClickListener);
+        }
+    }
+
+    private void initSettingToggleBtn() {
+        for (int SettingToggleBtn : mArraySettingToggleBtn) {
+            ToggleButton settingToggleButton = (ToggleButton) findViewById(SettingToggleBtn);
+            settingToggleButton.setOnClickListener(settingOnClickListener);
+        }
+    }
+
+    class SettingOnClickListener implements View.OnClickListener {
+
+        public void onClick(View v) {
+            Intent intent = null;
+            switch (v.getId()) {
+
+                //토글1
+                case R.id.settingToggleBtn1:
+                    intent = new Intent(getBaseContext(), TestBtnActivity.class);
+                    startActivity(intent);
+                    break;
+
+                //세팅버튼1
+                case R.id.settingBtn1:
+                    intent = new Intent(getBaseContext(), TestBtnActivity.class);
+                    startActivity(intent);
+                    break;
+
+                //세팅버튼2
+                case R.id.settingBtn2:
+                    break;
+
+            }
+        }
     }
 }

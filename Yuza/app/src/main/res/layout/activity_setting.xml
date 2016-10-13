@@ -1,54 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_setting"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="seoyuki.yuza.SettingActivity">
-
-    <Button
-        android:text="Button"
-        android:layout_width="395dp"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="63dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:id="@+id/settingSampleBtn"
-        android:textSize="24sp"
-        android:background="@color/cardview_light_background"
-        android:textColor="@color/colorPrimary" />
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/settingLayout1"
         android:orientation="horizontal"
-        android:layout_width="395dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="7dp"
-        tools:layout_editor_absoluteX="8dp"
-        android:background="@color/cardview_light_background"
-        android:animationCache="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <TextView
-            android:id="@+id/settingText"
-            android:layout_width="match_parent"
+            android:text="세팅 메뉴"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SettingSample"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="24sp"
-            android:layout_weight="2"
-            android:elevation="24dp"
-            android:layout_alignParentEnd="true"
-            tools:layout_editor_absoluteY="26dp"
-            tools:layout_editor_absoluteX="16dp" />
+            android:id="@+id/settingText1"
+            android:layout_weight="4"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="?android:attr/colorForeground"
+            android:textAlignment="center" />
 
         <ToggleButton
             android:text="ToggleButton"
-            android:layout_width="99dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteY="16dp"
-            tools:layout_editor_absoluteX="307dp"
-            android:id="@+id/toggleButton"
-            android:background="@color/colorPrimary"
-            android:textSize="24sp" />
+            android:id="@+id/settingToggleBtn1"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:layout_marginRight="16dp"
+            android:background="@color/cardview_light_background"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settingBtn1"
+        android:layout_below="@+id/settingLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        android:background="@color/cardview_light_background" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settingBtn2"
+        android:layout_below="@+id/settingBtn1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        android:background="@color/cardview_light_background" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/yuza_bike"
+        android:id="@+id/imageView3"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/settingBtn2"
+        android:layout_marginBottom="16dp" />
+
+</RelativeLayout>
