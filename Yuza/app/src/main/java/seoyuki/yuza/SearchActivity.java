@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -30,11 +31,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SearchActivity extends AppCompatActivity {
     ArrayList<Student> list;
     private ListView mListView = null;
+    private ListView recoListView = null;
     private ListViewAdapter mAdapter = null;
+    private ListViewAdapter recoAdapter = null;
     private TextView searchText;
     ArrayList<Student> mlist = new ArrayList<Student>();
     private ArrayList<Student> mListData = new ArrayList<Student>();
@@ -47,22 +51,39 @@ public class SearchActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("유적 찾아보기");
 
+        recoListView = (ListView) findViewById(R.id.listView);
         mListView = (ListView) findViewById(R.id.listView);
         searchText = (TextView)findViewById(R.id.editText);
         mAdapter = new ListViewAdapter(this);
+        recoAdapter = new ListViewAdapter(this);
 
 
         list = xmlParser();
-
+        int r1 = (int)(Math.random()*list.size());
+        int r2 = (int)(Math.random()*list.size());
+        int r3 = (int)(Math.random()*list.size());
         for (int i = 0; i < list.size(); i++) {
-//            data[i] = list.get(i).getName()+"\n"+list.get(i).getName();
-            mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
-                    list.get(i).getName(),
-                    list.get(i).getAddress());
+            if(r1 == i) {
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                        list.get(i).getName(),
+                        list.get(i).getAddress());
+            }
+            if(r2== i) {
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                        list.get(i).getName(),
+                        list.get(i).getAddress());
+            }
+            if(r3 == i) {
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                        list.get(i).getName(),
+                        list.get(i).getAddress());
+            }
         }
 
-        mlist.addAll(mListData);
+        mListView.setAdapter(mAdapter);
 
+
+        mlist.addAll(list);
         mListView.setTextFilterEnabled(true);
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -106,15 +127,17 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        mListView.setAdapter(mAdapter);
-
     }
-
 
     public void textonClick(View v) {
         Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
         toast.show();
+
+        for (int i = 0; i < list.size(); i++) {
+            mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                    list.get(i).getName(),
+                    list.get(i).getAddress());
+        }
         mListView.setAdapter(mAdapter);
     }
     private class ViewHolder {
