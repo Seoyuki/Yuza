@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -67,7 +68,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-
+    private static final String PROX_ALERT_INTENT =   "com.javacodegeeks.android.lbs.ProximityAlert";
+    private static final long POINT_RADIUS = 1000; // in Meters
+    private static final long PROX_ALERT_EXPIRATION = -1;
+    LocationReceiver receivers = new LocationReceiver();
     TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
     String decodeStr;
@@ -77,7 +81,13 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     List<Student> marker ;
     Student[] stu;
     private CallbackManager callbackManager;
+    private static final String TAG = "ProximityTest";
+    private final String POI_REACHED =              // 공중파 방송의 채널 같은 역할. 임의로 정함.
+            "com.example.proximitytest.POI_REACHED";    //
+    private PendingIntent proximityIntent;
 
+    private final double sampleLatitude = 127.1;  // 목표 위치
+    private final double sampleLongitude = 37.4;
     @Override
     public void onLocationChange(Location location) {
         double lat = location.getLatitude();
@@ -120,7 +130,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private static int mMarkerID;
     String[] item = new String[3];
     LocationManager mLocMan;
-    Goal receiver;
+
     String mProvider;
     int mCount;
     double s ;
@@ -133,9 +143,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         intent.putExtra("name",markerItem.getCalloutTitle());
         intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())-1].getImage());
         startActivity(intent);
-        LogManager.printLog(markerItem.getID()+"를 불러옴옴d");
+
     }
-    PendingIntent mPending;
+  //  PendingIntent mPending;
     /**
      * onCreate()
      */
@@ -153,7 +163,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         addView(mMapView);
 
         configureMapView();
-
+        alert("안녕하세요");
         ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
         ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
         ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
@@ -161,12 +171,24 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             @Override
             public void onClick(View v) {
                 drawMapPath();
+                mMapView.setTrackingMode(true);
+                Intent intent = new Intent(PROX_ALERT_INTENT);
+
+//                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+//                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
+//                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
+//
+//                registerReceiver(new Goal(), filter);
+//                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
+
             }
         });
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  Log.d("yuja", "searchBtn start: ");
+//                Intent intent = new Intent(getApplicationContext(), SqlLiteYuzaActivity.class);
+//                startActivity(intent);
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
 
@@ -176,9 +198,27 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Double latitude =0.0;
+                Double longitude =0.0;
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                try {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
+                    Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (lastLocation != null) {
+                        latitude = lastLocation.getLatitude();
+                        longitude = lastLocation.getLongitude();
+                        // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
 
-                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
-                startActivity(intent);
+                    }
+                } catch (Exception e) {
+
+                }
+                LogManager.printLog(longitude+"와"+latitude);
+                mMapView.setCenterPoint(longitude, latitude);
+                mMapView.setLocationPoint(longitude, latitude);
+//                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
+//                startActivity(intent);
+                setupProximityAlert();  //방송국
             }
         });
         mArrayID = new ArrayList<String>();
@@ -196,7 +236,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         mMarkerID = 0;
         Double latitude =0.0;
         Double longitude =0.0;
-
+//        TMapGpsManager gps = new TMapGpsManager(this);
+//        gps.setProvider(TMapGpsManager.GPS_PROVIDER);
+//        gps.OpenGps();
+//
+//        TMapPoint point = gps.getLocation();
+//
+//        mMapView.setCenterPoint(point.getLongitude(),    point.getLatitude());
+//        LogManager.printLog(point.getLongitude()+"안녕"+    point.getLatitude());
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
@@ -208,34 +255,58 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             if (lastLocation != null) {
                 latitude = lastLocation.getLatitude();
                 longitude = lastLocation.getLongitude();
-                Toast.makeText(getApplicationContext(), "마지막 위치 latitude" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+
             }
         } catch (Exception e) {
 
         }
+
         GPSListener gpsListener = new GPSListener();
-        long minTime = 1000;
+        long minTime = 500;
         float minDistance = 0;
+
+
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
-        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this,Goal.class);
-        mPending = PendingIntent.getBroadcast(this,0,intent,0);
-        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+        //Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
+
+
         Location location;
-        double s = mMapView.getLatitude();
-        double d = mMapView.getLongitude();
-        LogManager.printLog("setLocationPointss " + s + " " + d);
-        mMapView.setIconVisibility(true);
+
+        LogManager.printLog("setLocationPointss " + longitude + " " + latitude);
+        TMapPoint tpoint = mMapView.getLocationPoint();
+        double Latitude = tpoint.getLatitude();
+        double Longitude = tpoint.getLongitude();
+        Bitmap  bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        mMapView.setIcon(bitmap);
+        LogManager.printLog(longitude+"와"+latitude);
         mMapView.setCenterPoint(longitude, latitude);
+        mMapView.setLocationPoint(longitude, latitude);
+        mMapView.setZoomLevel(13);
+        mMapView.setIconVisibility(true);
+
+
+//        receiver = new LocationReceiver();
+//        IntentFilter filter = new IntentFilter("seoyuki.yuza");
+//        registerReceiver(receiver, filter);
+//
+//        // ProximityAlert 등록
+//        Intent intent = new Intent("seoyuki.yuza");
+//        PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+//        locationManager.addProximityAlert(37.422006, 122.084095, 10000, -1, proximityIntent);
 
     }
     public void onResume(){
         super.onResume();
-        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+
+        //locationManager.addProximityAlert(37.464366,127.082277,5000,-1,mPending);
     }
     public void onPause(){
         super.onPause();
-        locationManager.removeProximityAlert(mPending);
+        LogManager.printLog("이바보야진짜아니야");
+
+       // locationManager.removeProximityAlert(mPending);
     }
     @Override
     public void onLocationChanged(Location location) {
@@ -386,6 +457,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(receivers);
+
 //		gps.CloseGps();
         if (mOverlayList != null) {
             mOverlayList.clear();
@@ -886,7 +959,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         for(int count = 0 ; count <marker.size();count++){
 
             stu[count] = marker.get(count);
-            LogManager.printLog(stu[count].getName().toString()+"test");
+
             wi = Double.parseDouble(stu[count].getWido());
             kyung = Double.parseDouble(stu[count].getKyungdo());
 
@@ -966,8 +1039,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
         Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this,Goal.class);
-        mPending = PendingIntent.getBroadcast(this,0,intent,0);
-        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
+//        mPending = PendingIntent.getBroadcast(this,0,intent,0);
+//        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
         Location location;
         double s = mMapView.getLatitude();
         double d = mMapView.getLongitude();
@@ -1281,6 +1354,50 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Date currentTime = new Date();
         tmapdata.findTimeMachineCarPath(pathInfo, currentTime, null);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void setupProximityAlert() {
+        LocationManager locationManager = (LocationManager)
+                getSystemService(LOCATION_SERVICE);
+
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d(TAG, "Registering ProximityAlert");
+            //방송 시작, 방송이름은 POI_REACHED, 누가 이방송을 필요하는지는 관심없음. 그냥 보내는...
+            Intent intent = new Intent(POI_REACHED);
+            proximityIntent =
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intent,
+                            PendingIntent.FLAG_ONE_SHOT);
+            //방송 조건, 목표위치에 50미터 안으로 이동하면 10초간 경보 라는 방송을 보냄. 방송이름은POI_REACHED
+            //경보란게 먼지 모르겠음. 에뮬레이터에서 어떻게 확인 가능한지 모름.
+            locationManager.addProximityAlert(sampleLongitude,
+                    sampleLatitude, 500, 1000000,
+                    proximityIntent);
+
+            /*================================================================*/
+            //시청자. POI_REACHED 이란 채널명으로 방송된 내용을 보려고 함.
+            IntentFilter intentFilter = new IntentFilter(POI_REACHED);
+            registerReceiver(receivers,
+                    intentFilter);
+
+            /*================================================================*/
+        } else {
+            Log.d(TAG, "GPS_PROVIDER not available");
+        }
+
+    }
+
 
 
 
