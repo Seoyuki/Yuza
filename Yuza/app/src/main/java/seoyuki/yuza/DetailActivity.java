@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,10 @@ public class DetailActivity extends Activity {
         TextView address_text = (TextView) findViewById(R.id.textView2);
         TextView content_text = (TextView) findViewById(R.id.textView3);
         ImageView image_text = (ImageView) findViewById(R.id.imageView);
+        ImageView image_start = (ImageView) findViewById(R.id.detailStartImage);
+
+        TextView detailBottomMsg = (TextView) findViewById(R.id.detailBottomMsg); // 최하단 메시지
+
         // 이전 액티비티로부터 넘어온 데이터를 꺼낸다.
 
         String name = getIntent().getStringExtra("name");
@@ -68,8 +73,16 @@ public class DetailActivity extends Activity {
         name_text.setText(name);
         address_text.setText(address);
         content_text.setText(content);
+        image_start.setImageResource(R.drawable.yuza_start);
+        image_start.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // 유적지 길찾기 코드
+            }
+        });
         new ImageDownloader(image_text).execute(decodeStr);
         //받아온 내용들을 뿌려준다.
+
+        detailBottomMsg.setText("여행할 목적지가 있다는 것은 좋은 일이다.\n그러나 중요한 것은 여행 자체다.\n\n어슐러 K. 르 귄(Ursula Kroeber Le Guin)");
     }
 }
 
