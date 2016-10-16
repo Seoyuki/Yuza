@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -200,6 +201,66 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //
 //                registerReceiver(new Goal(), filter);
 //                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
+
+                // 도착시 나타나는 AlertDialog
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+
+                LayoutInflater inflater = getLayoutInflater();
+
+                // dialog.xml 파일을 인플레이션해서 보여준다
+                View dialogView= inflater.inflate(R.layout.dialog, null);
+                dialog.setView(dialogView).create().show();
+
+//                Button cameraDialogBtn = (Button) findViewById(R.id.cameraDialogBtn);
+//                cameraDiglogBtn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Alert 카메라 버튼 클릭시
+//                    }
+//                });
+//
+//                Button facebookDialogBtn = (Button) findViewById(R.id.faceBookDialogBtn);
+//                facebookDiglogBtn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Alert 페북 버튼 클릭시
+//                    }
+//                });
+//
+//                Button cancelDialogBtn = (Button) findViewById(R.id.cancelDialogBtn);
+//                cancelDiglogBtn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Alert 취소 버튼 클릭시
+//                    }
+//                });
+
+//                dialog.setPositiveButton("페이스북공유",new DialogInterface.OnClickListener(){
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which){
+//                        finish();
+//                    }
+//                });
+//                dialog.setNeutralButton("취소",new DialogInterface.OnClickListener(){
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which){
+//                        finish();
+//                    }
+//                });
+//                dialog.setNegativeButton("카메라",new DialogInterface.OnClickListener(){
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which){
+//                        finish();
+//                    }
+//                }).create().show();
+//                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+//                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
+//                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
+//
+//                registerReceiver(new Goal(), filter);
+//                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
+
+
 
             }
         });
