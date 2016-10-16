@@ -4,37 +4,33 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends AppCompatActivity {
     ArrayList<Student> list;
     private ListView mListView = null;
     private ListViewAdapter mAdapter = null;
@@ -48,6 +44,8 @@ public class SearchActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("유적 찾아보기");
 
         mListView = (ListView) findViewById(R.id.listView);
         searchText = (TextView)findViewById(R.id.editText);
@@ -58,7 +56,7 @@ public class SearchActivity extends Activity {
         String[] data = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
 //            data[i] = list.get(i).getName()+"\n"+list.get(i).getName();
-            mAdapter.addItem(getResources().getDrawable(R.drawable.archive),
+            mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                     list.get(i).getName(),
                     list.get(i).getAddress());
         }
