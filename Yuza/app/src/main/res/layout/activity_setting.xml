@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/yuza_bike"
-        android:id="@+id/imageView3"
+        android:id="@+id/settingImageYuza"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/settingBtn2"
         android:layout_marginBottom="16dp" />
