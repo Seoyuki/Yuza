@@ -46,7 +46,7 @@
 					android:onClick="moveSearch" />
 
 				<TextView
-					android:text="마음 속 유적"
+					android:text="유적 찾아보기"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:id="@+id/searchText"
