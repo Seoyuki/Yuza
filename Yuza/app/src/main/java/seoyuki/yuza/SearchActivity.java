@@ -70,7 +70,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().trim().equalsIgnoreCase("")) {
-                    mlist = (ArrayList<Student>) tempList.clone();
+                    if (tempList != null) {
+                        mlist = (ArrayList<Student>) tempList.clone();
+                    }
                 } else {
                     SearchActivity.this.mAdapter.getFilter().filter(s);
                 }
