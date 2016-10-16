@@ -172,7 +172,27 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 drawMapPath();
                 mMapView.setTrackingMode(true);
                 Intent intent = new Intent(PROX_ALERT_INTENT);
-
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                dialog.setTitle("도착하셨습니다");
+                dialog.setMessage("목적지에 도착하셨습니다");
+                dialog.setPositiveButton("페이스북공유",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        finish();
+                    }
+                });
+                dialog.setNeutralButton("취소",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        finish();
+                    }
+                });
+                dialog.setNegativeButton("카메라",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        finish();
+                    }
+                }).create().show();
 //                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 //                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
 //                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
@@ -1401,5 +1421,4 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
 
 }
-
 
