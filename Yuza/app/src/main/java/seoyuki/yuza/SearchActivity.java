@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +36,10 @@ public class SearchActivity extends AppCompatActivity {
     private ListView mListView = null;
     private ListViewAdapter mAdapter = null;
     private TextView searchText;
-    ArrayList<Student> tempList;
-    ArrayList<Student> mlist;
+    ArrayList<Student> mlist = new ArrayList<Student>();
+    private ArrayList<Student> mListData = new ArrayList<Student>();
 
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
@@ -49,17 +49,20 @@ public class SearchActivity extends AppCompatActivity {
 
         mListView = (ListView) findViewById(R.id.listView);
         searchText = (TextView)findViewById(R.id.editText);
-        mAdapter = new ListViewAdapter(this, mlist);
+        mAdapter = new ListViewAdapter(this);
 
 
         list = xmlParser();
-        String[] data = new String[list.size()];
+
         for (int i = 0; i < list.size(); i++) {
 //            data[i] = list.get(i).getName()+"\n"+list.get(i).getName();
             mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                     list.get(i).getName(),
                     list.get(i).getAddress());
         }
+
+        mlist.addAll(mListData);
+
         mListView.setTextFilterEnabled(true);
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -69,28 +72,25 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().equalsIgnoreCase("")) {
-                    if (tempList != null) {
-                        mlist = (ArrayList<Student>) tempList.clone();
-                    }
-                } else {
-                    SearchActivity.this.mAdapter.getFilter().filter(s);
-                }
+
+
+
             }
             @Override
             public void afterTextChanged(Editable s) {
-                setVisibiltyList();
+                SearchActivity.this.mAdapter.getFilter().filter(s);
+
             }
         });
 
 
-                //listView.setAdapter(arrad);
+        //listView.setAdapter(arrad);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-                Student mData = mAdapter.mListData.get(position);
-                    Student data = list.get(position);
+
+                Student data = mListData.get(position);
                 // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
                 Bundle extras = new Bundle();
                 extras.putString("name", data.getName());
@@ -107,14 +107,10 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        mListView.setAdapter(mAdapter);
+
     }
-    public void setVisibiltyList() {
-        if (searchText.getText().toString().equals("")) {
-            mListView.setVisibility(View.GONE);
-        } else {
-            mListView.setVisibility(View.VISIBLE);
-        }
-    }
+
 
     public void textonClick(View v) {
         Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
@@ -131,13 +127,11 @@ public class SearchActivity extends AppCompatActivity {
 
     private class ListViewAdapter extends BaseAdapter implements Filterable {
         private Context mContext = null;
-        private ArrayList<Student> mListData = new ArrayList<Student>();
         Activity context;
 
-        public ListViewAdapter(Activity context, ArrayList<Student> list) {
+        public ListViewAdapter(Activity context) {
             super();
             this.context = context;
-            mlist = list;
         }
 
         @Override
@@ -163,6 +157,7 @@ public class SearchActivity extends AppCompatActivity {
             addInfo.address = mDate;
 
             mListData.add(addInfo);
+
         }
 
         public void remove(int position){
@@ -177,6 +172,8 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
+            Student mData = mListData.get(position);
+
             if (convertView == null) {
                 holder = new ViewHolder();
 
@@ -192,7 +189,7 @@ public class SearchActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            Student mData = mListData.get(position);
+
 
             if (mData.imgId != null) {
                 holder.mIcon.setVisibility(View.VISIBLE);
@@ -209,17 +206,18 @@ public class SearchActivity extends AppCompatActivity {
         public Filter getFilter() {
             Filter filter = new Filter() {
 
-                @SuppressWarnings("unchecked")
-                @Override
-                protected void publishResults(CharSequence constraint,
-                                              Filter.FilterResults results) {
-                    mlist = (ArrayList<Student>) results.values;
-                    notifyDataSetChanged();
-                }
 
                 @Override
                 protected FilterResults performFiltering(CharSequence constraint) {
+                    Log.d("yuza","ret performFiltering()");
                     FilterResults results = new FilterResults();
+                    Log.d("yuza","constraint "+constraint.toString());
+
+                    if("".equals(constraint.toString())){
+                        return results;
+                    }
+                    String word = constraint.toString();
+
                     ArrayList<Student> FilteredList = new ArrayList<Student>();
                     if (constraint == null || constraint.length() == 0) {
                         // No filter implemented we return all the list
@@ -229,11 +227,13 @@ public class SearchActivity extends AppCompatActivity {
                     } else {
 
                         for (int i = 0; i < mlist.size(); i++) {
-                            String data = mlist.get(i).name;
+                            Log.d("yuza","mListData "+mlist.get(i).getName());
+                            String data = mlist.get(i).getName();
 
                             if (data.toLowerCase().contains(
-                                    constraint.toString().toLowerCase())) {
+                                    word.toLowerCase())) {
                                 FilteredList.add(mlist.get(i));
+                                Log.d("yuza","mListData "+mlist.get(i).getName());
                             }
                         }
                         results.values = FilteredList;
@@ -242,6 +242,21 @@ public class SearchActivity extends AppCompatActivity {
 
                     return results;
                 }
+
+                @Override
+                protected void publishResults(CharSequence constraint,
+                                              Filter.FilterResults results) {
+                    Log.d("yuza","ret publishResults()"+results);
+                    mListData = (ArrayList<Student>) results.values;
+                    if(mListData != null){
+                        for (int i = 0; i < mListData.size(); i++) {
+                            Log.d("yuza","ret "+mListData.get(i).getName());
+                        }
+                        SearchActivity.this.mAdapter.notifyDataSetChanged();
+                    }
+
+                }
+
             };
 
             return filter;
