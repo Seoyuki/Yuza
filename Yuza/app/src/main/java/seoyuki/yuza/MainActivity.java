@@ -163,7 +163,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         addView(mMapView);
 
         configureMapView();
-        alert("안녕하세요");
         ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
         ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
         ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
