@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class SearchActivity extends AppCompatActivity {
     ArrayList<Student> list;
@@ -64,17 +62,17 @@ public class SearchActivity extends AppCompatActivity {
         int r3 = (int)(Math.random()*list.size());
         for (int i = 0; i < list.size(); i++) {
             if(r1 == i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
                         list.get(i).getName(),
                         list.get(i).getAddress());
             }
             if(r2== i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
                         list.get(i).getName(),
                         list.get(i).getAddress());
             }
             if(r3 == i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
                         list.get(i).getName(),
                         list.get(i).getAddress());
             }
