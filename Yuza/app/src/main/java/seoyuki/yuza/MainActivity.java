@@ -1,6 +1,5 @@
 package seoyuki.yuza;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -25,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -34,7 +32,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.internal.ImageDownloader;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.share.model.SharePhoto;
@@ -70,22 +67,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.R.id.content;
-
-
-public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener   {
+public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private static final String PROX_ALERT_INTENT =   "com.javacodegeeks.android.lbs.ProximityAlert";
+    private static final String PROX_ALERT_INTENT = "com.javacodegeeks.android.lbs.ProximityAlert";
     private static final long POINT_RADIUS = 1000; // in Meters
     private static final long PROX_ALERT_EXPIRATION = -1;
     LocationReceiver receivers = new LocationReceiver();
@@ -95,7 +88,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     Bitmap mIcon = null;
     int placenumber;
     Student student = null;
-    List<Student> marker ;
+    List<Student> marker;
     Student[] stu;
     private static final String TAG = "ProximityTest";
     private final String POI_REACHED =              // 공중파 방송의 채널 같은 역할. 임의로 정함.
@@ -107,6 +100,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private final double sampleLatitude = 127.028590;  // 목표 위치
     private final double sampleLongitude = 37.495083;
     String mokjuk = "덕수궁";
+
     @Override
     public void onLocationChange(Location location) {
         double lat = location.getLatitude();
@@ -152,16 +146,17 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     String mProvider;
     int mCount;
-    double s ;
-    double d ;
+    double s;
+    double d;
+
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("content",markerItem.getName());
-        intent.putExtra("address",markerItem.getCalloutSubTitle());
-        intent.putExtra("name",markerItem.getCalloutTitle());
-        intent.putExtra("image",stu[Integer.parseInt(markerItem.getID())-1].getImage());
-        intent.putExtra("id",markerItem.getID());
+        intent.putExtra("content", markerItem.getName());
+        intent.putExtra("address", markerItem.getCalloutSubTitle());
+        intent.putExtra("name", markerItem.getCalloutTitle());
+        intent.putExtra("image", stu[Integer.parseInt(markerItem.getID()) - 1].getImage());
+        intent.putExtra("id", markerItem.getID());
         startActivity(intent);
 
     }
@@ -170,6 +165,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      * onCreate()
      */
     private LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,64 +198,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //                registerReceiver(new Goal(), filter);
 //                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
 
-                // 도착시 나타나는 AlertDialog
-                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-
-                LayoutInflater inflater = getLayoutInflater();
-
-                // dialog.xml 파일을 인플레이션해서 보여준다
-                View dialogView= inflater.inflate(R.layout.dialog, null);
-                dialog.setView(dialogView).create().show();
-
-//                Button cameraDialogBtn = (Button) findViewById(R.id.cameraDialogBtn);
-//                cameraDiglogBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // Alert 카메라 버튼 클릭시
-//                    }
-//                });
-//
-//                Button facebookDialogBtn = (Button) findViewById(R.id.faceBookDialogBtn);
-//                facebookDiglogBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // Alert 페북 버튼 클릭시
-//                    }
-//                });
-//
-//                Button cancelDialogBtn = (Button) findViewById(R.id.cancelDialogBtn);
-//                cancelDiglogBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // Alert 취소 버튼 클릭시
-//                    }
-//                });
-
-//                dialog.setPositiveButton("페이스북공유",new DialogInterface.OnClickListener(){
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which){
-//                        finish();
-//                    }
-//                });
-//                dialog.setNeutralButton("취소",new DialogInterface.OnClickListener(){
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which){
-//                        finish();
-//                    }
-//                });
-//                dialog.setNegativeButton("카메라",new DialogInterface.OnClickListener(){
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which){
-//                        finish();
-//                    }
-//                }).create().show();
 //                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 //                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
 //                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
 //
 //                registerReceiver(new Goal(), filter);
 //                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
-
 
 
             }
@@ -279,8 +223,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Double latitude =0.0;
-                Double longitude =0.0;
+                Double latitude = 0.0;
+                Double longitude = 0.0;
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 try {
 //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
@@ -294,7 +238,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 } catch (Exception e) {
 
                 }
-                LogManager.printLog(longitude+"와"+latitude);
+                LogManager.printLog(longitude + "와" + latitude);
                 mMapView.setCenterPoint(longitude, latitude);
                 mMapView.setLocationPoint(longitude, latitude);
 //                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
@@ -315,8 +259,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mArrayMarkerID = new ArrayList<String>();
         mMarkerID = 0;
-        Double latitude =0.0;
-        Double longitude =0.0;
+        Double latitude = 0.0;
+        Double longitude = 0.0;
 //        TMapGpsManager gps = new TMapGpsManager(this);
 //        gps.setProvider(TMapGpsManager.GPS_PROVIDER);
 //        gps.OpenGps();
@@ -348,7 +292,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         float minDistance = 0;
 
 
-
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
         //Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
 
@@ -359,9 +302,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         TMapPoint tpoint = mMapView.getLocationPoint();
         double Latitude = tpoint.getLatitude();
         double Longitude = tpoint.getLongitude();
-        Bitmap  bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
         mMapView.setIcon(bitmap);
-        LogManager.printLog(longitude+"와"+latitude);
+        LogManager.printLog(longitude + "와" + latitude);
         mMapView.setCenterPoint(longitude, latitude);
         mMapView.setLocationPoint(longitude, latitude);
         mMapView.setZoomLevel(13);
@@ -377,24 +320,27 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //        locationManager.addProximityAlert(37.422006, 122.084095, 10000, -1, proximityIntent);
 
     }
-    public void onResume(){
+
+    public void onResume() {
         super.onResume();
 
         //locationManager.addProximityAlert(37.464366,127.082277,5000,-1,mPending);
     }
-    public void onPause(){
+
+    public void onPause() {
         super.onPause();
         LogManager.printLog("이바보야진짜아니야");
 
         // locationManager.removeProximityAlert(mPending);
     }
+
     @Override
     public void onLocationChanged(Location location) {
         String msg = "New Latitude: " + location.getLatitude()
                 + "New Longitude: " + location.getLongitude();
 
         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-        LogManager.printLog(msg+"안녕하세요");
+        LogManager.printLog(msg + "안녕하세요");
     }
 
     @Override
@@ -414,15 +360,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     }
 
 
-
-
-
-
 //    @Override
 //    Public void onLocationChange(Location location){
 //        double lat = location.getLatitude();
 //        double lon = location.getLongtitude();
 //    }
+
     /**
      * setSKPMapApiKey()에 ApiKey를 입력 한다.
      * setSKPMapBizappId()에 mBizAppID를 입력한다.
@@ -537,15 +480,15 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receivers);
+//        unregisterReceiver(receivers);
+//        alertDialog의 페이스북 버튼 클릭 메소드(alertDialogFacebookBtnClick 메소드) 실행 후 메인으로 돌아올 때 에러
+//        에러 회피 위해 주석처리. unregisterReceiver 메소드 분석 후 정리 필요함.
 
 //		gps.CloseGps();
         if (mOverlayList != null) {
             mOverlayList.clear();
         }
     }
-
-
 
 
     public TMapPoint randomTMapPoint() {
@@ -716,10 +659,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void setLocationPoint() {
 
         TMapGpsManager tmapgps = new TMapGpsManager(this);
-        tmapgps.setProvider(TMapGpsManager.GPS_PROVIDER );
+        tmapgps.setProvider(TMapGpsManager.GPS_PROVIDER);
         tmapgps.OpenGps();
         TMapPoint point = tmapgps.getLocation();
-        double Latitude =   point.getLatitude();
+        double Latitude = point.getLatitude();
         double Longitude = point.getLongitude();
         LogManager.printLog("setLocationPoint " + Latitude + " " + Longitude);
 
@@ -881,8 +824,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
+
     //xmlParser를 사용해 xml 파싱하기
-    ArrayList<Student> xmlParser()  {
+    ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser
@@ -893,38 +837,38 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             int eventType = parser.getEventType();
 
 
-            while(eventType != XmlPullParser.END_DOCUMENT) {
+            while (eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
                     case XmlPullParser.START_TAG:
                         String startTag = parser.getName();
-                        if(startTag.equals("historic")) {
+                        if (startTag.equals("historic")) {
                             student = new Student();
                         }
-                        if(startTag.equals("name")) {
+                        if (startTag.equals("name")) {
                             student.setName(parser.nextText());
                         }
-                        if(startTag.equals("content")) {
+                        if (startTag.equals("content")) {
                             student.setContent(parser.nextText());
                         }
-                        if(startTag.equals("address")) {
+                        if (startTag.equals("address")) {
                             student.setAddress(parser.nextText());
                         }
-                        if(startTag.equals("image")) {
+                        if (startTag.equals("image")) {
                             student.setImage(parser.nextText());
                         }
-                        if(startTag.equals("wido")) {
+                        if (startTag.equals("wido")) {
                             student.setWido(parser.nextText());
                         }
-                        if(startTag.equals("kyungdo")) {
+                        if (startTag.equals("kyungdo")) {
                             student.setKyungdo(parser.nextText());
                         }
-                        if(startTag.equals("id")) {
+                        if (startTag.equals("id")) {
                             student.setId(Integer.parseInt(parser.nextText()));
                         }
                         break;
                     case XmlPullParser.END_TAG:
                         String endTag = parser.getName();
-                        if(endTag.equals("historic")) {
+                        if (endTag.equals("historic")) {
                             arrayList.add(student);
                         }
                         break;
@@ -933,7 +877,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
 
 
-        }catch(XmlPullParserException e) {
+        } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -943,6 +887,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         return arrayList;
     }
+
     /**
      * showMarkerPoint
      * 지도에 마커를 표출한다.
@@ -957,7 +902,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //
 //
 //
-
 
 
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
@@ -1032,11 +976,11 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Double wi;
         Double kyung;
 
-        for(int count = 0 ; count <marker.size();count++){
+        for (int count = 0; count < marker.size(); count++) {
             TMapMarkerItem item = new TMapMarkerItem();
 
         }
-        for(int count = 0 ; count <marker.size();count++){
+        for (int count = 0; count < marker.size(); count++) {
 
             stu[count] = marker.get(count);
 
@@ -1063,15 +1007,13 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
             item2.setIcon(bitmap);
 
-            strID = String.format(stu[count].getId()+"", mMarkerID++);
+            strID = String.format(stu[count].getId() + "", mMarkerID++);
 
             mMapView.addMarkerItem(strID, item2);
             mArrayMarkerID.add(strID);
 
 
-
         }
-
 
 
     }
@@ -1126,10 +1068,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //        double d = mMapView.getLongitude();
 //        LogManager.printLog("setLocationPointss " + s + " " + d);
 
-        TMapPoint point1 = new TMapPoint(37.565847,126.975069);
+        TMapPoint point1 = new TMapPoint(37.565847, 126.975069);
         TMapPoint point2 = new TMapPoint(s, d);
         TMapData tmapdata = new TMapData();
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH,point2,point1,
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
                 new TMapData.FindPathDataListenerCallback() {
                     @Override
                     public void onFindPathData(TMapPolyLine polyLine) {
@@ -1146,6 +1088,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //		});
 
     }
+
     public void mokdrawMapPath() {
 //		TMapPoint point1 = mMapView.getCenterPoint();
 //		TMapPoint point2 = randomTMapPoint();
@@ -1164,10 +1107,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         Intent inent = getIntent();
 
         TMapMarkerItem markeritem = mMapView.getMarkerItemFromID(getIntent().getStringExtra("mokname"));
-        TMapPoint point1 = new TMapPoint(37.565847,126.975069);
+        TMapPoint point1 = new TMapPoint(37.565847, 126.975069);
         TMapPoint point2 = markeritem.getTMapPoint();
         TMapData tmapdata = new TMapData();
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH,point2,point1,
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
                 new TMapData.FindPathDataListenerCallback() {
                     @Override
                     public void onFindPathData(TMapPolyLine polyLine) {
@@ -1184,6 +1127,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 //		});
 
     }
+
     private String getContentFromNode(Element item, String tagName) {
         NodeList list = item.getElementsByTagName(tagName);
         if (list.getLength() > 0) {
@@ -1474,18 +1418,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private void setupProximityAlert() {
         LocationManager locationManager = (LocationManager)
                 getSystemService(LOCATION_SERVICE);
@@ -1515,100 +1447,20 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         }
 
     }
-    public void showalert(){
+
+    public void showalert() {
+        // 도착 완료 화면(얼럿) 코드
         android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
-        dialog.setTitle("도착하셨습니다");
-        dialog.setMessage("축하합니다 목적지에 도착하셨습니다");
-        dialog.setPositiveButton("페이스북공유",new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which){
-                callbackManager = CallbackManager.Factory.create();
-                // 페이스북 SDK 초기화
-                FacebookSdk.sdkInitialize(getApplicationContext());
-                FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
 
-                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this,Arrays.asList("public_profile", "email"));
-                LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LayoutInflater inflater = getLayoutInflater();
 
-                    @Override
-                    public void onSuccess(final LoginResult result) {
-
-                        GraphRequest request;
-                        request = GraphRequest.newMeRequest(result.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                            @Override
-                            public void onCompleted(JSONObject user, GraphResponse response) {
-                                if (response.getError() != null) {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
-
-                                } else {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
-                                    setResult(RESULT_OK);
-                                    Bitmap stamp = BitmapFactory.decodeResource(getResources(), R.drawable.stamp);
-                                    String filePath =  saveBitmaptoPng(stamp);
-
-                                    Log.i("yuja", "filePath: " + filePath);
-                                    // finish();
-                                    shareDialog = new ShareDialog(MainActivity.this);
-                                    BitmapFactory.Options options = new BitmapFactory.Options();
-                                    // options.inSampleSize = 4;
-                                    final Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-
-
-                                    SharePhoto photo = new SharePhoto.Builder()
-                                            .setUserGenerated(true)
-                                            .setBitmap(bmp)
-                                            .setCaption("Latest score 하하하하하하")
-                                            .build();
-                                    SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
-                                            .build();
-
-                                    if (shareDialog.canShow(SharePhotoContent.class)){
-                                        shareDialog.show(content);
-                                    }
-                                    else{
-                                        Log.d("youja", "you cannot share photos :(");
-                                    }
-
-                                }
-                            }
-                        });
-                        Bundle parameters = new Bundle();
-                        parameters.putString("fields", "id,name,email,gender,birthday");
-                        request.setParameters(parameters);
-                        request.executeAsync();
-                    }
-
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.e("yuja", "Error: " + error);
-                        finish();
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        finish();
-                    }
-                });
-            }
-        });
-        dialog.setNeutralButton("취소",new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which){
-                Intent ints = new Intent(MainActivity.this,SqlLiteYuzaActivity.class);
-                ints.putExtra("mokjuk",mokjuk);
-                startActivity(ints);
-            }
-        });
-        dialog.setNegativeButton("카메라",new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which){
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
-                startActivity(intent);
-            }
-        }).create().show();
+        // dialog.xml 파일을 인플레이션해서 보여준다
+        // dialog.xml 파일의 세 버튼(카메라, 페이스북, 취소)에 대한 클릭 메소드는
+        // alertDialogCameraClick, alertDialogFacebookClick, alertDialogCancelClick이며 가장 아래에 위치해 있다.
+        // + TextView(위 세 버튼 이미지는 이미지뷰가 아닌 텍스트뷰의 백그라운드)에 직접 리스너를 달면 에러 발생
+        View dialogView = inflater.inflate(R.layout.dialog, null);
+        dialog.setView(dialogView);
+        dialog.create().show();
 
     }
 
@@ -1625,37 +1477,133 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         }
 
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
-    public  String saveBitmaptoPng(Bitmap bitmap){
+
+    public String saveBitmaptoPng(Bitmap bitmap) {
         File file_path;
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "youja");
 
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
                 Log.d("youja", "failed to create directory");
             }
         }
-        String file_name  = String.format(mediaStorageDir.getPath()+"/youja%d.png",
+        String file_name = String.format(mediaStorageDir.getPath() + "/youja%d.png",
                 System.currentTimeMillis());
 
-        try{
+        try {
             file_path = new File(file_name);
 
             FileOutputStream out = new FileOutputStream(file_path);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.close();
             return file_name;
-        }catch(FileNotFoundException exception){
+        } catch (FileNotFoundException exception) {
             Log.e("FileNotFoundException", exception.getMessage());
-        }catch(IOException exception){
+        } catch (IOException exception) {
             Log.e("IOException", exception.getMessage());
         }
         return file_name;
     }
+
+    public void alertDialogCameraClick(View v) { // alertDialog(도착 얼럿)의 카메라 버튼 클릭 메소드
+
+        Intent intent = new Intent(getBaseContext(), CameraActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void alertDialogFacebookClick(View v) { // alertDialog(도착 얼럿)의 페이스북 버튼 클릭 메소드
+
+        callbackManager = CallbackManager.Factory.create();
+
+        // 페이스북 SDK 초기화
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.setApplicationId(getResources().getString(R.string.facebook_app_id));
+
+        LoginManager.getInstance().logInWithReadPermissions(MainActivity.this,Arrays.asList("public_profile", "email"));
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            @Override
+            public void onSuccess(final LoginResult result) {
+
+                GraphRequest request;
+                request = GraphRequest.newMeRequest(result.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+
+                    @Override
+                    public void onCompleted(JSONObject user, GraphResponse response) {
+                        if (response.getError() != null) {
+                            Log.i("yuja", "user: " + user.toString());
+                            Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+
+                        } else {
+                            Log.i("yuja", "user: " + user.toString());
+                            Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                            setResult(RESULT_OK);
+                            Bitmap stamp = BitmapFactory.decodeResource(getResources(), R.drawable.stamp);
+                            String filePath =  saveBitmaptoPng(stamp);
+
+                            Log.i("yuja", "filePath: " + filePath);
+                            // finish();
+                            shareDialog = new ShareDialog(MainActivity.this);
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            // options.inSampleSize = 4;
+                            final Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
+
+
+                            SharePhoto photo = new SharePhoto.Builder()
+                                .setUserGenerated(true)
+                                .setBitmap(bmp)
+                                .setCaption("Latest score 하하하하하하")
+                                .build();
+
+                            SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
+                                .build();
+
+                            if (shareDialog.canShow(SharePhotoContent.class)){
+                                shareDialog.show(content);
+                            } else {
+                                Log.d("youja", "you cannot share photos :(");
+                            }
+
+                        }
+                    }
+                });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("yuja", "Error: " + error);
+                finish();
+            }
+
+            @Override
+            public void onCancel() {
+                finish();
+            }
+        });
+
+    }
+
+    public void alertDialogCancelClick(View v) { // alertDialog(도착 얼럿)의 취소 버튼 클릭 메소드
+
+        Intent ints = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
+        ints.putExtra("mokjuk", mokjuk);
+        startActivity(ints);
+
+    }
+
 }
