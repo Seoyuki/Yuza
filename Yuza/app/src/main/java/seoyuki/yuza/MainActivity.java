@@ -1,5 +1,7 @@
 package seoyuki.yuza;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -7,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,7 +19,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -73,7 +76,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener {
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+
+public class MainActivity extends BaseActivity implements onLocationChangedCallback, TMapView.OnCalloutRightButtonClickCallback, LocationListener {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -166,6 +171,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      */
     private LocationManager locationManager;
 
+    @TargetApi(Build.VERSION_CODES.M)  // 마시멜로 이하에서도 잘 돌아가는 코드라는 의미의 애너테이션(checkSelfPermission이 SDK 23 이상에서만 작동하는 문제에 대한 스튜디오의 제안.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,6 +227,8 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
         img3.setOnClickListener(new View.OnClickListener() {
+
+            @TargetApi(Build.VERSION_CODES.M) // 마시멜로 이하에서도 잘 돌아가는 코드라는 의미의 애너테이션(checkSelfPermission이 SDK 23 이상에서만 작동하는 문제에 대한 스튜디오의 제안.
             @Override
             public void onClick(View v) {
                 Double latitude = 0.0;
@@ -228,13 +236,29 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 try {
 //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
-                    Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (lastLocation != null) {
-                        latitude = lastLocation.getLatitude();
-                        longitude = lastLocation.getLongitude();
-                        // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+
+                    // 마시멜로 이상에서는 아래의 개별 권한 승인 코드가 실행된다 -> 확인 필요함!
+                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        // 원래 있었던 코드(권한을 요청했던 코드)
+                        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (lastLocation != null) {
+                            latitude = lastLocation.getLatitude();
+                            longitude = lastLocation.getLongitude();
+                            return;
+
+                        }
+                        return;
+                    } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) || shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        // 권한이 왜 필요한지 설명한다. 여기서는 리스너에 달려서 안된다고 나옴. 이유는 확인 필요함.
+                        //Toast.makeText(this, "위치 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        // 권한 다시 묻기. 여기 결과는 onRequestPermissionsResult 메소드에서 콜백으로 나타난다.
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, 1);
 
                     }
+
                 } catch (Exception e) {
 
                 }
@@ -276,13 +300,32 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try {
 //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
-            Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastLocation != null) {
-                latitude = lastLocation.getLatitude();
-                longitude = lastLocation.getLongitude();
-                // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
 
+            // 마시멜로 이상에서는 아래의 개별 권한 승인 코드가 실행된다 -> 확인 필요함!
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                // 원래 있었던 코드
+                Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastLocation != null) {
+                    latitude = lastLocation.getLatitude();
+                    longitude = lastLocation.getLongitude();
+                    // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
+                }
+                return;
+
+            } else {
+
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // 권한이 왜 필요한지 설명한다.
+                    Toast.makeText(this, "위치 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    // 권한 다시 묻기. 여기 결과는 onRequestPermissionsResult 메소드에서 콜백으로 나타난다.
+                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, 1);
+
+                }
             }
+
         } catch (Exception e) {
 
         }
@@ -1418,6 +1461,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     }
 
 
+    @TargetApi(Build.VERSION_CODES.M) // 마시멜로 이하에서도 잘 돌아가는 코드라는 의미의 애너테이션(checkSelfPermission이 SDK 23 이상에서만 작동하는 문제에 대한 스튜디오의 제안.
     private void setupProximityAlert() {
         LocationManager locationManager = (LocationManager)
                 getSystemService(LOCATION_SERVICE);
@@ -1431,9 +1475,27 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                             PendingIntent.FLAG_ONE_SHOT);
             //방송 조건, 목표위치에 50미터 안으로 이동하면 10초간 경보 라는 방송을 보냄. 방송이름은POI_REACHED
             //경보란게 먼지 모르겠음. 에뮬레이터에서 어떻게 확인 가능한지 모름.
-            locationManager.addProximityAlert(sampleLongitude,
-                    sampleLatitude, 500, 1000000,
-                    proximityIntent);
+
+            // 마시멜로 이상에서는 아래의 개별 권한 승인 코드가 실행된다 -> 확인 필요함!
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                // 원래 있었던 코드
+                locationManager.addProximityAlert(sampleLongitude, sampleLatitude, 500, 1000000, proximityIntent);
+
+                return;
+            } else {
+
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // 권한이 왜 필요한지 설명한다.
+                    Toast.makeText(this, "위치 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    // 권한 다시 묻기. 여기 결과는 onRequestPermissionsResult 메소드에서 콜백으로 나타난다.
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, 1);
+
+                }
+            }
+
 
             /*================================================================*/
             //시청자. POI_REACHED 이란 채널명으로 방송된 내용을 보려고 함.
@@ -1442,11 +1504,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                     intentFilter);
 
             /*================================================================*/
+            // 혹시 원래 코드에서 꼬인 것이 아닌지 확인 필요. 불안불안...
         } else {
             Log.d(TAG, "GPS_PROVIDER not available");
         }
-
     }
+
 
     public void showalert() {
         // 도착 완료 화면(얼럿) 코드
@@ -1606,4 +1669,24 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
     }
 
+    // requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, 1);
+    // 위 메소드에 대한 결과로 작동(콜백)하는 메소드
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "감사합니다! 권한을 사용자가 승인함.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    // 최종적으로 권한이 거부됨. 이럴 경우는 어떻게 해야할지 코딩이 필요함.
+                    Toast.makeText(this, "SMS 권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+                return;
+            }
+        }
+    }
 }
