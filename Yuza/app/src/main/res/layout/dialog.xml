@@ -52,7 +52,7 @@
             android:textColor="#FFFFFF"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
-            android:onClick="onClick" />
+            android:onClick="alertDialogCameraClick" />
 
         <Button
             android:layout_width="60dp"
@@ -63,7 +63,7 @@
             android:textColor="#FFFFFF"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
-            android:onClick="onClick" />
+            android:onClick="alertDialogFacebookClick" />
 
         <Button
             android:layout_width="60dp"
@@ -74,6 +74,6 @@
             android:textColor="#FFFFFF"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
-            android:onClick="onClick" />
+            android:onClick="alertDialogCancelClick" />
     </LinearLayout>
 </LinearLayout>
