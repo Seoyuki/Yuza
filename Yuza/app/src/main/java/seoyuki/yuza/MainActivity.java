@@ -4,24 +4,42 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -62,6 +80,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -75,20 +94,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements onLocationChangedCallback, TMapView.OnCalloutRightButtonClickCallback, LocationListener {
+public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+    String wido2;
+    String kyungdo2;
+    String wido;
+    String kyungdo;
+    Double latitude = 0.0;
+    Double longitude = 0.0;
     private static final String PROX_ALERT_INTENT = "com.javacodegeeks.android.lbs.ProximityAlert";
     private static final long POINT_RADIUS = 1000; // in Meters
     private static final long PROX_ALERT_EXPIRATION = -1;
     LocationReceiver receivers = new LocationReceiver();
-    TMapMarkerItem item1 = new TMapMarkerItem();
     TMapMarkerItem item2 = new TMapMarkerItem();
     String decodeStr;
     Bitmap mIcon = null;
-    int placenumber;
     Student student = null;
     List<Student> marker;
     Student[] stu;
@@ -98,88 +121,76 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private PendingIntent proximityIntent;
     private CallbackManager callbackManager;
     ShareDialog shareDialog;
-
     private final double sampleLatitude = 127.028590;  // 목표 위치
     private final double sampleLongitude = 37.495083;
     String mokjuk = "덕수궁";
-
+    int[] imsy = new int[180];
+    Double[] widos = new Double[180];
+    Double[] kyungdos = new Double[180];
     @Override
     public void onLocationChange(Location location) {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
     }
-
     private TMapView mMapView = null;
-
     private Context mContext;
     private ArrayList<Bitmap> mOverlayList;
     private ImageOverlay mOverlay;
-
     public static String mApiKey = "66800ce1-b178-3464-b52b-74cb4998e20a"; // 발급받은 appKey
     public static String mBizAppID; // 발급받은 BizAppID (TMapTapi로 TMap앱 연동을 할 때 BizAppID 꼭 필요)
-
-
     private int m_nCurrentZoomLevel = 0;
     private double m_Latitude = 0;
     private double m_Longitude = 0;
     private boolean m_bShowMapIcon = false;
-
     private boolean m_bTrafficeMode = false;
     private boolean m_bSightVisible = false;
     private boolean m_bTrackingMode = false;
-
     private boolean m_bOverlayMode = false;
-
     ArrayList<String> mArrayID;
-
     ArrayList<String> mArrayCircleID;
     private static int mCircleID;
-
     ArrayList<String> mArrayLineID;
     private static int mLineID;
-
     ArrayList<String> mArrayPolygonID;
     private static int mPolygonID;
-
     ArrayList<String> mArrayMarkerID;
     private static int mMarkerID;
     String[] item = new String[3];
     LocationManager mLocMan;
-
     String mProvider;
     int mCount;
     double s;
     double d;
-
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
+        int counts = Integer.parseInt(markerItem.getID())-1;
+        wido = stu[counts].getWido();
+        kyungdo= stu[counts].getKyungdo();
+
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         intent.putExtra("content", markerItem.getName());
         intent.putExtra("address", markerItem.getCalloutSubTitle());
         intent.putExtra("name", markerItem.getCalloutTitle());
         intent.putExtra("image", stu[Integer.parseInt(markerItem.getID()) - 1].getImage());
         intent.putExtra("id", markerItem.getID());
+        intent.putExtra("wido", wido);
+        intent.putExtra("kyungdo", kyungdo);
+        LogManager.printLog(counts+" 구분자 "+widos[counts]+"    "+kyungdos[counts]);
         startActivity(intent);
-
+        finish();
     }
     //  PendingIntent mPending;
     /**
      * onCreate()
      */
     private LocationManager locationManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
-
         mContext = this;
-
         mMapView = new TMapView(this);
         addView(mMapView);
-
         configureMapView();
         ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
         ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
@@ -188,34 +199,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             @Override
             public void onClick(View v) {
                 showalert();
-//                drawMapPath();
-//                mMapView.setTrackingMode(true);
-//                Intent intent = new Intent(PROX_ALERT_INTENT);
-//                Toast.makeText(getApplicationContext(), getIntent().getStringExtra("mokid"), Toast.LENGTH_LONG).show();
-                //showalert();
-//                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-//                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
-//                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-//
-//                registerReceiver(new Goal(), filter);
-//                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
-
-//                PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-//                locationManager.addProximityAlert(37.1271,127.0125,POINT_RADIUS,PROX_ALERT_EXPIRATION,proximityIntent);
-//                IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-//
-//                registerReceiver(new Goal(), filter);
-//                 mLocMan.addProximityAlert(37.422006, 122.084095, 5, -1, proximityIntent);
-
-
             }
         });
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("yuja", "searchBtn start: ");
-//                Intent intent = new Intent(getApplicationContext(), SqlLiteYuzaActivity.class);
-//                startActivity(intent);
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
 
@@ -229,7 +218,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 Double longitude = 0.0;
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 try {
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
@@ -246,18 +234,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                     if (lastLocation != null) {
                         latitude = lastLocation.getLatitude();
                         longitude = lastLocation.getLongitude();
-                        // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
 
                     }
                 } catch (Exception e) {
 
                 }
-                LogManager.printLog(longitude + "와" + latitude);
                 mMapView.setCenterPoint(longitude, latitude);
                 mMapView.setLocationPoint(longitude, latitude);
-//                Intent intent = new Intent(MainActivity.this, TestBtnActivity.class);
-//                startActivity(intent);
-                setupProximityAlert();  //방송국
+
             }
         });
         mArrayID = new ArrayList<String>();
@@ -273,29 +257,29 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
         mArrayMarkerID = new ArrayList<String>();
         mMarkerID = 0;
-        Double latitude = 0.0;
-        Double longitude = 0.0;
-//        TMapGpsManager gps = new TMapGpsManager(this);
-//        gps.setProvider(TMapGpsManager.GPS_PROVIDER);
-//        gps.OpenGps();
-//
-//        TMapPoint point = gps.getLocation();
-//
-//        mMapView.setCenterPoint(point.getLongitude(),    point.getLatitude());
-//        LogManager.printLog(point.getLongitude()+"안녕"+    point.getLatitude());
+
         showMarkerPoint();
         mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);
         mMapView.setBicycleFacilityInfo(true);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try {
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, 1, this);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    return;
+                }
+            }
             Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastLocation != null) {
                 latitude = lastLocation.getLatitude();
                 longitude = lastLocation.getLongitude();
-                // Toast.makeText(getApplicationContext(), "마지막 위치 latitudedddd" + latitude + "\nlongitude" + longitude, Toast.LENGTH_LONG).show();
-
             }
         } catch (Exception e) {
 
@@ -304,7 +288,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         GPSListener gpsListener = new GPSListener();
         long minTime = 500;
         float minDistance = 0;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -318,45 +301,41 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
-        //Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
-
-
         Location location;
-
-        LogManager.printLog("setLocationPointss " + longitude + " " + latitude);
         TMapPoint tpoint = mMapView.getLocationPoint();
         double Latitude = tpoint.getLatitude();
         double Longitude = tpoint.getLongitude();
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
         mMapView.setIcon(bitmap);
-        LogManager.printLog(longitude + "와" + latitude);
         mMapView.setCenterPoint(longitude, latitude);
         mMapView.setLocationPoint(longitude, latitude);
         mMapView.setZoomLevel(13);
         mMapView.setIconVisibility(true);
+       wido2 = getIntent().getStringExtra("mokwido");
+        kyungdo2 = getIntent().getStringExtra("mokkyungdo");
+        LogManager.printLog(wido2+" 구분자 "+kyungdo2);
+        if(wido2!=null){
+            mokdrawMapPath(wido2,kyungdo2);
+            for (int count = 0; count < marker.size(); count++) {
+                String imsy =  String.format(count + "", mMarkerID++);
+                mMapView.removeAllMarkerItem();
+            }
 
-//        receiver = new LocationReceiver();
-//        IntentFilter filter = new IntentFilter("seoyuki.yuza");
-//        registerReceiver(receiver, filter);
-//
-//        // ProximityAlert 등록
-//        Intent intent = new Intent("seoyuki.yuza");
-//        PendingIntent proximityIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-//        locationManager.addProximityAlert(37.422006, 122.084095, 10000, -1, proximityIntent);
-
+        }
     }
-
+    public void gogogo(Double a, Double b){
+        mokdrawMapPath(wido2,kyungdo2);
+        for (int count = 0; count < marker.size(); count++) {
+            String imsy =  String.format(count + "", mMarkerID++);
+            mMapView.removeAllMarkerItem();
+        }
+    }
     public void onResume() {
         super.onResume();
-
-        //locationManager.addProximityAlert(37.464366,127.082277,5000,-1,mPending);
     }
 
     public void onPause() {
         super.onPause();
-        LogManager.printLog("이바보야진짜아니야");
-
-        // locationManager.removeProximityAlert(mPending);
     }
 
     @Override
@@ -383,14 +362,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void onProviderDisabled(String provider) {
 
     }
-
-
-//    @Override
-//    Public void onLocationChange(Location location){
-//        double lat = location.getLatitude();
-//        double lon = location.getLongtitude();
-//    }
-
     /**
      * setSKPMapApiKey()에 ApiKey를 입력 한다.
      * setSKPMapBizappId()에 mBizAppID를 입력한다.
@@ -398,18 +369,12 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
      */
     private void configureMapView() {
         mMapView.setSKPMapApiKey(mApiKey);
-//		mMapView.setSKPMapBizappId(mBizAppID);
     }
 
     /**
      * initView - 버튼에 대한 리스너를 등록한다.
      */
     private void initView() {
-//        for (int btnMapView : mArrayMapButton) {
-//            Button ViewButton = (Button) findViewById(btnMapView);
-//            ViewButton.setOnClickListener(this);
-//        }
-
         mMapView.setOnApiKeyListener(new TMapView.OnApiKeyListenerCallback() {
             @Override
             public void SKPMapApikeySucceed() {
@@ -491,25 +456,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         m_bSightVisible = false;
         m_bTrackingMode = false;
     }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        unregisterReceiver(receivers);
-//        alertDialog의 페이스북 버튼 클릭 메소드(alertDialogFacebookBtnClick 메소드) 실행 후 메인으로 돌아올 때 에러
-//        에러 회피 위해 주석처리. unregisterReceiver 메소드 분석 후 정리 필요함.
-
-//		gps.CloseGps();
         if (mOverlayList != null) {
             mOverlayList.clear();
         }
@@ -564,9 +513,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     }
 
     public void animateTo() {
-//		TMapPoint point = randomTMapPoint();
-//		mMapView.setCenterPoint(point.getLongitude(), point.getLatitude(), true);
-//		Bitmap capture = mMapView.getCaptureImage();
         addTMapCircle();
 
     }
@@ -920,138 +866,57 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void showMarkerPoint() {
         TMapView tmapview = new TMapView(this);
         Bitmap bitmap = null;
-////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////
-//        final String[] arrString = getResources().getStringArray(R.array.ducksugung);
         TMapPoint point = new TMapPoint(37.565847, 126.975069);
-//
-//
-//
-
-
         Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         String strID = String.format("pmarker%d", mMarkerID++);
-//
-//
-//
         point = new TMapPoint(37.55102510077652, 126.98789834976196);
-//
-//
-//        item2.setTMapPoint(point);
-//        item2.setName("서울타워");
-//        item2.setVisible(item2.VISIBLE);
-//        item2.setCalloutTitle("청호타워");
-//
-//        item2.setCanShowCallout(true);
-//
         bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
         item2.setCalloutRightButtonImage(bitmap_i);
-
-//        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.pin_tevent);
-//        item2.setIcon(bitmap);
-
         strID = String.format("pmarker%d", mMarkerID++);
-
         mMapView.addMarkerItem(strID, item2);
         mArrayMarkerID.add(strID);
-//
-//
-//        point = new TMapPoint(37.58102510077652, 126.98789834976196);
-//        item2 = new TMapMarkerItem();
-//
-//        item2.setTMapPoint(point);
-//        item2.setName("chunggunsas");
-//        item2.setVisible(item2.VISIBLE);
-//        item2.setCalloutTitle("chunggunsas");
-//
-//        item2.setCalloutSubTitle("을지로입구역 500M");
-//        item2.setCanShowCallout(true);
-//
-//
-//        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
-//        item2.setCalloutRightButtonImage(bitmap_i);
-//
-//        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.map_pin_red);
-//        item2.setIcon(bitmap);
-//
-//        strID = String.format("pmarker%d", mMarkerID++);
-//
-//        mMapView.addMarkerItem(strID, item2);
-//        mArrayMarkerID.add(strID);
-
-
-//
-//        for (int i = 4; i < 10; i++) {
-//            TMapMarkerItem item3 = new TMapMarkerItem();
-//
-//            item3.setID(strID);
-//            item3.setIcon(BitmapFactory.decodeResource(getResources(), R.drawable.map_pin_red));
-//
-//            item3.setTMapPoint(randomTMapPoint());
-//            item3.setCalloutTitle(">>>>" + strID + "<<<<<");
-//            item3.setCanShowCallout(true);
-//
-//            strID = String.format("pmarker%d", mMarkerID++);
-//
-//            mMapView.addMarkerItem(strID, item2);
-//            mArrayMarkerID.add(strID);
-//        }
         marker = xmlParser();
         stu = new Student[marker.size()];
         Double wi;
         Double kyung;
-
         for (int count = 0; count < marker.size(); count++) {
             TMapMarkerItem item = new TMapMarkerItem();
-
         }
         for (int count = 0; count < marker.size(); count++) {
-
             stu[count] = marker.get(count);
-
             wi = Double.parseDouble(stu[count].getWido());
             kyung = Double.parseDouble(stu[count].getKyungdo());
-
             point = new TMapPoint(wi, kyung);
             item2 = new TMapMarkerItem();
-
             item2.setTMapPoint(point);
             item2.setName(stu[count].getContent());
             item2.setVisible(item2.VISIBLE);
             item2.setCalloutTitle(stu[count].getName());
             item2.setCalloutSubTitle(stu[count].getAddress());
             item2.setCanShowCallout(true);
-            String imsy = stu[count].getImage();
-            item2.setID(imsy);
-
-
+            String imsy1 = stu[count].getImage();
+            item2.setID(imsy1);
             bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
             item2.setCalloutRightButtonImage(bitmap_i);
-
-
             bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
             item2.setIcon(bitmap);
-
             strID = String.format(stu[count].getId() + "", mMarkerID++);
 
             mMapView.addMarkerItem(strID, item2);
+            imsy[count] = stu[count].getId();
+            widos[count] = Double.parseDouble(stu[count].getWido());
+            kyungdos[count] = Double.parseDouble(stu[count].getKyungdo());
             mArrayMarkerID.add(strID);
 
-
         }
-
-
     }
-
     public void removeMarker() {
         if (mArrayMarkerID.size() <= 0)
             return;
-
         String strMarkerID = mArrayMarkerID.get(mArrayMarkerID.size() - 1);
         mMapView.removeMarkerItem(strMarkerID);
         mArrayMarkerID.remove(mArrayMarkerID.size() - 1);
     }
-
     /**
      * moveFrontMarker
      * 마커를 맨 앞으로 표시 하도록 한다.
@@ -1061,7 +926,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         TMapMarkerItem item = mMapView.getMarkerItemFromID("1");
         mMapView.bringMarkerToFront(item);
     }
-
     /**
      * moveBackMarker
      * 마커를 맨 뒤에 표시하도록 한다.
@@ -1071,30 +935,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         TMapMarkerItem item = mMapView.getMarkerItemFromID("1");
         mMapView.sendMarkerToBack(item);
     }
-
-
     /**
      * drawMapPath
      * 지도에 시작-종료 점에 대해서 경로를 표시한다.
      */
     public void drawMapPath() {
-//		TMapPoint point1 = mMapView.getCenterPoint();
-//		TMapPoint point2 = randomTMapPoint();
-//        GPSListener gpsListener = new GPSListener();
-//        long minTime = 1000;
-//        float minDistance = 0;
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
-//        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
-//        Intent intent = new Intent(this,Goal.class);
-////        mPending = PendingIntent.getBroadcast(this,0,intent,0);
-////        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
-//        Location location;
-//        double s = mMapView.getLatitude();
-//        double d = mMapView.getLongitude();
-//        LogManager.printLog("setLocationPointss " + s + " " + d);
-
+        LogManager.printLog(latitude+"adfsadf"+longitude);
         TMapPoint point1 = new TMapPoint(37.565847, 126.975069);
-        TMapPoint point2 = new TMapPoint(s, d);
+        TMapPoint point2 = new TMapPoint(latitude, longitude);
         TMapData tmapdata = new TMapData();
         tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
                 new TMapData.FindPathDataListenerCallback() {
@@ -1103,37 +951,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                         mMapView.addTMapPath(polyLine);
                     }
                 });
-
-//		tmapdata.findPathData(point1, point2, new FindPathDataListenerCallback() {
-//
-//			@Override
-//			public void onFindPathData(TMapPolyLine polyLine) {
-//				mMapView.addTMapPath(polyLine);
-//			}
-//		});
-
     }
-
-    public void mokdrawMapPath() {
-//		TMapPoint point1 = mMapView.getCenterPoint();
-//		TMapPoint point2 = randomTMapPoint();
-//        GPSListener gpsListener = new GPSListener();
-//        long minTime = 1000;
-//        float minDistance = 0;
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, gpsListener);
-//        Toast.makeText(getApplicationContext(), "위치확인 로그를 확인하세요", Toast.LENGTH_LONG).show();
-//        Intent intent = new Intent(this,Goal.class);
-////        mPending = PendingIntent.getBroadcast(this,0,intent,0);
-////        locationManager.addProximityAlert(37.464366,127.082277,500,-1,mPending);
-//        Location location;
-//        double s = mMapView.getLatitude();
-//        double d = mMapView.getLongitude();
-//        LogManager.printLog("setLocationPointss " + s + " " + d);
+    public void mokdrawMapPath(String wido , String kyungdo) {
+        Double wi = Double.parseDouble(wido);
+        Double kyu = Double.parseDouble(kyungdo);
         Intent inent = getIntent();
-
         TMapMarkerItem markeritem = mMapView.getMarkerItemFromID(getIntent().getStringExtra("mokname"));
-        TMapPoint point1 = new TMapPoint(37.565847, 126.975069);
-        TMapPoint point2 = markeritem.getTMapPoint();
+        TMapPoint point1 = new TMapPoint(wi, kyu);
+        TMapPoint point2 = new TMapPoint(latitude, longitude);
         TMapData tmapdata = new TMapData();
         tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
                 new TMapData.FindPathDataListenerCallback() {
@@ -1142,17 +967,23 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                         mMapView.addTMapPath(polyLine);
                     }
                 });
-
-//		tmapdata.findPathData(point1, point2, new FindPathDataListenerCallback() {
-//
-//			@Override
-//			public void onFindPathData(TMapPolyLine polyLine) {
-//				mMapView.addTMapPath(polyLine);
-//			}
-//		});
-
     }
-
+    public void mokdrawMapPath2(String wido , String kyungdo,Double a , Double b) {
+        mMapView.removeTMapPath();
+        Double wi = Double.parseDouble(wido);
+        Double kyu = Double.parseDouble(kyungdo);
+        TMapPoint point1 = new TMapPoint(wi, kyu);
+        TMapPoint point2 = new TMapPoint(a, b);
+        LogManager.printLog(a+"   :::    "+b+wi+"   :::    "+kyu+"   :::    ");
+        TMapData tmapdata = new TMapData();
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
+                new TMapData.FindPathDataListenerCallback() {
+                    @Override
+                    public void onFindPathData(TMapPolyLine polyLine) {
+                        mMapView.addTMapPath(polyLine);
+                    }
+                });
+    }
     private String getContentFromNode(Element item, String tagName) {
         NodeList list = item.getElementsByTagName(tagName);
         if (list.getLength() > 0) {
@@ -1162,7 +993,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         }
         return null;
     }
-
     /**
      * displayMapInfo()
      * POI들이 모두 표시될 수 있는 줌레벨 결정함수와 중심점리턴하는 함수
@@ -1176,22 +1006,16 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         TMapPoint point2 = new TMapPoint(37.541243493556976, 126.99659830331802);
         TMapPoint point3 = new TMapPoint(37.540909826755524, 126.99739581346512);
         TMapPoint point4 = new TMapPoint(37.541080713272095, 126.99874675273895);
-
         ArrayList<TMapPoint> point = new ArrayList<TMapPoint>();
-
         point.add(point1);
         point.add(point2);
         point.add(point3);
         point.add(point4);
-
         TMapInfo info = mMapView.getDisplayTMapInfo(point);
-
         String strInfo = "Center Latitude" + info.getTMapPoint().getLatitude() + "Center Longitude" + info.getTMapPoint().getLongitude() +
                 "Level " + info.getTMapZoomLevel();
-
         Common.showAlertDialog(this, "", strInfo);
     }
-
     /**
      * removeMapPath
      * 경로 표시를 삭제한다.
@@ -1199,7 +1023,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void removeMapPath() {
         mMapView.removeTMapPath();
     }
-
     /**
      * naviGuide
      * 길안내
@@ -1207,10 +1030,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     public void naviGuide() {
         TMapPoint point1 = randomTMapPoint();
         TMapPoint point2 = new TMapPoint(37.565847, 126.975069);
-//				 mMapView.getCenterPoint();
-
         TMapData tmapdata = new TMapData();
-
         tmapdata.findPathDataAll(point1, point2, new TMapData.FindPathDataAllListenerCallback() {
             @Override
             public void onFindPathDataAll(Document doc) {
@@ -1218,14 +1038,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
-
-
     public void drawPedestrianPath() {
         TMapPoint point1 = mMapView.getCenterPoint();
         TMapPoint point2 = randomTMapPoint();
-
         TMapData tmapdata = new TMapData();
-
         tmapdata.findPathDataWithType(TMapData.TMapPathType.PEDESTRIAN_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
             @Override
             public void onFindPathData(TMapPolyLine polyLine) {
@@ -1234,13 +1050,10 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
-
     public void drawBicyclePath() {
         TMapPoint point1 = mMapView.getCenterPoint();
         TMapPoint point2 = randomTMapPoint();
-
         TMapData tmapdata = new TMapData();
-
         tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
             @Override
             public void onFindPathData(TMapPolyLine polyLine) {
@@ -1248,8 +1061,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             }
         });
     }
-
-
     /**
      * convertToAddress
      * 지도에서 선택한 지점을 주소를 변경요청한다.
@@ -1267,26 +1078,6 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 }
             });
 
-//		    tmapdata.geoCodingWithAddressType("F02", "서울시", "구로구", "새말로", "6", "", new GeoCodingWithAddressTypeListenerCallback() {
-//
-//				@Override
-//				public void onGeoCodingWithAddressType(TMapGeocodingInfo geocodingInfo) {
-//					LogManager.printLog(">>> strMatchFlag : " + geocodingInfo.strMatchFlag);
-//					LogManager.printLog(">>> strLatitude : " + geocodingInfo.strLatitude);
-//					LogManager.printLog(">>> strLongitude : " + geocodingInfo.strLongitude);
-//					LogManager.printLog(">>> strCity_do : " + geocodingInfo.strCity_do);
-//					LogManager.printLog(">>> strGu_gun : " + geocodingInfo.strGu_gun);
-//					LogManager.printLog(">>> strLegalDong : " + geocodingInfo.strLegalDong);
-//					LogManager.printLog(">>> strAdminDong : " + geocodingInfo.strAdminDong);
-//					LogManager.printLog(">>> strBunji : " + geocodingInfo.strBunji);
-//					LogManager.printLog(">>> strNewMatchFlag : " + geocodingInfo.strNewMatchFlag);
-//					LogManager.printLog(">>> strNewLatitude : " + geocodingInfo.strNewLatitude);
-//					LogManager.printLog(">>> strNewLongitude : " + geocodingInfo.strNewLongitude);
-//					LogManager.printLog(">>> strNewRoadName : " + geocodingInfo.strNewRoadName);
-//					LogManager.printLog(">>> strNewBuildingIndex : " + geocodingInfo.strNewBuildingIndex);
-//					LogManager.printLog(">>> strNewBuildingName : " + geocodingInfo.strNewBuildingName);
-//				}
-//			});
         }
     }
 
@@ -1475,8 +1266,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             /*================================================================*/
             //시청자. POI_REACHED 이란 채널명으로 방송된 내용을 보려고 함.
             IntentFilter intentFilter = new IntentFilter(POI_REACHED);
-            registerReceiver(receivers,
-                    intentFilter);
+            registerReceiver(receivers,intentFilter);
 
             /*================================================================*/
         } else {
@@ -1588,21 +1378,19 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                             String filePath =  saveBitmaptoPng(stamp);
 
                             Log.i("yuja", "filePath: " + filePath);
-                            // finish();
                             shareDialog = new ShareDialog(MainActivity.this);
                             BitmapFactory.Options options = new BitmapFactory.Options();
-                            // options.inSampleSize = 4;
                             final Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
 
 
                             SharePhoto photo = new SharePhoto.Builder()
-                                .setUserGenerated(true)
-                                .setBitmap(bmp)
-                                .setCaption("Latest score 하하하하하하")
-                                .build();
+                                    .setUserGenerated(true)
+                                    .setBitmap(bmp)
+                                    .setCaption("Latest score 하하하하하하")
+                                    .build();
 
                             SharePhotoContent content = new SharePhotoContent.Builder().addPhoto(photo)
-                                .build();
+                                    .build();
 
                             if (shareDialog.canShow(SharePhotoContent.class)){
                                 shareDialog.show(content);
@@ -1642,5 +1430,61 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         startActivity(ints);
 
     }
+    class GPSListener implements LocationListener {
+        private LocationManager lm;
+        private LocationListener ll;
+        double mySpeed, maxSpeed;
+        PendingIntent mPending;
 
+        @Override
+        public void onLocationChanged(Location location) {
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
+            String msg = "Latitude :" + latitude + "\nLongitude:" + longitude;
+            setupProximityAlert();
+            if(getIntent().getStringExtra("mokwido")!=null){
+                LogManager.printLog("상태변화인식"+     getIntent().getStringExtra("mokwido"));
+                LogManager.printLog("상태변화인식"+     getIntent().getStringExtra("mokkyungdo"));
+                mMapView.setCenterPoint(longitude, latitude);
+                mMapView.setLocationPoint(longitude, latitude);
+                Double wi = Double.parseDouble(wido2);
+                Double kyu = Double.parseDouble(kyungdo2);
+                Intent inent = getIntent();
+                TMapMarkerItem markeritem = mMapView.getMarkerItemFromID(getIntent().getStringExtra("mokname"));
+                TMapPoint point1 = new TMapPoint(wi, kyu);
+                TMapPoint point2 = new TMapPoint(latitude, longitude);
+                TMapData tmapdata = new TMapData();
+                tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,
+                        new TMapData.FindPathDataListenerCallback() {
+                            @Override
+                            public void onFindPathData(TMapPolyLine polyLine) {
+                                mMapView.addTMapPath(polyLine);
+                            }
+                        });
+                for (int count = 0; count < marker.size(); count++) {
+                    String imsy =  String.format(count + "", mMarkerID++);
+                    mMapView.removeAllMarkerItem();
+                }
+            }
+
+
+        }
+
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            LogManager.printLog("상태변화인식");
+
+        }
+
+
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        public void onProviderDisabled(String provider) {
+
+        }
+
+
+    }
 }
