@@ -4,42 +4,24 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.database.DatabaseErrorHandler;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.UserHandle;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -80,7 +62,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,6 +74,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static seoyuki.yuza.R.layout.dialog;
 
 public class MainActivity extends BaseActivity implements onLocationChangedCallback ,TMapView.OnCalloutRightButtonClickCallback,LocationListener {
     /**
@@ -161,6 +144,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     int mCount;
     double s;
     double d;
+
+    DialogInterface mArriveDialog = null; // 얼럿을 담는 인터페이스
+
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         int counts = Integer.parseInt(markerItem.getID())-1;
@@ -461,6 +447,11 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         super.onDestroy();
         if (mOverlayList != null) {
             mOverlayList.clear();
+        }
+
+        if (mArriveDialog != null) { // 얼럿 화면 null 처리
+            mArriveDialog.dismiss();
+            mArriveDialog = null;
         }
     }
 
@@ -1276,19 +1267,19 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     }
 
     public void showalert() {
-        // 도착 완료 화면(얼럿) 코드
-        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
-
+        // 도착 완료 화면(얼럿) 코드, dialog.xml과 혼동되지 않도록 변수명을 alertDialog
+        android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = getLayoutInflater();
 
         // dialog.xml 파일을 인플레이션해서 보여준다
         // dialog.xml 파일의 세 버튼(카메라, 페이스북, 취소)에 대한 클릭 메소드는
         // alertDialogCameraClick, alertDialogFacebookClick, alertDialogCancelClick이며 가장 아래에 위치해 있다.
         // + TextView(위 세 버튼 이미지는 이미지뷰가 아닌 텍스트뷰의 백그라운드)에 직접 리스너를 달면 에러 발생
-        View dialogView = inflater.inflate(R.layout.dialog, null);
-        dialog.setView(dialogView);
-        dialog.create().show();
+        View dialogView = inflater.inflate(dialog, null);
+        alertDialog.setView(dialogView);
+        alertDialog.create();
 
+        mArriveDialog = alertDialog.show(); // DialogInterface에 alertDialog를 담아서 보여준다. 수명주기 코드를 위해 필요하다.
     }
 
     class LocationReceiver extends BroadcastReceiver {
@@ -1487,4 +1478,5 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
 
     }
+
 }
