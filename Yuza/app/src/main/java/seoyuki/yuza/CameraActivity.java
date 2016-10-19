@@ -48,7 +48,7 @@ public class CameraActivity extends Activity {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 // 권한이 없을 때 요청
                 if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                    Toast.makeText(mContext, "위치 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "카메라 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
 
                 } else {
                     requestPermissions(
