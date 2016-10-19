@@ -2,6 +2,7 @@ package seoyuki.yuza;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -19,6 +20,7 @@ import java.net.URLDecoder;
 
 public class DetailActivity extends Activity {
     String decodeStr;
+    MainActivity mainActivity= new MainActivity();
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -32,11 +34,16 @@ public class DetailActivity extends Activity {
 
         TextView detailBottomMsg = (TextView) findViewById(R.id.detailBottomMsg); // 최하단 메시지
 
+
         // 이전 액티비티로부터 넘어온 데이터를 꺼낸다.
 
-        String name = getIntent().getStringExtra("name");
-        String address = getIntent().getStringExtra("address");
-        String content = getIntent().getStringExtra("content");
+       final String name = getIntent().getStringExtra("name");
+        final String address = getIntent().getStringExtra("address");
+        final String content = getIntent().getStringExtra("content");
+        final String wido = getIntent().getStringExtra("wido");
+        final String kyungdo = getIntent().getStringExtra("kyungdo");
+        final String id = getIntent().getStringExtra("id");
+        LogManager.printLog(wido+"::"+kyungdo);
         String image = getIntent().getStringExtra("image");
         //넘어온 데이터를 String값으로 받아온다.
     try {
@@ -77,6 +84,19 @@ public class DetailActivity extends Activity {
         image_start.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // 유적지 길찾기 코드
+                Bundle extras = new Bundle();
+                extras.putString("mokwido", wido);
+                extras.putString("mokkyungdo",kyungdo);
+                extras.putString("mokid",id);
+                // 인텐트를 생성한다.
+                // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
+                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+                // 위에서 만든 Bundle을 인텐트에 넣는다.
+                intent.putExtras(extras);
+                // 액티비티를 생성한다.
+                startActivity(intent);
+                finish();
+
             }
         });
         new ImageDownloader(image_text).execute(decodeStr);

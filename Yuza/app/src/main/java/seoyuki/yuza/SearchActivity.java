@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SearchActivity extends AppCompatActivity {
     ArrayList<Student> list;
@@ -62,19 +64,19 @@ public class SearchActivity extends AppCompatActivity {
         int r3 = (int)(Math.random()*list.size());
         for (int i = 0; i < list.size(); i++) {
             if(r1 == i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                         list.get(i).getName(),
-                        list.get(i).getAddress());
+                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
             }
             if(r2== i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                         list.get(i).getName(),
-                        list.get(i).getAddress());
+                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
             }
             if(r3 == i) {
-                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                         list.get(i).getName(),
-                        list.get(i).getAddress());
+                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
             }
         }
 
@@ -116,6 +118,8 @@ public class SearchActivity extends AppCompatActivity {
                 extras.putString("address", data.getAddress());
                 extras.putString("content", data.getContent());
                 extras.putString("image", data.getImage());
+                extras.putString("wido", data.getWido());
+                extras.putString("kyungdo", data.getKyungdo());
                 // 인텐트를 생성한다.
                 // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
                 Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
@@ -134,7 +138,7 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < list.size(); i++) {
             mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
                     list.get(i).getName(),
-                    list.get(i).getAddress());
+                    list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
         }
         mListView.setAdapter(mAdapter);
     }
@@ -170,13 +174,14 @@ public class SearchActivity extends AppCompatActivity {
             return position;
         }
 
-        public void addItem(Drawable icon, String mTitle, String mDate){
+        public void addItem(Drawable icon, String mTitle, String mDate,String wido,String kyungdo){
             Student addInfo = null;
             addInfo = new Student();
             addInfo.imgId = icon;
             addInfo.name = mTitle;
             addInfo.address = mDate;
-
+            addInfo.wido = wido;
+            addInfo.kyungdo = kyungdo;
             mListData.add(addInfo);
 
         }
