@@ -1,11 +1,14 @@
 package seoyuki.yuza;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -40,6 +43,23 @@ public class CameraActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                    Toast.makeText(mContext, "위치 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.CAMERA},
+                            1);
+
+                }
+                return;
+            }
+        }
+
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
         // 스테이터스바 숨기기
@@ -228,4 +248,26 @@ public class CameraActivity extends Activity {
             }
         }
     };
+
+    // 권한 요청 결과에 따른 콜백 메소드 처리
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "카메라 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                return;
+            }
+
+        }
+    }
 }
