@@ -40,7 +40,8 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             R.id.cameraBtn,
             R.id.searchBtn,
             R.id.settingBtn,
-            R.id.sqlBtn
+            R.id.sqlBtn,
+            R.id.archiveBtn
     };
 
     /**
@@ -145,7 +146,12 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
                 startActivity(intent);
 
                 break;
+            case R.id.archiveBtn:
+                Log.d("yuja", "archiveBtn start: ");
+                intent = new Intent(getApplicationContext(), ArchiveActivity.class);
+                startActivity(intent);
 
+                break;
         }
     }
 
