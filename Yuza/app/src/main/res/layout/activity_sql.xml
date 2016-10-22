@@ -9,14 +9,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SqlLiteYuzaActivity">
 
-
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/textSql"
         android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/insertBtn1" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="삭제yuzaId"
+        android:ems="10"
+        android:id="@+id/delEditText"
+        android:layout_below="@+id/textSql"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="149dp"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:text="insert버튼"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textSql"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="35dp"
-        android:id="@+id/textSql" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/insertBtn1" />
+
+    <Button
+        android:text="select버튼"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/insertBtn1"
+        android:layout_alignEnd="@+id/insertBtn1"
+        android:id="@+id/selectList1" />
+
+    <Button
+        android:text="delete버튼"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selectList1"
+        android:layout_alignStart="@+id/selectList1"
+        android:id="@+id/delBtn1" />
+
+
+
+    <Button
+        android:text="모두삭제"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delBtn2"
+        android:layout_below="@+id/delBtn1"
+        android:layout_alignStart="@+id/delBtn1" />
 </RelativeLayout>

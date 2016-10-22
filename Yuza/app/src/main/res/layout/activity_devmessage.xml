@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,53 +40,21 @@
     </LinearLayout>
     -->
 
-    <Button
-        android:text="업적초기화"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/settingBtn1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textSize="16sp"
-        android:background="@color/cardview_light_background" />
-
-    <Button
-        android:text="네이버까페이동"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/settingBtn2"
-        android:layout_below="@+id/settingBtn1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textSize="16sp"
-        android:background="@color/cardview_light_background" />
-    <Button
-        android:text="개발자한마디"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/settingBtn3"
-        android:layout_below="@+id/settingBtn2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:textSize="16sp"
-        android:background="@color/cardview_light_background" />
-
-    <ImageView
+  <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/yuza_bike"
         android:id="@+id/settingImageYuza"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/settingBtn2"
-        android:layout_marginBottom="16dp" />
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true" />
+
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/message1"
+      android:layout_marginTop="43dp"
+      android:layout_below="@+id/editText3"
+      android:text="아아아아아아"
+      android:layout_alignParentStart="true" />
 
 </RelativeLayout>

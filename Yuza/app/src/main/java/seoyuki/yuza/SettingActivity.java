@@ -1,6 +1,7 @@
 package seoyuki.yuza;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,34 +22,35 @@ public class SettingActivity extends AppCompatActivity {
         actionBar.setTitle("설정 바꾸기");
 
         initSettingBtn();
-        initSettingToggleBtn();
+        //initSettingToggleBtn();
 
     }
 
 
     private static final int[] mArraySettingBtn = { // 버튼 ID 배열
             R.id.settingBtn1,
-            R.id.settingBtn2
+            R.id.settingBtn2,
+            R.id.settingBtn3
     };
-
+/*
     private static final int[] mArraySettingToggleBtn = { // 토글 ID 배열
             R.id.settingToggleBtn1
     };
-
+*/
     private void initSettingBtn() {
         for (int SettingBtn : mArraySettingBtn) {
             Button settingButton = (Button) findViewById(SettingBtn);
             settingButton.setOnClickListener(settingOnClickListener);
         }
     }
-
+/*
     private void initSettingToggleBtn() {
         for (int SettingToggleBtn : mArraySettingToggleBtn) {
             ToggleButton settingToggleButton = (ToggleButton) findViewById(SettingToggleBtn);
             settingToggleButton.setOnClickListener(settingOnClickListener);
         }
     }
-
+*/
     class SettingOnClickListener implements View.OnClickListener {
 
         public void onClick(View v) {
@@ -56,21 +58,28 @@ public class SettingActivity extends AppCompatActivity {
             switch (v.getId()) {
 
                 //토글1
-                case R.id.settingToggleBtn1:
+           /*     case R.id.settingToggleBtn1:
                     intent = new Intent(getBaseContext(), TestBtnActivity.class);
                     startActivity(intent);
                     break;
-
-                //세팅버튼1
+            */
+                //업적 초기화
                 case R.id.settingBtn1:
                     intent = new Intent(getBaseContext(), TestBtnActivity.class);
                     startActivity(intent);
                     break;
 
-                //세팅버튼2
+                //네이버 까페 연동
                 case R.id.settingBtn2:
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://cafe.naver.com/yujainseoul"));
+                    startActivity(intent);
                     break;
 
+                //개발자 한마디
+                case R.id.settingBtn3:
+                    intent = new Intent(getBaseContext(), DevMsgActivity.class);
+                    startActivity(intent);
+                    break;
             }
         }
     }

@@ -2,11 +2,16 @@ package seoyuki.yuza;
 
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +19,8 @@ import java.util.List;
 
 
 public class SqlLiteYuzaActivity extends AppCompatActivity {
+
+    SqlLiteYuzaActivity.testgOnClickListener listener = new SqlLiteYuzaActivity.testgOnClickListener();
     SQLiteDatabase db;
     SqlLiteYuzaOpenHelper helper;
     List<YuzaRanking> yuzaRanking;
@@ -27,33 +34,38 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
                 null, // 커서 팩토리
                 1); // 버전 번호
 
+
+        deleteAll();
+
         // 1. 데이터 저장
-        this.insert(1,"유적지",100,"2016-10-10 20:00");
-        this.insert(2,"유적지2",100,"2016-10-10 20:00");
-        //insert("유저2", 28, "각기도");
-        //insert("유저3", 28, "각도기");
+        this.insert(1,"유적지",100,"120분","2016-10-10 20:00");
+        this.insert(2,"유적지2",100,"120분","2016-10-10 20:00");
+
 
         //일단주석
         // 2. 수정하기
         //update("유저1", 58); // 나이만 수정하기
 
         // 3. 삭제하기
-        delete("유저2");
+       // delete("유저2");
 
         // 4. 조회하기
-        List<YuzaRanking> list =   select();
+        List<YuzaRanking> yuzaRanking =   select();
         String listStr = "";
-        for (int i=0 ; i < yuzaRanking.size() ; i++){
-            listStr += "\n tid: " + yuzaRanking.get(i).getTid() + ", name : "
-                    + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
-                    + ", time : " + yuzaRanking.get(i).getRet_km();
+        for (int i=0 ; i < yuzaRanking.size() ; i++) {
+            listStr += "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : "+ yuzaRanking.get(i).getYuza_id()
+                    + ", ret_time : "+ yuzaRanking.get(i).getRet_time()
+                    + ", ret_km : " + yuzaRanking.get(i).getRet_km();
+
         }
         sqlText = (TextView) findViewById(R.id.textSql);
         sqlText.setText(listStr);
+
+        initBtn();
     }
 
     // insert
-    public void insert(int yuzaid, String name, float km, String time) {
+    public void insert(int yuzaid, String name, float km, String time,String ret_date) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
 
         ContentValues values = new ContentValues();
@@ -63,6 +75,7 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
         values.put("name", name);
         values.put("ret_km", km);
         values.put("ret_time", time);
+        values.put("ret_date", ret_date);
         db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
@@ -93,6 +106,12 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
         Log.i("db", yuzaid + "정상적으로 삭제 되었습니다.");
     }
 
+    public void deleteAll () {
+        db = helper.getWritableDatabase();
+        db.delete("yuzaranking",null,null);
+        Log.i("db", "정상적으로 삭제 되었습니다.");
+    }
+
     // select
     public List<YuzaRanking>  select() {
 
@@ -114,21 +133,96 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
             int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
             String time = c.getString(c.getColumnIndex("ret_time"));
             float km = c.getInt(c.getColumnIndex("ret_km"));
+            String ret_date = c.getString(c.getColumnIndex("ret_date"));
 
             YuzaRanking tmp = new YuzaRanking();
             tmp.setTid(tid);
+            tmp.setYuza_id(yuzaid);
             tmp.setName(name);
             tmp.setRet_km(km);
             tmp.setRet_time(time);
+            tmp.setRet_date(ret_date);
+
             yuzaRanking.add(tmp);
-
-        }
-
-        for (int i=0 ; i < yuzaRanking.size() ; i++) {
-            Log.i("db", "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
-                    + ", time : " + yuzaRanking.get(i).getRet_km());
 
         }
         return yuzaRanking;
     }
+    private static final int[] mArraySettingBtn = { // 버튼 ID 배열
+            R.id.insertBtn1,
+            R.id.selectList1,
+            R.id.delBtn1,
+            R.id.delBtn2
+    };
+    private void initBtn() {
+        for (int SettingBtn : mArraySettingBtn) {
+            Button settingButton = (Button) findViewById(SettingBtn);
+            settingButton.setOnClickListener(listener);
+        }
+    }
+    class testgOnClickListener implements View.OnClickListener {
+
+        String listStr = "";
+        public void onClick(View v) {
+
+            switch (v.getId()) {
+
+                //랜덤 인설트
+                case R.id.insertBtn1:
+                    int t =  (int) (Math.random() * 10000) + 1;
+                    insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                    yuzaRanking =   select();
+                    listStr = "";
+                    for (int i=0 ; i < yuzaRanking.size() ; i++) {
+                        listStr += "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : "+ yuzaRanking.get(i).getYuza_id()
+                                + ", ret_time : "+ yuzaRanking.get(i).getRet_time()
+                                + ", ret_km : " + yuzaRanking.get(i).getRet_km();
+
+                    }
+                    sqlText = (TextView) findViewById(R.id.textSql);
+                    sqlText.setText(listStr);
+                    break;
+
+                //리스트불러오기
+                case R.id.selectList1:
+                    yuzaRanking =   select();
+                    listStr = "";
+                    for (int i=0 ; i < yuzaRanking.size() ; i++) {
+                        listStr += "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : "+ yuzaRanking.get(i).getYuza_id()
+                                + ", ret_time : "+ yuzaRanking.get(i).getRet_time()
+                                + ", ret_km : " + yuzaRanking.get(i).getRet_km();
+
+                    }
+                    sqlText = (TextView) findViewById(R.id.textSql);
+                    sqlText.setText(listStr);
+                    break;
+
+                //텍스트값의 로우 삭제
+                case R.id.delBtn1:
+                    EditText deltxt = (EditText) findViewById(R.id.delEditText);
+                    String str =deltxt.getText().toString();
+                    if(str != null &&  !"".equals(str)){
+                        delete(str);
+                    }
+
+                    yuzaRanking =   select();
+                    listStr = "";
+                    for (int i=0 ; i < yuzaRanking.size() ; i++) {
+                        listStr += "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : "+ yuzaRanking.get(i).getYuza_id()
+                                + ", ret_time : "+ yuzaRanking.get(i).getRet_time()
+                                + ", ret_km : " + yuzaRanking.get(i).getRet_km();
+
+                    }
+                    sqlText = (TextView) findViewById(R.id.textSql);
+                    sqlText.setText(listStr);
+                    break;
+
+                case R.id.delBtn2:
+                    deleteAll();
+                    sqlText.setText("");
+                    break;
+            }
+        }
+    }
+
 }

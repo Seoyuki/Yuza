@@ -24,7 +24,8 @@ public class SqlLiteYuzaOpenHelper extends SQLiteOpenHelper {
                 "yuza_id integer, " +
                 "name text, " +
                 "ret_time text, " +
-                "ret_km real);";
+                "ret_km real," +
+                "ret_date text);";
         db.execSQL(sql);
     }
 
