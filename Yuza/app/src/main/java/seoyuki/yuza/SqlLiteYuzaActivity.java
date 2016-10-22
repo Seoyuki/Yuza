@@ -35,11 +35,11 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
                 1); // 버전 번호
 
 
-        deleteAll();
+        //deleteAll();
 
         // 1. 데이터 저장
-        this.insert(1,"유적지",100,"120분","2016-10-10 20:00");
-        this.insert(2,"유적지2",100,"120분","2016-10-10 20:00");
+        //this.insert(1,"유적지",100,"120분","2016-10-10 20:00");
+        //this.insert(2,"유적지2",100,"120분","2016-10-10 20:00");
 
 
         //일단주석
