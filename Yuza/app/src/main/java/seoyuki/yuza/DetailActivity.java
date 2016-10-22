@@ -88,6 +88,7 @@ public class DetailActivity extends Activity {
                 extras.putString("mokwido", wido);
                 extras.putString("mokkyungdo",kyungdo);
                 extras.putString("mokid",id);
+                extras.putString("mokname",name);
                 // 인텐트를 생성한다.
                 // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
                 Intent intent = new Intent(DetailActivity.this, MainActivity.class);
