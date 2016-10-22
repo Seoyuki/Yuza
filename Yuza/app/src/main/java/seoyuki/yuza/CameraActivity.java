@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -38,6 +39,8 @@ public class CameraActivity extends Activity {
     @SuppressWarnings("deprecation")
     Camera.PictureCallback jpegCallback;
 
+    private int rotation1 = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ) {
                 // 권한이 없을 때 요청
                 if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                     Toast.makeText(mContext, "카메라 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
@@ -54,6 +57,34 @@ public class CameraActivity extends Activity {
                     requestPermissions(
                             new String[] {Manifest.permission.CAMERA},
                             1);
+
+                }
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Toast.makeText(mContext, "저장소 읽기 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                            2);
+
+                }
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(mContext, "저장소 쓰기 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            3);
 
                 }
                 return;
@@ -75,21 +106,21 @@ public class CameraActivity extends Activity {
                 FileOutputStream outStream = null;
                 try {
                     File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES), "youja");
+                            Environment.DIRECTORY_PICTURES), "yuza");
                     Toast.makeText(getApplicationContext(),
                             mediaStorageDir.getPath(), Toast.LENGTH_LONG).show();
                     if (! mediaStorageDir.exists()){
                         if (! mediaStorageDir.mkdirs()){
-                            Log.d("youja", "failed to create directory");
+                            Log.d("yuza", "failed to create directory");
 
                         }
                     }
 
-                    str = String.format(mediaStorageDir.getPath()+"/youja%d.png",
+                    str = String.format(mediaStorageDir.getPath()+"/yuza%d.png",
                             System.currentTimeMillis());
 
                     File mediaFile;
-                    Log.d("youja", str);
+                    Log.d("yuza", str);
                     mediaFile = new File(str);
                     outStream = new FileOutputStream(mediaFile);
 
@@ -116,6 +147,8 @@ public class CameraActivity extends Activity {
                 Intent intent = new Intent(CameraActivity.this,
                         ResultActivity.class);
                 intent.putExtra("strParamName", str);
+                intent.putExtra("rotation1", rotation1);
+
                 startActivity(intent);
             }
         };
@@ -127,7 +160,7 @@ public class CameraActivity extends Activity {
                 if(mCamera != null){
                     mCamera.takePicture(null, null, jpegCallback);
                 }else{
-                    Log.d("youja","testddddd");
+                    Log.d("yuza","testddddd");
                 }
 
             }
@@ -136,7 +169,9 @@ public class CameraActivity extends Activity {
     /** 카메라 인스턴스를 안전하게 획득합니다 */
     public static Camera getCameraInstance(){
         Camera c = null;
+
         try {
+
             c = Camera.open();
         }
         catch (Exception e){
@@ -168,22 +203,32 @@ public class CameraActivity extends Activity {
                     mCamera.stopPreview();
                 }
 
-                Camera.Parameters parameters = mCamera.getParameters();
-                if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-                    parameters.set("orientation", "portrait");
-                    mCamera.setDisplayOrientation(90);
-                    parameters.setRotation(90);
-                } else {
-                    parameters.set("orientation", "landscape");
-                    mCamera.setDisplayOrientation(0);
-                    parameters.setRotation(0);
-                }
-                mCamera.setParameters(parameters);
+                android.hardware.Camera.CameraInfo info =
+                        new android.hardware.Camera.CameraInfo();
+                android.hardware.Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);//카메라 갯수 관련 현재는 후방카메라만적용
 
+                int rotation = CameraActivity.this.getWindowManager().getDefaultDisplay()
+                        .getRotation();
+                int degrees = 0;
+                switch (rotation) {
+                    case Surface.ROTATION_0: degrees = 0; break;
+                    case Surface.ROTATION_90: degrees = 90; break;
+                    case Surface.ROTATION_180: degrees = 180; break;
+                    case Surface.ROTATION_270: degrees = 270; break;
+                }
+                int result;
+                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {//전면카메라라면
+                    result = (info.orientation + degrees) % 360;
+                    result = (360 - result) % 360;  // compensate the mirror
+                } else {  // back-facing
+                    result = (info.orientation - degrees + 360) % 360;
+                }
+                mCamera.setDisplayOrientation(result);//폰 화면전환에 따른 로테이션 전환 90도인지 180도인지
+                rotation1=result;//결과에도 보내야함
                 mCamera.setPreviewDisplay(holder);
                 mCamera.startPreview();
             } catch (IOException e) {
-                Log.d("youja", "Error setting camera preview: " + e.getMessage());
+                Log.d("yuza", "Error setting camera preview: " + e.getMessage());
             }
         }
 
@@ -214,7 +259,7 @@ public class CameraActivity extends Activity {
                 mCamera.startPreview();
 
             } catch (Exception e){
-                Log.d("youja", "Error starting camera preview: " + e.getMessage());
+                Log.d("yuza", "Error starting camera preview: " + e.getMessage());
             }
         }
         private Camera.Size getBestPreviewSize(int width, int height)
@@ -253,7 +298,7 @@ public class CameraActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 1: {
+            case 1:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
@@ -265,8 +310,41 @@ public class CameraActivity extends Activity {
 
                 }
 
-                return;
-            }
+                break;
+
+
+
+            case 2:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "저장소 일기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+
+
+            case 3:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "저장소 쓰기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+
 
         }
     }

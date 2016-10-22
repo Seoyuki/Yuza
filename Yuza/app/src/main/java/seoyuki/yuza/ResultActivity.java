@@ -1,18 +1,26 @@
 package seoyuki.yuza;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,28 +42,80 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends AppCompatActivity {
     String photoPath ="";
     Bitmap bitMap;
     private CallbackManager callbackManager;
     ShareDialog shareDialog;
-
+    private Context mContext = this;
+    private int rotation1 = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                    Toast.makeText(mContext, "카메라 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.CAMERA},
+                            1);
+
+                }
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Toast.makeText(mContext, "저장소 읽기 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                            2);
+
+                }
+                return;
+            }
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(mContext, "저장소 쓰기 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            3);
+
+                }
+                return;
+            }
+        }
+
         // 스테이터스바 숨기기
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+       //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("사진 확인");
 
         Intent intent = getIntent();
         photoPath = intent.getStringExtra("strParamName");
+
+        rotation1 = intent.getIntExtra("rotation1",90);
         Log.d("youja", "test@@@@@@"+photoPath);
         BitmapFactory.Options options = new BitmapFactory.Options();
        // options.inSampleSize = 4;
         final Bitmap bmp = BitmapFactory.decodeFile(photoPath, options);
 
         Matrix matrix = new Matrix();
-        matrix.preRotate(90);
+
+        matrix.preRotate(rotation1);
         Bitmap adjustedBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
                 bmp.getHeight(), matrix, true);
 
@@ -238,5 +298,60 @@ public class ResultActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    // 권한 요청 결과에 따른 콜백 메소드 처리
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "카메라 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+
+
+            case 2:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "저장소 일기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+
+
+            case 3:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "저장소 쓰기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "권한 거부됨.", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+
+
+        }
     }
 }
