@@ -6,6 +6,7 @@ public class YuzaRanking {
     int tid;
     int yuza_id;
     String name;
+    String ret_date;
     String ret_time;
     float ret_km;
 
@@ -21,12 +22,28 @@ public class YuzaRanking {
         this.tid = tid;
     }
 
+    public int getYuza_id() {
+        return yuza_id;
+    }
+
+    public void setYuza_id(int yuza_id) {
+        this.yuza_id = yuza_id;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRet_date() {
+        return ret_date;
+    }
+
+    public void setRet_date(String ret_date) {
+        this.ret_date = ret_date;
     }
 
     public String getRet_time() {
