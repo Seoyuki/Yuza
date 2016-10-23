@@ -1,13 +1,11 @@
 package seoyuki.yuza;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +27,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,50 +42,35 @@ public class ArchiveActivity extends AppCompatActivity {
     List<YuzaRanking> yuzaRanking;
 
     private ListView mArchiveListView = null;
+    private ListView archiveRecoListView = null;
     private ArchiveActivity.ListViewAdapter mArchiveAdapter = null;
+    private ArchiveActivity.ListViewAdapter archiveRecoAdapter = null;
     ArrayList<Student> mArchiveStudentList = new ArrayList<Student>();
     private ArrayList<YuzaRanking> mArchiveListData = new ArrayList<YuzaRanking>();
 
-    private final int YUZA_MAX_NUMBER = 99;
-    private int archiveNumber = 0;
-    private String imageURL = "";
-    private String decodeStr = "";
-
-    private TextView archiveNumberView;
+    private ImageView archiveImage;
     private TextView archiveTitleText;
-    private TextView archiveCheerText;
+    private TextView archiveInfoText;
 
-    private ImageView archiveNoImg;
-    private TextView archiveNoMsg;
-
-    private int n;
-    private StringBuilder stringBuilder = new StringBuilder();
-    private final String ARCHIVE_TITLE_STRING[] = {
-            "설레는 시작!",
-            "다리가 딴딴! :)",
-            "서울유적사랑xD",
-            "자전거여행자>o<",
-            "계속 두근두근!",
-            "조금 더 가까이:)",
-            "행복한 자전거^o^"
+    private StringBuilder archiveTitle = new StringBuilder();
+    private int level;
+    private final int archiveImageLevelId[] = {
+            R.drawable.level1,
+            R.drawable.level2,
+            R.drawable.level3,
+            R.drawable.level4,
+            R.drawable.level5,
+            R.drawable.level6,
+            R.drawable.level7
     };
-    private final String ARCHIVE_CHEER_STRING[] = {
-            "뿌듯할 것 같아요. xD",
-            "오늘 컨디션은 괜찮아요?",
-            "친구에게 같이 가자고 해볼까요!?",
-            "조금 힘들었죠? :) 화이팅!",
-            "오늘도 좋은 하루!",
-            "추억이 새록새록...",
-            "기분 좋은 음악도 함께라면!? ^^"
-    };
-    private final String ARCHIVE_GRADE_STRING[] = {
-            "유자 초보자입니다. ^^\n",
-            "유자 중수예요. :)\n",
-            "유자 고수예요. 짝짝짝!\n",
-            "유자 초고수예요. 우와!\n",
-            "유자 초인(^^;)이에요.\n",
-            "유자 마스터예요. >o<\n",
-            "유자의 수호신이에요. ㅋㅋ^^\n"
+    private final String archiveInfo[] = {
+            "유적들과 친해지는 단계 ^^",
+            "조금씩 빠져들고 있음!",
+            "본격적으로 유적 다녀와보기!",
+            "이제는 매니아라고 해도 되겠어요!",
+            "유자의 달인? ^^",
+            "유자의 신!",
+            "앞으로도 행복한 자전거 여행 하세요!"
     };
 
     @Override
@@ -96,19 +79,17 @@ public class ArchiveActivity extends AppCompatActivity {
         setContentView(R.layout.activity_archive);
 
         ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
+        actionBar.setTitle("나의 여정");
 
+        archiveRecoListView = (ListView) findViewById(R.id.archiveListView);
         mArchiveListView = (ListView) findViewById(R.id.archiveListView);
         // searchText = (TextView)findViewById(R.id.archiveText);
         mArchiveAdapter = new ListViewAdapter(this);
+        archiveRecoAdapter = new ListViewAdapter(this);
 
-        archiveNumberView = (TextView) findViewById(R.id.archiveNumber);
+        archiveImage = (ImageView) findViewById(R.id.archiveImage);
         archiveTitleText = (TextView) findViewById(R.id.archiveTitleText);
-        archiveCheerText = (TextView) findViewById(R.id.archiveCheerText);
-
-        archiveNoImg = (ImageView) findViewById(R.id.archiveNoImg);
-        archiveNoMsg = (TextView) findViewById(R.id.archiveNoMsg);
+        archiveInfoText = (TextView) findViewById(R.id.archiveInfoText);
 
         helper = new SqlLiteYuzaOpenHelper(this, // 현재 화면의 context
                 "yuza.db", // 파일명
@@ -116,20 +97,13 @@ public class ArchiveActivity extends AppCompatActivity {
                 1); // 버전 번호
 
         List<YuzaRanking> archiveList = select(); // 현재 완료한 곳 리스트 불러오기
-        archiveNumber = archiveList.size();
 
         mArchiveStudentList = xmlParser();
 
-        // 도착한 곳이 있으면 archiveNoImg, archiveNoMsg를 숨기고 archiveRecord는 보여준다
-        if (archiveNumber != 0) {
-            archiveNoImg.setVisibility(View.GONE);
-            archiveNoMsg.setVisibility(View.GONE);
-        }
-
         // 도착한 곳의 숫자만큼 업적 이미지와 업적 관련 텍스트 보여주기
-        setArchiveNumberView(archiveNumber);
-        setArchiveTitleTextView(archiveNumber);
-        setArchiveCheerTextView(archiveNumber);
+        level = archiveList.size() / 15;
+        setArchiveImageView(level);
+        setAchiveTextView(level);
 
         for (YuzaRanking i : archiveList) {
             mArchiveAdapter.addItem(i); }
@@ -188,20 +162,20 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
 //    // insert
-//    public void insert(int yuzaid, String name, float km, String time, String date) {
-//        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
-//
-//        ContentValues values = new ContentValues();
-//        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-//        // 데이터의 삽입은 put을 이용한다.
-//        values.put("yuza_id", yuzaid);
-//        values.put("name", name);
-//        values.put("ret_km", km);
-//        values.put("ret_time", time);
-//        values.put("ret_date", date);
-//        db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-//        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
-//    }
+    public void insert(int yuzaid, String name, float km, String time, String date) {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("yuza_id", yuzaid);
+        values.put("name", name);
+        values.put("ret_km", km);
+        values.put("ret_time", time);
+        values.put("ret_date", date);
+        db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
+    }
 //
 //    // update 일단 주석
 //  /*  public void update (String name, int age) {
@@ -229,41 +203,14 @@ public class ArchiveActivity extends AppCompatActivity {
 //        Log.i("db", yuzaid + "정상적으로 삭제 되었습니다.");
 //    }
 
-    private void setArchiveNumberView(int number) {
-        archiveNumberView.setText(String.valueOf(number)); // 전체 도착 개수 출력
+    private void setArchiveImageView(int level) {
+        archiveImage.setImageResource(archiveImageLevelId[level]);
     }
 
-    private void setArchiveTitleTextView(int number) {
-        archiveTitleText.setText(ARCHIVE_TITLE_STRING[number/15]);
-    }
-
-    private void setArchiveCheerTextView(int number) {
-
-        stringBuilder.append("단계 ").append((number/15)).append(", ");
-        stringBuilder.append(ARCHIVE_GRADE_STRING[number/15]);
-
-        n = (int) (Math.random() * 6);
-        switch (number) {
-            case YUZA_MAX_NUMBER:
-                stringBuilder
-                        .append("모든 유적에 다녀왔어요!\n");
-                stringBuilder.append(ARCHIVE_CHEER_STRING[n]);
-                break;
-            case 0:
-                stringBuilder
-                        .append("이제부터 시작! 유적은 모두 ")
-                        .append(YUZA_MAX_NUMBER + "개예요.\n");
-                break;
-            default:
-                stringBuilder
-                        .append(YUZA_MAX_NUMBER)
-                        .append("개의 유적 중 ")
-                        .append(YUZA_MAX_NUMBER - number)
-                        .append("개가 남았어요. ^^\n");
-                stringBuilder.append(ARCHIVE_CHEER_STRING[n]);
-        }
-
-        archiveCheerText.setText(stringBuilder);
+    private void setAchiveTextView(int level) {
+        archiveTitle.append(yuzaRanking.size()).append("개의 유적에 다녀왔어요.\n");
+        archiveTitleText.setText(archiveTitle.toString());
+        archiveInfoText.setText(archiveInfo[level]);
     }
 
     // select
@@ -279,12 +226,12 @@ public class ArchiveActivity extends AppCompatActivity {
          * query (String table, String[] columns, String selection, String[]
          * selectionArgs, String groupBy, String having, String orderBy)
          */
-        yuzaRanking = new ArrayList<>();
+        yuzaRanking = new ArrayList<YuzaRanking>();
         while (c.moveToNext()) {
             // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
             int tid = c.getInt(c.getColumnIndex("tid"));
             String name = c.getString(c.getColumnIndex("name"));
-            // int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+            int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
             String time = c.getString(c.getColumnIndex("ret_time"));
             float km = c.getInt(c.getColumnIndex("ret_km"));
             String date = c.getString(c.getColumnIndex("ret_date"));
@@ -308,20 +255,20 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
     private class ViewHolder {
-        private ImageView mArchiveImageIcon;
+        public ImageView mArchiveImageIcon;
 
-        private TextView mArchiveName;
+        public TextView mArchiveName;
 
-        private TextView mArchiveDate;
+        public TextView mArchiveDate;
 
-        private TextView mArchiveTime;
+        public TextView mArchiveTime;
 
-        private TextView mArchiveDistance;
+        public TextView mArchiveDistance;
     }
 
     private class ListViewAdapter extends BaseAdapter implements Filterable {
+        private Context mContext = null;
         Activity context;
-        boolean isYellow = true;
 
         public ListViewAdapter(Activity context) {
             super();
@@ -373,41 +320,25 @@ public class ArchiveActivity extends AppCompatActivity {
                 holder.mArchiveTime = (TextView) convertView.findViewById(R.id.archiveTime);
                 holder.mArchiveDistance = (TextView) convertView.findViewById(R.id.archiveDistance);
 
-                if (isYellow) {
-                    convertView.setBackgroundColor(getColor(R.color.colorPrimaryLight));
-                    isYellow = !isYellow;
-                } else {
-                    convertView.setBackgroundColor(getColor(android.R.color.white));
-                    isYellow = !isYellow;
-                }
-
                 convertView.setTag(holder);
 
             }else{
                 holder = (ArchiveActivity.ViewHolder) convertView.getTag();
             }
 
-            imageURL = mArchiveStudentList.get(position).getImage();
 
-            try {
-                decodeStr = URLDecoder.decode(imageURL, "UTF-8");
-                //image를 디코딩한다.
-            } catch(Exception e) {
-
-            }
 
             if (mData.name != null) {
                 holder.mArchiveImageIcon.setVisibility(View.VISIBLE);
-                new ImageDownloader(holder.mArchiveImageIcon).execute(decodeStr);
+                holder.mArchiveImageIcon.setImageResource(R.drawable.yuza_stamp_archive);
             }else{
                 holder.mArchiveImageIcon.setVisibility(View.GONE);
             }
 
             holder.mArchiveName.setText(mData.getName());
-            holder.mArchiveDate.setText("날짜_" + mData.getRet_date());
-            holder.mArchiveTime.setText("시간_" + mData.getRet_time());
-            holder.mArchiveDistance.setText("거리_" + String.valueOf(mData.getRet_km()) + "km");
-
+            holder.mArchiveDate.setText("정복 날짜 : " + mData.getRet_date());
+            holder.mArchiveTime.setText("걸린 시간 : " + mData.getRet_time());
+            holder.mArchiveDistance.setText("이동 거리 : " + String.valueOf(mData.getRet_km()) + "km");
 
             return convertView;
         }
@@ -475,7 +406,7 @@ public class ArchiveActivity extends AppCompatActivity {
 
     //xmlParser를 사용해 xml 파싱하기
     private ArrayList<Student> xmlParser() {
-        ArrayList<Student> arrayList = new ArrayList<>();
+        ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser
 
@@ -493,31 +424,24 @@ public class ArchiveActivity extends AppCompatActivity {
                             student = new Student();
                         }
                         if (startTag.equals("id")) {
-                            assert student != null;
                             student.setId(parser.next());
                         }
                         if (startTag.equals("name")) {
-                            assert student != null;
                             student.setName(parser.nextText());
                         }
                         if (startTag.equals("address")) {
-                            assert student != null;
                             student.setAddress(parser.nextText());
                         }
                         if (startTag.equals("content")) {
-                            assert student != null;
                             student.setContent(parser.nextText());
                         }
                         if (startTag.equals("wido")) {
-                            assert student != null;
                             student.setWido(parser.nextText());
                         }
                         if (startTag.equals("kyungdo")) {
-                            assert student != null;
                             student.setKyungdo(parser.nextText());
                         }
                         if (startTag.equals("image")) {
-                            assert student != null;
                             student.setImage(parser.nextText());
                         }
                         break;
@@ -532,37 +456,17 @@ public class ArchiveActivity extends AppCompatActivity {
             }
 
 
-        } catch (XmlPullParserException | IOException e) {
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return arrayList;
     }
 
-    class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-        //AsyncTask를 사용해 url 이미지 보여주기
-        ImageView bmImage;
-        public ImageDownloader(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
 
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            String url = params[0];
-            Bitmap mIcon = null;
-            try {
-                InputStream is = new java.net.URL(url).openStream();
-                mIcon = BitmapFactory.decodeStream(is);
-                //디코딩된 소스를 비트맵에 넣는다.
-            } catch (Exception e) {
-            }
-            return mIcon;
-        }
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-            //결과를 비트맵에 저장한다.
-        }
-    }
 
 }
 
