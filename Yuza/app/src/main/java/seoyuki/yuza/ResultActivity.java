@@ -160,16 +160,16 @@ public class ResultActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject user, GraphResponse response) {
                                 if (response.getError() != null) {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                                    Log.i("yuza", "user: " + user.toString());
+                                    Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
 
                                 } else {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                                    Log.i("yuza", "user: " + user.toString());
+                                    Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
                                     setResult(RESULT_OK);
                                     String filePath =  saveBitmaptoPng(bitMap);
 
-                                    Log.i("yuja", "filePath: " + filePath);
+                                    Log.i("yuza", "filePath: " + filePath);
                                  // finish();
                                     shareDialog = new ShareDialog(ResultActivity.this);
                                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -189,7 +189,7 @@ public class ResultActivity extends AppCompatActivity {
                                         shareDialog.show(content);
                                     }
                                     else{
-                                        Log.d("youja", "you cannot share photos :(");
+                                        Log.d("yuza", "you cannot share photos :(");
                                     }
 
                                 }
@@ -203,7 +203,7 @@ public class ResultActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(FacebookException error) {
-                        Log.e("yuja", "Error: " + error);
+                        Log.e("yuza", "Error: " + error);
                         finish();
                     }
 

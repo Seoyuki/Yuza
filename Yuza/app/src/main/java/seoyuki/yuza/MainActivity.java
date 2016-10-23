@@ -3,6 +3,7 @@ package seoyuki.yuza;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.graphics.PointF;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -83,7 +85,7 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static seoyuki.yuza.R.layout.dialog;
 
-public class MainActivity extends BaseActivity implements onLocationChangedCallback, TMapView.OnCalloutRightButtonClickCallback, LocationListener {
+public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRightButtonClickCallback {
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -119,10 +121,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private CallbackManager callbackManager;                                                                //권한 관련 변수?
     ShareDialog shareDialog;                                                                                   //alert창
 
-    @Override
-    public void onLocationChange(Location location) {                                                       //위치 변경시 실행되는 메서드
-        Log.d("안녕","그래안녕");
-    }
+
 
     private TMapView mMapView = null;                                                                       //지도 생성
     private Context mContext;                                                                               //context
@@ -134,6 +133,196 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
     private static int mMarkerID;                                                       //마커 아이디
     ArrayList<String> mArrayMarkerID;
     DialogInterface mArriveDialog = null; // 얼럿을 담는 인터페이스
+    private LocationManager locationManager;
+    long minTime = 1000;  //인식 초
+    float minDistance = 5; // 인식 최소거리
+
+    TMapGpsManager tmapgps;
+    TMapPoint tpoint;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                // 권한이 없을 때 요청
+                if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION) || shouldShowRequestPermissionRationale(ACCESS_COARSE_LOCATION)) {
+                    Toast.makeText(mContext, "위치 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
+
+                } else {
+                    requestPermissions(
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                            1);
+                }
+                return;
+            }
+        }
+
+        //Tmap 초기 셋팅
+        mContext = MainActivity.this;
+        mMapView = new TMapView(mContext);
+        //뷰에 셋팅
+        addView(mMapView);
+        configureMapView();
+
+
+        //다른 엑티비티에서 온 위도 경도
+        mokswido = getIntent().getStringExtra("mokwido");            //목적지 위도를 담는다
+        mokskyungdo = getIntent().getStringExtra("mokkyungdo");     //목적지 경도를 담는다
+
+        mMarkerID = 0;                                                                                  //초기화
+        showMarkerPoint();                                                                              //마커를 찍는다
+        mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);        //tmap 로고위치  변경
+        mMapView.setBicycleInfo(true);                                                      //자전거 도로표시
+        mMapView.setBicycleFacilityInfo(true);                                              //자전거 시설물 표시 여부
+
+
+
+        mMapView.setZoomLevel(17);                                                              //지도 확대 레벨
+        mMapView.setIconVisibility(true);                                                       //현재위치 표시 여부
+
+
+        wido2 = getIntent().getStringExtra("mokwido");                                          //목적지 위도를 받음
+        kyungdo2 = getIntent().getStringExtra("mokkyungdo");                                    //목적지 경도를 받음
+
+
+    //LocationManager 설정 및 탐색
+         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        GpsListener gpsListener = new GpsListener();
+
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                minTime,
+                minDistance,
+                gpsListener);
+
+
+        Log.d("yuza", "locationManager.getLastKnownLocation GPS_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        Log.d("yuza", "locationManager.getLastKnownLocation NETWORK_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+        if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {//gps가 켜저 있으면
+            Location  lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);      //gps로 위치 검색
+            if (lastLocation == null) {                                                                 //gps가 잡히지 않을때
+                lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+
+            latitude = lastLocation.getLatitude();                                                      //현재위치 위도
+            longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
+
+            Log.d("yuza", " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
+            Toast.makeText(getBaseContext(), " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+                    Toast.LENGTH_SHORT).show();
+            mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+            mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
+
+
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "GPS를 켜주시기바랍니다.", Snackbar.LENGTH_INDEFINITE).setAction("GPS켜기", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
+                        }
+                    }).show();
+                }
+            });
+        }
+
+
+
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
+        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
+
+        //업적
+        img1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ArchiveActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //검색
+        img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("yuza", "searchBtn start: ");
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+        //설정
+        img3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+        //현재위치
+        img4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+                mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
+
+            }
+        });
+
+
+        //길찾기 시 아래 로직으로 경로 실행 시킨다
+        if (wido2 != null) {                                                                        //목적지 정보가 있을때
+
+            Double wi = Double.parseDouble(wido2);                                                  //변수 변환
+            Double kyu = Double.parseDouble(kyungdo2);
+
+            mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
+            mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
+            mMapView.setSightVisible(true);                                                         //시야 표출여부
+            TMapPoint point1 = new TMapPoint(wi, kyu);                                              //목적지 설정
+            TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
+            Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
+
+            TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
+            tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
+                    new TMapData.FindPathDataListenerCallback() {
+                        @Override
+                        public void onFindPathData(TMapPolyLine polyLine) {
+                            mMapView.addTMapPath(polyLine);
+                        }
+                    });
+          //  for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
+          //      String imsy = String.format(count + "", mMarkerID++);
+          //      mMapView.removeAllMarkerItem();                                                         //마커를 지운다
+          //  }
+
+        }
+
+    }
+
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+
+
     @Override
     public void onCalloutRightButton(TMapMarkerItem markerItem) {
         int counts = Integer.parseInt(markerItem.getID()) - 1;                          //선택한 마커의 아이디(숫자)
@@ -150,184 +339,15 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         startActivity(intent);                                                                  //intent실행
         finish();                                                                                //메인 종료
     }
-    private LocationManager locationManager;                                                    //변수 생성
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mContext = this;
-        mMapView = new TMapView(this);
-        addView(mMapView);
-        configureMapView();
-        mokswido = getIntent().getStringExtra("mokwido");                                       //목적지 위도를 담는다
-        mokskyungdo = getIntent().getStringExtra("mokkyungdo");                                 //목적지 경도를 담는다
-        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
-        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
-        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
-        img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ArchiveActivity.class);
-                startActivity(intent);
-            }
-        });
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("yuja", "searchBtn start: ");
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                startActivity(intent);
-
-
-            }
-        });
-        img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent);
-
-
-            }
-        });
-
-
-
-
-        mMarkerID = 0;                                                                                  //초기화
-
-        showMarkerPoint();                                                                              //마커를 찍는다
-        mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);//tmap 위치 변경
-        mMapView.setBicycleFacilityInfo(true);                                          //자전거 시설물 표시 여부
-
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // 권한이 없을 때 요청
-                    if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION) || shouldShowRequestPermissionRationale(ACCESS_COARSE_LOCATION)) {
-                        Toast.makeText(mContext, "위치 관련 권한이 필요해요.", Toast.LENGTH_LONG).show();
-
-                    } else {
-                        requestPermissions(
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                                1);
-                    }
-                    return;
-                }
-            }
-
-        } catch (Exception e) {
-
-        } finally {
-            Location lastLocation = null;        //마지막으로 받았던 위치정보를 담을 변수
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);//위치 서비스 실행
-            if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {//gps가 켜저 있으면
-                lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);      //gps로 위치 검색
-                if (lastLocation == null) {                                                                 //gps가 잡히지 않을때
-                    lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  //network로 실행
-                }
-                latitude = lastLocation.getLatitude();                                                      //현재위치 위도
-                longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
-                mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
-                mMapView.setLocationPoint(longitude, latitude);
-            } else {
-               runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Snackbar.make(getWindow().getDecorView().getRootView(), "GPS를 켜주시기바랍니다.", Snackbar.LENGTH_INDEFINITE).setAction("GPS켜기", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(intent);
-                            }
-                        }).show();
-                    }
-                });
-            }
-
-//            latitude = lastLocation.getLatitude();                                                      //현재위치 위도
-//            longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
-//            mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
-//            mMapView.setLocationPoint(longitude, latitude);                                             //현재위치를 티맵의 현재 위치로
-
-        }
-
-        mMapView.setZoomLevel(17);                                                              //지도 확대 레벨
-        mMapView.setIconVisibility(true);                                                       //현재위치 표시 여부
-        wido2 = getIntent().getStringExtra("mokwido");                                          //목적지 위도를 받음
-        kyungdo2 = getIntent().getStringExtra("mokkyungdo");                                    //목적지 경도를 받음
-        if (wido2 != null) {                                                                        //목적지 정보가 있을때
-            Double wi = Double.parseDouble(wido2);                                                  //변수 변환
-            Double kyu = Double.parseDouble(kyungdo2);
-            mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
-            mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
-            TMapPoint point1 = new TMapPoint(wi, kyu);                                              //목적지 설정
-            TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
-            TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
-            tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
-                    new TMapData.FindPathDataListenerCallback() {
-                        @Override
-                        public void onFindPathData(TMapPolyLine polyLine) {
-                            mMapView.addTMapPath(polyLine);
-                        }
-                    });
-            for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
-                String imsy = String.format(count + "", mMarkerID++);
-                mMapView.removeAllMarkerItem();                                                         //마커를 지운다
-            }
-
-        }
-
-    }
-
-
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {                                                  //위치가 변경되었을때
-        Log.d("잘가","그래잘가");
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-
-        if (wido2 != null) {
-            mMapView.setLocationPoint(longitude, latitude);
-            mMapView.setCenterPoint(longitude, latitude);
-            setupProximityAlert();
-            Log.d("sds", longitude + " :ee " + latitude);
-            LogManager.printLog(longitude + " :qq " + latitude);
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Toast.makeText(getBaseContext(), "Gps is turned on!! ",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
     private void configureMapView() {
         mMapView.setSKPMapApiKey(mApiKey);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+       // locationManager.removeUpdates();
         if (mOverlayList != null) {
             mOverlayList.clear();
         }
@@ -341,6 +361,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             unregisterReceiver(receivers);//실행했던 리시버 삭제
         }catch(IllegalArgumentException e){}
     }
+
     //xmlParser를 사용해 xml 파싱하기
     ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();
@@ -404,16 +425,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         return arrayList;
     }
 
-    /**
-     * showMarkerPoint
+    /*
      * 지도에 마커를 표출한다.
      */
     public void showMarkerPoint() {
         Bitmap bitmap = null;                                           //비트맵 사진 저장 변수
         TMapPoint point;                                                //위치를 담을 변수
-        Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);//마커 오른쪽 사진
-        String strID = String.format("pmarker%d", mMarkerID++);
-        bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
+        String strID ="";
+        Bitmap bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go); //마커 오른쪽 사진
         item2.setCalloutRightButtonImage(bitmap_i);                                                 //오른쪽에 담길 사진 변경
         marker = xmlParser();
         stu = new Student[marker.size()];
@@ -444,7 +463,9 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
             mMapView.addMarkerItem(strID, item2);
         }
     }
-    private void setupProximityAlert() {                                                            //목적지 도착여부를 알려주는 메서드
+    private void setupProximityAlert() {     //목적지 도착여부를 알려주는 메서드
+
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);             //위치 정보
         Location lastLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
@@ -529,14 +550,14 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
         File file_path;
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "youja");
+                Environment.DIRECTORY_PICTURES), "yuza");
 
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("youja", "failed to create directory");
+                Log.d("yuza", "failed to create directory");
             }
         }
-        String file_name = String.format(mediaStorageDir.getPath() + "/youja%d.png",
+        String file_name = String.format(mediaStorageDir.getPath() + "/yuza%d.png",
                 System.currentTimeMillis());
 
         try {
@@ -581,17 +602,17 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                     @Override
                     public void onCompleted(JSONObject user, GraphResponse response) {
                         if (response.getError() != null) {
-                            Log.i("yuja", "user: " + user.toString());
-                            Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                            Log.i("yuza", "user: " + user.toString());
+                            Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
 
                         } else {
-                            Log.i("yuja", "user: " + user.toString());
-                            Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                            Log.i("yuza", "user: " + user.toString());
+                            Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
                             setResult(RESULT_OK);
                             Bitmap stamp = BitmapFactory.decodeResource(getResources(), R.drawable.stamp);
                             String filePath =  saveBitmaptoPng(stamp);
 
-                            Log.i("yuja", "filePath: " + filePath);
+                            Log.i("yuza", "filePath: " + filePath);
                             shareDialog = new ShareDialog(MainActivity.this);
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             final Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
@@ -625,7 +646,7 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
             @Override
             public void onError(FacebookException error) {
-                Log.e("yuja", "Error: " + error);
+                Log.e("yuza", "Error: " + error);
                 finish();
             }
 
@@ -670,4 +691,40 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
 
 
 
+    private class GpsListener implements LocationListener {
+
+        public void onLocationChanged(Location location) {
+            //capture location data sent by current provider
+            Double latitude1 = location.getLatitude();
+            Double longitude1 = location.getLongitude();
+
+            latitude = latitude1;                                                     //현재위치 위도
+            longitude = longitude1;                                                  //현재 위치 경도
+
+            Log.d("yuza", " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
+            Toast.makeText(getBaseContext(), " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+                    Toast.LENGTH_SHORT).show();
+            mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+            mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
+
+            if (wido2 != null) {
+                Toast.makeText(getBaseContext(), "onLocationChanged 안의 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+                        Toast.LENGTH_SHORT).show();
+
+                setupProximityAlert();
+                Log.d("yuza", longitude + " :ee " + latitude);
+                LogManager.printLog(longitude + " :qq " + latitude);
+            }
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+    }
 }
