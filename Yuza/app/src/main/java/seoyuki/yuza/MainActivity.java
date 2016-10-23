@@ -216,19 +216,26 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                     return;
                 }
             }
+
+        } catch (Exception e) {
+
+        } finally {
             Location lastLocation = null;        //마지막으로 받았던 위치정보를 담을 변수
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);//위치 서비스 실행
             if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {//gps가 켜저 있으면
-                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);//위치 서비스 실행
                 lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);      //gps로 위치 검색
                 if (lastLocation == null) {                                                                 //gps가 잡히지 않을때
                     lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  //network로 실행
                 }
-            } else {                                                                                          //gps가 꺼저있으면
-                Log.e("GPS Enable", "false");
-                runOnUiThread(new Runnable() {
+                latitude = lastLocation.getLatitude();                                                      //현재위치 위도
+                longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
+                mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+                mMapView.setLocationPoint(longitude, latitude);
+            } else {
+               runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Snackbar.make(getCurrentFocus(), "GPS를 켜주시기발바니다.", Snackbar.LENGTH_INDEFINITE).setAction("GPS켜기", new View.OnClickListener() {
+                        Snackbar.make(getWindow().getDecorView().getRootView(), "GPS를 켜주시기바랍니다.", Snackbar.LENGTH_INDEFINITE).setAction("GPS켜기", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -239,14 +246,11 @@ public class MainActivity extends BaseActivity implements onLocationChangedCallb
                 });
             }
 
-                latitude = lastLocation.getLatitude();                                                      //현재위치 위도
-                longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
-                mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
-                mMapView.setLocationPoint(longitude, latitude);                                             //현재위치를 티맵의 현재 위치로
+//            latitude = lastLocation.getLatitude();                                                      //현재위치 위도
+//            longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
+//            mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+//            mMapView.setLocationPoint(longitude, latitude);                                             //현재위치를 티맵의 현재 위치로
 
-        } catch (Exception e) {
-
-        } finally {
         }
 
         mMapView.setZoomLevel(17);                                                              //지도 확대 레벨
