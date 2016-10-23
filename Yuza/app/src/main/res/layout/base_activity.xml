@@ -14,105 +14,42 @@
 		android:background="@android:color/white">
 	</RelativeLayout>
 
-
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:paddingTop="2dip"
-		android:layout_height="90dp"
-		android:orientation="vertical">
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentStart="true"
+		android:layout_marginBottom="8dp"
+		android:layout_height="50dp"
+		android:layout_marginTop="8dp">
 
-		<LinearLayout
-			android:orientation="horizontal"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/herebtn"
+			android:id="@+id/hereImageView"
+			android:layout_weight="1" />
 
-			<RelativeLayout
-				android:orientation="vertical"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				android:id="@+id/search"
-				android:background="@drawable/imageviewframe">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/searchbtn"
+			android:id="@+id/searchImageView"
+			android:layout_weight="1" />
 
-				<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/searchImageView"
-					android:layout_weight="1"
-					android:src="@drawable/search"
-					android:scaleType="center"
-					android:layout_centerVertical="true"
-					android:layout_centerHorizontal="true"
-					android:onClick="moveSearch" />
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/archivebtn"
+			android:id="@+id/achievementImageView"
+			android:layout_weight="1" />
 
-				<TextView
-					android:text="유적 찾아보기"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/searchText"
-					android:layout_alignBottom="@+id/searchImageView"
-					android:layout_centerHorizontal="true"
-					android:textColor="@color/wallet_bright_foreground_holo_light" />
-			</RelativeLayout>
-
-			<RelativeLayout
-				android:orientation="vertical"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				android:id="@+id/archive"
-				android:background="@drawable/imageviewframe">
-
-				<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/achievementImageView"
-					android:layout_weight="1"
-					android:src="@drawable/archive"
-					android:scaleType="center"
-					android:layout_centerVertical="true"
-					android:layout_centerHorizontal="true" />
-
-				<TextView
-					android:text="나의 여정"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/archiveText"
-					android:layout_alignBottom="@+id/achievementImageView"
-					android:layout_centerHorizontal="true"
-					android:textColor="@color/wallet_bright_foreground_holo_light" />
-			</RelativeLayout>
-
-			<RelativeLayout
-				android:orientation="vertical"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				android:id="@+id/setting"
-				android:background="@drawable/imageviewframe">
-
-				<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/settingImageView"
-					android:layout_weight="1"
-					android:scaleType="center"
-					android:src="@drawable/setting"
-					android:layout_centerVertical="true"
-					android:layout_centerHorizontal="true" />
-
-				<TextView
-					android:text="설정 바꾸기"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/settingText"
-					android:layout_alignBottom="@+id/settingImageView"
-					android:layout_centerHorizontal="true"
-					android:textColor="@color/wallet_bright_foreground_holo_light" />
-			</RelativeLayout>
-
-		</LinearLayout>
-
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/settingbtn"
+			android:id="@+id/settingImageView"
+			android:layout_weight="1" />
 	</LinearLayout>
 
 

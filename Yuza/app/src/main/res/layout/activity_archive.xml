@@ -8,14 +8,17 @@
     android:background="#ffffffff">
 
     <ImageView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/yuza_archive_leaf"
         android:id="@+id/archiveLeaf"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="140dp" />
 
     <TextView
         android:text="TextView"
@@ -38,7 +41,10 @@
         android:lineSpacingExtra="4dip"
         app:layout_constraintTop_toBottomOf="@+id/archiveTitleText"
         app:layout_constraintLeft_toLeftOf="@+id/archiveTitleText"
-        android:layout_marginStart="4dp" />
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
 
     <TextView
         android:text="99"
@@ -71,10 +77,10 @@
         android:id="@+id/archiveStreet"
         app:layout_constraintLeft_toLeftOf="parent"
         android:scaleType="fitXY"
-        app:layout_constraintRight_toLeftOf="@+id/archiveListView"
         app:layout_constraintTop_toBottomOf="@+id/archiveLeaf"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintRight_toRightOf="@+id/archiveLeaf" />
 
     <ListView
         android:id="@+id/archiveListView"
