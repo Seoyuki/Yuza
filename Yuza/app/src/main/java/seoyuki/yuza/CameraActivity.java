@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Build;
@@ -318,7 +317,7 @@ public class CameraActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Toast.makeText(this, "저장소 일기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "저장소 읽기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
 
                 } else {
 

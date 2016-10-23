@@ -9,11 +9,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -41,7 +39,7 @@ public class SettingActivity extends AppCompatActivity {
     public void deleteAll () {
         db = helper.getWritableDatabase();
         db.delete("yuzaranking",null,null);
-        Toast.makeText(this, "업적이 초기화 되었습니다.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "새로운 시작! 다시 시작해 볼까요. :)", Toast.LENGTH_LONG).show();
     }
     private static final int[] mArraySettingBtn = { // 버튼 ID 배열
             R.id.settingBtn1,
@@ -112,8 +110,8 @@ public class SettingActivity extends AppCompatActivity {
 
     private void DialoConfirm(){
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        alt_bld.setMessage("정말로 업적을 초기화 하시겠습니까.").setCancelable(
-                false).setPositiveButton("예!!",
+        alt_bld.setMessage("처음부터 다시 시작할까요?").setCancelable(
+                false).setPositiveButton("좋아요^^",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         deleteAll();
@@ -129,7 +127,7 @@ public class SettingActivity extends AppCompatActivity {
         // Title for AlertDialog
         alert.setTitle("업적 초기화");
         // Icon for AlertDialog
-        alert.setIcon(R.drawable.yuza_stamp_big);
+        alert.setIcon(R.mipmap.ic_launcher);
         alert.show();
     }
 }
