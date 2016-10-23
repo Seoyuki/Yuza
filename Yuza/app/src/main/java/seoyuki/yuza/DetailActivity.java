@@ -80,7 +80,7 @@ public class DetailActivity extends Activity {
         name_text.setText(name);
         address_text.setText(address);
         content_text.setText(content);
-        image_start.setImageResource(R.drawable.yuza_start);
+        image_start.setImageResource(R.drawable.detail_start);
         image_start.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // 유적지 길찾기 코드
