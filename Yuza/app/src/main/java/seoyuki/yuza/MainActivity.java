@@ -253,7 +253,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             @Override
             public void onClick(View v) {
                 Log.d("yuza", "searchBtn start: ");
-                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RecoActivity.class);
                 startActivity(intent);
 
 

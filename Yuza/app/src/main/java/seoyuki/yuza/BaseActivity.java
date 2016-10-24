@@ -80,7 +80,7 @@ public class BaseActivity extends Activity implements View.OnClickListener {
 	
 	
 	public void moveSearch(View v) {
-		Intent searchIntent = new Intent(getBaseContext(), SearchActivity.class);
+		Intent searchIntent = new Intent(getBaseContext(), RecoActivity.class);
 		startActivity(searchIntent);
 
 	}
