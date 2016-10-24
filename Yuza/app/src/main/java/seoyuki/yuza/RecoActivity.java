@@ -85,7 +85,7 @@ public class RecoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 
-                Student data = mListData.get(position);
+                Student data = list.get(position);
                 // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
                 Bundle extras = new Bundle();
                 extras.putString("name", data.getName());

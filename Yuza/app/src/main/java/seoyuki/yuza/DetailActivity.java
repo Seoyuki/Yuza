@@ -20,7 +20,6 @@ import java.net.URLDecoder;
 
 public class DetailActivity extends Activity {
     String decodeStr;
-    MainActivity mainActivity= new MainActivity();
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);

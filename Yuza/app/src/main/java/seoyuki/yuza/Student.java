@@ -32,6 +32,7 @@ public class Student {
         this.id = id;
         this.imgId = imgId;
     }
+
     public String getImage() { return image; }
 
     public void setImage(String image) {this.image = image;}
