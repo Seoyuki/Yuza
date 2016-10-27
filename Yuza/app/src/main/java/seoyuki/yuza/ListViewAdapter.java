@@ -46,16 +46,8 @@ import java.util.ArrayList;
                     return position;
                 }
 
-                    public void addItem(Drawable icon, String mTitle, String mDate, String wido, String kyungdo){
-                    Student addInfo = null;
-                    addInfo = new Student();
-                    addInfo.imgId = icon;
-                    addInfo.name = mTitle;
-                    addInfo.address = mDate;
-                    addInfo.wido = wido;
-                    addInfo.kyungdo = kyungdo;
+                    public void addItem(Student addInfo){
                     mListData.add(addInfo);
-
                         }
 
                     @Override

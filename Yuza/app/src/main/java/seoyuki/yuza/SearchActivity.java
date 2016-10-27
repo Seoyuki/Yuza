@@ -2,6 +2,7 @@ package seoyuki.yuza;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,56 +25,40 @@ import java.util.List;
 
 public class SearchActivity extends Activity {
 
-    // List view
-    private ListView lv;
-
-    // Listview Adapter
-    ArrayAdapter<String> adapter;
-
-    // Search EditText
+    CustomListViewAdapter adapter;
+    ListView lv;
+    List<Student> list;
     EditText inputSearch;
 
-
-    // ArrayList for Listview
-    ArrayList<Student> productList;
-
-    //데이터를 저장해서 넘길 Bundle
-    Bundle extras = new Bundle();
-
+    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        // Listview Data
+        list = xmlParser(); // xml파싱
+       // Student searchObj = null;
+        Drawable image = null;
+        for (int i = 1; i < list.size(); i++) {
+            //searchObj = list.get(i);
+            image = getResources().getDrawable(R.drawable.yuza_bike);
+            list.get(i).setIcon(image);
+        }
 
-        productList = xmlParser(); // xml파싱
-
-        String[] data = new String[productList.size()]; // ArrayList인 리스트를 배열로 변환
-
-        for (int i = 0; i < productList.size(); i++) {
-            data[i] = productList.get(i).getName(); // 데이터 리스트 뿌리기 (i값이 반환)
-        };
-
-
-        lv = (ListView) findViewById(R.id.listView);
         inputSearch = (EditText) findViewById(R.id.editText);
-
-
-        // 리스트뷰에 아이템이 더해진다.
-        adapter = new ArrayAdapter<String>(this, R.layout.listview_item, R.id.mText, data);
-
-        //어뎁터 세팅
+        lv = (ListView) findViewById(R.id.listView);
+         adapter = new CustomListViewAdapter(this,
+                R.layout.listview_item, list);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                    Bundle extras = new Bundle();
                 //i값을 얻어서 데이터 전송
                 //이 부분에서i값이 for문 i값이 아니라 위 int i값으로 새롭게 불러와지기 떄문에 법천사지부터 1번부터 불러오게 됩니다.
                 // 그래서 번들을 위로 빼고
-                Student check = productList.get(i);
+                Student check = list.get(i);
                 extras.putString("name", check.getName());
                 extras.putString("address", check.getAddress());
                 extras.putString("content", check.getContent());
@@ -88,6 +73,7 @@ public class SearchActivity extends Activity {
 
             }
         });
+
         /**
          * Enabling Search Filter
          * */

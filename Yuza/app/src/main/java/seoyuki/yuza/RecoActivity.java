@@ -2,6 +2,7 @@ package seoyuki.yuza;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,17 +21,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class RecoActivity extends Activity {
+
+    List<Student> recoList = new ArrayList<Student>();
 
     // List view
     private ListView lv;
 
     // Listview Adapter
-    ArrayAdapter<String> recoadapter;
-
     public ListViewAdapter recoadapter2;
     // Search EditText
     EditText inputSearch;
@@ -52,59 +52,59 @@ public class RecoActivity extends Activity {
         lv = (ListView) findViewById(R.id.listView);
         inputSearch = (EditText) findViewById(R.id.editText);
 
-        int r1 = (int) (Math.random() * productList.size());
-        int r2 = (int) (Math.random() * productList.size());
-        int r3 = (int) (Math.random() * productList.size());
-
 //        String[] data = new String[productList.size()];
 
-        for (int i = 0; i < productList.size(); i++) {
 
-                if (r1 == i) {
-                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                            productList.get(i).getName(),
-                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
-//                data[i] = productList.get(i).getName();
+        int r1 = (int) (Math.random() * productList.size()) + 1;
+        int r2 = (int) (Math.random() * productList.size()) + 1;
+        int r3 = (int) (Math.random() * productList.size()) + 1;
+        Student recoObj = null;
+        Drawable image = null;
+        for (int i = 1; i < productList.size(); i++) {
+            if (r1 == i) {
+                recoObj = productList.get(i);
+                image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                recoObj.setIcon(image);
+                recoadapter2.addItem(recoObj);
+                recoList.add(recoObj);
                 }
-                if (r1 == i) {
-                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                            productList.get(i).getName(),
-                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
-//                           data[i] = productList.get(i).getName();
+                if (r2 == i) {
+                    recoObj = productList.get(i);
+                    image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                    recoObj.setIcon(image);
+                    recoadapter2.addItem(recoObj);
+                    recoList.add(recoObj);
                 }
                 if (r3 == i) {
-                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                            productList.get(i).getName(),
-                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
-//                       data[i] = productList.get(i).getName();
+                    recoObj = productList.get(i);
+                    image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                    recoObj.setIcon(image);
+                    recoadapter2.addItem(recoObj);
+                    recoList.add(recoObj);
                 }
-
-            Student check = productList.get(i);
-            //추천지에서 r1, r2, r3로 3개만 뽑아냈는데 productList로 i값을 얻어오니 3개보다 값이 커서 오류가 나게 됩니다.
-            //여기에 어떤 타 변수를 지정해서 넣어야 하는 것 일까요?
-            //데이터 넘어가는 과정은 SearchActivity와 동일합니다.
-            extras.putString("name", check.getName());
-            extras.putString("address", check.getAddress());
-            extras.putString("content", check.getContent());
-            extras.putString("image", check.getImage());
-            extras.putString("wido", check.getWido());
-            extras.putString("kyungdo", check.getKyungdo());
-        }
-
-        lv.setAdapter(recoadapter2);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                Intent intent = new Intent(RecoActivity.this, DetailActivity.class);
-                intent.putExtras(extras);
-                startActivity(intent);
-
-
             }
-        });
-    }
+
+            lv.setAdapter(recoadapter2);
+
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    Student getrecoList = recoList.get(i);
+                    extras.putString("name", getrecoList.getName());
+                    extras.putString("address", getrecoList.getAddress());
+                    extras.putString("content", getrecoList.getContent());
+                    extras.putString("image", getrecoList.getImage());
+                    extras.putString("wido", getrecoList.getWido());
+                    extras.putString("kyungdo", getrecoList.getKyungdo());
+                    Intent intent = new Intent(RecoActivity.this, DetailActivity.class);
+                    intent.putExtras(extras);
+                    startActivity(intent);
+
+
+                }
+            });
+        }
 
     public void textonClick(View v) {
         Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
