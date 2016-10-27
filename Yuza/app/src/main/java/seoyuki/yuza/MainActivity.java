@@ -1,9 +1,7 @@
 package seoyuki.yuza;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,15 +10,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PointF;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
-
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,7 +21,6 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -44,24 +35,14 @@ import com.facebook.login.LoginResult;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
-import com.skp.Tmap.TMapCircle;
 import com.skp.Tmap.TMapData;
 import com.skp.Tmap.TMapGpsManager;
-import com.skp.Tmap.TMapGpsManager.onLocationChangedCallback;
-import com.skp.Tmap.TMapInfo;
-import com.skp.Tmap.TMapLabelInfo;
 import com.skp.Tmap.TMapMarkerItem;
-import com.skp.Tmap.TMapMarkerItem2;
-import com.skp.Tmap.TMapPOIItem;
 import com.skp.Tmap.TMapPoint;
 import com.skp.Tmap.TMapPolyLine;
-import com.skp.Tmap.TMapTapi;
 import com.skp.Tmap.TMapView;
 
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -72,13 +53,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -90,7 +68,10 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-
+    float speed;
+    Double distance =0.0;
+    Double twi;
+    Double tky;
     String mokswido;
     String mokskyungdo;
     public String wido2;                        //목적지 위치 담는 변수
@@ -209,7 +190,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
             latitude = lastLocation.getLatitude();                                                      //현재위치 위도
             longitude = lastLocation.getLongitude();                                                    //현재 위치 경도
-
+            twi = latitude;
+            tky = longitude;
             Log.d("yuza", " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
             Toast.makeText(getBaseContext(), " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
                     Toast.LENGTH_SHORT).show();
@@ -338,6 +320,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         intent.putExtra("kyungdo", kyungdo);                                                //선택한 마커의 경도를 EXTRA에 담는다
         startActivity(intent);                                                                  //intent실행
         finish();                                                                                //메인 종료
+
     }
 
     private void configureMapView() {
@@ -521,7 +504,17 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         View dialogView = inflater.inflate(dialog, null);
         alertDialog.setView(dialogView);
         alertDialog.create();
-
+        final String name = getIntent().getStringExtra("mokname ");
+        Double distan = distance;
+        Bundle extras = new Bundle();
+        extras.putString("mokjuckji", name);
+        extras.putString("mokdistance",distan.toString());
+        Intent intent = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
+        // 위에서 만든 Bundle을 인텐트에 넣는다.
+        intent.putExtras(extras);
+        // 액티비티를 생성한다.
+        startActivity(intent);
+        finish();
         mArriveDialog = alertDialog.show(); // DialogInterface에 alertDialog를 담아서 보여준다. 수명주기 코드를 위해 필요하다.
         showMarkerPoint();
     }
@@ -700,16 +693,34 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
             latitude = latitude1;                                                     //현재위치 위도
             longitude = longitude1;                                                  //현재 위치 경도
-
+            speed = location.getSpeed();
             Log.d("yuza", " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
-            Toast.makeText(getBaseContext(), " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getBaseContext(), " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+//                    Toast.LENGTH_SHORT).show();
             mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
             mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
 
             if (wido2 != null) {
-                Toast.makeText(getBaseContext(), "onLocationChanged 안의 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+
+                Location locationA = new Location("point A");                                       //현재 위치
+                locationA.setLatitude(latitude);
+                locationA.setLongitude(longitude);
+
+                Location locationB = new Location("point B");                                       //이전 위치
+                locationB.setLatitude(twi);
+                locationB.setLongitude(tky);
+                double distanceMeters=0.0;
+
+                if(locationA!=locationB) {                                                          //이동했을 때
+                    distanceMeters = locationA.distanceTo(locationB);
+                }
+                distance = distance  +distanceMeters;                                               //거리를 누적시킨다
+                Toast.makeText(getBaseContext(), "이동 거리 : "+distance + " 만큼이동  " ,
                         Toast.LENGTH_SHORT).show();
+                twi = latitude1;                                                                    //이전 위치를 현재 위치로
+                tky = longitude1;                                                                    //이전 위치를 현재 위치로
+//                Toast.makeText(getBaseContext(), "onLocationChanged 안의 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
+//                        Toast.LENGTH_SHORT).show();
 
                 setupProximityAlert();
                 Log.d("yuza", longitude + " :ee " + latitude);
