@@ -8,7 +8,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
-        android:onClick="textonClick"
         android:maxLines="1"
         android:maxLength="30"
         android:lines="1"

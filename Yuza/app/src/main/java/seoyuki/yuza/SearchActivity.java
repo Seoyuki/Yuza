@@ -1,26 +1,15 @@
 package seoyuki.yuza;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -30,227 +19,104 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
-    ArrayList<Student> list;
-    private ListView mListView = null;
-    private ListViewAdapter mAdapter = null;
-    private TextView searchText;
-    ArrayList<Student> mlist = new ArrayList<Student>();
-    private ArrayList<Student> mListData = new ArrayList<Student>();
+public class SearchActivity extends Activity {
+
+    // List view
+    private ListView lv;
+
+    // Listview Adapter
+    ArrayAdapter<String> adapter;
+
+    // Search EditText
+    EditText inputSearch;
 
 
-    protected void onCreate(Bundle savedInstanceState) {
+    // ArrayList for Listview
+    ArrayList<Student> productList;
+
+    //데이터를 저장해서 넘길 Bundle
+    Bundle extras = new Bundle();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("유적 찾아보기");
+        // Listview Data
 
-        mListView = (ListView) findViewById(R.id.listView);
-        searchText = (TextView)findViewById(R.id.editText);
-        mAdapter = new ListViewAdapter(this);
+        productList = xmlParser(); // xml파싱
 
-        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
-        toast.show();
+        String[] data = new String[productList.size()]; // ArrayList인 리스트를 배열로 변환
 
-        list = xmlParser();
-        for (int i = 0; i < list.size(); i++) {
-            mAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_search),
-                    list.get(i).getName(),
-                    list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
-        }
-        mListView.setAdapter(mAdapter);
-
-        mlist.addAll(list);
-        mListView.setTextFilterEnabled(true);
-        searchText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+        for (int i = 0; i < productList.size(); i++) {
+            data[i] = productList.get(i).getName(); // 데이터 리스트 뿌리기 (i값이 반환)
+        };
 
 
-
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                SearchActivity.this.mAdapter.getFilter().filter(s);
-
-            }
-        });
+        lv = (ListView) findViewById(R.id.listView);
+        inputSearch = (EditText) findViewById(R.id.editText);
 
 
-        //listView.setAdapter(arrad);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // 리스트뷰에 아이템이 더해진다.
+        adapter = new ArrayAdapter<String>(this, R.layout.listview_item, R.id.mText, data);
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+        //어뎁터 세팅
+        lv.setAdapter(adapter);
 
-                Student data = list.get(position);
-                // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
-                Bundle extras = new Bundle();
-                extras.putString("name", data.getName());
-                extras.putString("address", data.getAddress());
-                extras.putString("content", data.getContent());
-                extras.putString("image", data.getImage());
-                extras.putString("wido", data.getWido());
-                extras.putString("kyungdo", data.getKyungdo());
-                // 인텐트를 생성한다.
-                // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                //i값을 얻어서 데이터 전송
+                //이 부분에서i값이 for문 i값이 아니라 위 int i값으로 새롭게 불러와지기 떄문에 법천사지부터 1번부터 불러오게 됩니다.
+                // 그래서 번들을 위로 빼고
+                Student check = productList.get(i);
+                extras.putString("name", check.getName());
+                extras.putString("address", check.getAddress());
+                extras.putString("content", check.getContent());
+                extras.putString("image", check.getImage());
+                extras.putString("wido", check.getWido());
+                extras.putString("kyungdo", check.getKyungdo());
+                //extra.putString부분을 for문안에 넣고 extras를 배열로 변형 뒤 해보았는데 맨 뒤 정보가 나오게 되었습니다.
                 Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-                // 위에서 만든 Bundle을 인텐트에 넣는다.
                 intent.putExtras(extras);
-                // 액티비티를 생성한다.
                 startActivity(intent);
+
+
             }
+        });
+        /**
+         * Enabling Search Filter
+         * */
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                SearchActivity.this.adapter.getFilter().filter(cs);
+                //검색기능
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+
         });
     }
 
-    private class ViewHolder {
-        public ImageView mIcon;
-
-        public TextView mText;
-
-        public TextView mDate;
-    }
-
-    private class ListViewAdapter extends BaseAdapter implements Filterable {
-        private Context mContext = null;
-        Activity context;
-
-        public ListViewAdapter(Activity context) {
-            super();
-            this.context = context;
-        }
-
-        @Override
-        public int getCount() {
-            return mListData.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mListData.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public void addItem(Drawable icon, String mTitle, String mDate,String wido,String kyungdo){
-            Student addInfo = null;
-            addInfo = new Student();
-            addInfo.imgId = icon;
-            addInfo.name = mTitle;
-            addInfo.address = mDate;
-            addInfo.wido = wido;
-            addInfo.kyungdo = kyungdo;
-            mListData.add(addInfo);
-
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            Student mData = mListData.get(position);
-
-            if (convertView == null) {
-                holder = new ViewHolder();
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.listview_item, null);
-
-                holder.mIcon = (ImageView) convertView.findViewById(R.id.mImage);
-                holder.mText = (TextView) convertView.findViewById(R.id.mText);
-                holder.mDate = (TextView) convertView.findViewById(R.id.mDate);
-
-                convertView.setTag(holder);
-            }else{
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-
-
-            if (mData.imgId != null) {
-                holder.mIcon.setVisibility(View.VISIBLE);
-                holder.mIcon.setImageDrawable(mData.imgId);
-            }else{
-                holder.mIcon.setVisibility(View.GONE);
-            }
-
-            holder.mText.setText(mData.getName());
-            holder.mDate.setText(mData.getAddress());
-
-            return convertView;
-        }
-        public Filter getFilter() {
-            Filter filter = new Filter() {
-
-
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    Log.d("yuza","ret performFiltering()");
-                    FilterResults results = new FilterResults();
-                    Log.d("yuza","constraint "+constraint.toString());
-
-                    if("".equals(constraint.toString())){
-                        return results;
-                    }
-                    String word = constraint.toString();
-
-                    ArrayList<Student> FilteredList = new ArrayList<Student>();
-                    if (constraint == null || constraint.length() == 0) {
-                        // No filter implemented we return all the list
-                        results.values = mlist;
-                        results.count = mlist.size();
-
-                    } else {
-
-                        for (int i = 0; i < mlist.size(); i++) {
-                            Log.d("yuza","mListData "+mlist.get(i).getName());
-                            String data = mlist.get(i).getName();
-
-                            if (data.toLowerCase().contains(
-                                    word.toLowerCase())) {
-                                FilteredList.add(mlist.get(i));
-                                Log.d("yuza","mListData "+mlist.get(i).getName());
-                            }
-                        }
-                        results.values = FilteredList;
-                        results.count = FilteredList.size();
-                    }
-
-                    return results;
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint,
-                                              Filter.FilterResults results) {
-                    Log.d("yuza","ret publishResults()"+results);
-                    mListData = (ArrayList<Student>) results.values;
-                    if(mListData != null){
-                        for (int i = 0; i < mListData.size(); i++) {
-                            Log.d("yuza","ret "+mListData.get(i).getName());
-                        }
-                        SearchActivity.this.mAdapter.notifyDataSetChanged();
-                    }
-
-                }
-
-            };
-
-            return filter;
-        }
-
-
-    }
     //xmlParser를 사용해 xml 파싱하기
-      private ArrayList<Student> xmlParser() {
+    private ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();
         InputStream is = getResources().openRawResource(R.raw.testvalues);
         // xmlPullParser

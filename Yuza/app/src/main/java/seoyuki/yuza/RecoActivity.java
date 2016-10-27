@@ -1,25 +1,15 @@
 package seoyuki.yuza;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -30,164 +20,100 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class RecoActivity extends AppCompatActivity {
-    ArrayList<Student> list;
-    private ListView recoListView = null;
-    private ListViewAdapter recoAdapter = null;
-    private TextView searchText;
-    ArrayList<Student> mlist = new ArrayList<Student>();
+public class RecoActivity extends Activity {
+
+    // List view
+    private ListView lv;
+
+    // Listview Adapter
+    ArrayAdapter<String> recoadapter;
+
+    public ListViewAdapter recoadapter2;
+    // Search EditText
+    EditText inputSearch;
+
     private ArrayList<Student> mListData = new ArrayList<Student>();
+    // ArrayList for Listview
+    ArrayList<Student> productList;
 
+    Bundle extras = new Bundle();
 
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reco);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("유적 찾아보기");
+        // Listview Data
+        productList = xmlParser();
+        recoadapter2 = new ListViewAdapter(this);
+        lv = (ListView) findViewById(R.id.listView);
+        inputSearch = (EditText) findViewById(R.id.editText);
 
-        recoListView = (ListView) findViewById(R.id.listView);
-        searchText = (TextView)findViewById(R.id.editText);
-        recoAdapter = new ListViewAdapter(this);
+        int r1 = (int) (Math.random() * productList.size());
+        int r2 = (int) (Math.random() * productList.size());
+        int r3 = (int) (Math.random() * productList.size());
 
+//        String[] data = new String[productList.size()];
 
-        list = xmlParser();
-        int r1 = (int)(Math.random()*list.size());
-        int r2 = (int)(Math.random()*list.size());
-        int r3 = (int)(Math.random()*list.size());
-        for (int i = 0; i < list.size(); i++) {
-            if(r1 == i) {
-                recoAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                        list.get(i).getName(),
-                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
-            }
-            if(r2== i) {
-                recoAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                        list.get(i).getName(),
-                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
-            }
-            if(r3 == i) {
-                recoAdapter.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
-                        list.get(i).getName(),
-                        list.get(i).getAddress(),list.get(i).getWido(),list.get(i).getKyungdo());
-            }
+        for (int i = 0; i < productList.size(); i++) {
+
+                if (r1 == i) {
+                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                            productList.get(i).getName(),
+                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
+//                data[i] = productList.get(i).getName();
+                }
+                if (r1 == i) {
+                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                            productList.get(i).getName(),
+                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
+//                           data[i] = productList.get(i).getName();
+                }
+                if (r3 == i) {
+                    recoadapter2.addItem(getResources().getDrawable(R.drawable.yuza_bike_recommendation),
+                            productList.get(i).getName(),
+                            productList.get(i).getAddress(), productList.get(i).getWido(), productList.get(i).getKyungdo());
+//                       data[i] = productList.get(i).getName();
+                }
+
+            Student check = productList.get(i);
+            //추천지에서 r1, r2, r3로 3개만 뽑아냈는데 productList로 i값을 얻어오니 3개보다 값이 커서 오류가 나게 됩니다.
+            //여기에 어떤 타 변수를 지정해서 넣어야 하는 것 일까요?
+            //데이터 넘어가는 과정은 SearchActivity와 동일합니다.
+            extras.putString("name", check.getName());
+            extras.putString("address", check.getAddress());
+            extras.putString("content", check.getContent());
+            extras.putString("image", check.getImage());
+            extras.putString("wido", check.getWido());
+            extras.putString("kyungdo", check.getKyungdo());
         }
 
-        recoListView.setAdapter(recoAdapter);
+        lv.setAdapter(recoadapter2);
 
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        mlist.addAll(list);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-        //listView.setAdapter(arrad);
-        recoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-
-                Student data = list.get(position);
-                // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
-                Bundle extras = new Bundle();
-                extras.putString("name", data.getName());
-                extras.putString("address", data.getAddress());
-                extras.putString("content", data.getContent());
-                extras.putString("image", data.getImage());
-                extras.putString("wido", data.getWido());
-                extras.putString("kyungdo", data.getKyungdo());
-                // 인텐트를 생성한다.
-                // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
                 Intent intent = new Intent(RecoActivity.this, DetailActivity.class);
-                // 위에서 만든 Bundle을 인텐트에 넣는다.
                 intent.putExtras(extras);
-                // 액티비티를 생성한다.
                 startActivity(intent);
+
+
             }
         });
     }
 
     public void textonClick(View v) {
-            Intent intent = new Intent(RecoActivity.this, SearchActivity.class);
+        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
+                toast.show();
+
+        Intent intent = new Intent(RecoActivity.this, SearchActivity.class);
         startActivity(intent);
     }
-    private class ViewHolder {
-        public ImageView mIcon;
 
-        public TextView mText;
-
-        public TextView mDate;
-    }
-
-    private class ListViewAdapter extends BaseAdapter {
-        private Context mContext = null;
-        Activity context;
-
-        public ListViewAdapter(Activity context) {
-            super();
-            this.context = context;
-        }
-
-        @Override
-        public int getCount() {
-            return mListData.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mListData.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public void addItem(Drawable icon, String mTitle, String mDate,String wido,String kyungdo){
-            Student addInfo = null;
-            addInfo = new Student();
-            addInfo.imgId = icon;
-            addInfo.name = mTitle;
-            addInfo.address = mDate;
-            addInfo.wido = wido;
-            addInfo.kyungdo = kyungdo;
-            mListData.add(addInfo);
-
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            Student mData = mListData.get(position);
-
-            if (convertView == null) {
-                holder = new ViewHolder();
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.listview_item, null);
-
-                holder.mIcon = (ImageView) convertView.findViewById(R.id.mImage);
-                holder.mText = (TextView) convertView.findViewById(R.id.mText);
-                holder.mDate = (TextView) convertView.findViewById(R.id.mDate);
-
-                convertView.setTag(holder);
-            }else{
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-
-
-            if (mData.imgId != null) {
-                holder.mIcon.setVisibility(View.VISIBLE);
-                holder.mIcon.setImageDrawable(mData.imgId);
-            }else{
-                holder.mIcon.setVisibility(View.GONE);
-            }
-
-            holder.mText.setText(mData.getName());
-            holder.mDate.setText(mData.getAddress());
-
-            return convertView;
-        }
-    }
     //xmlParser를 사용해 xml 파싱하기
     private ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();

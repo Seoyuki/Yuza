@@ -33,11 +33,20 @@ public class Student {
         this.imgId = imgId;
     }
 
+    public Student(Drawable imgId, String name) {
+        this.imgId = imgId;
+        this.name = name;
+    }
     public String getImage() { return image; }
 
     public void setImage(String image) {this.image = image;}
 
-
+    public Drawable getIcon() {
+        return this.imgId ;
+    }
+    public void setIcon(Drawable icon) {
+        imgId = icon ;
+    }
 
     public String getAddress() {
         return address;
