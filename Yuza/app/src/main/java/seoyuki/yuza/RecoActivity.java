@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,7 +30,6 @@ public class RecoActivity extends Activity {
 
     // List view
     private ListView lv;
-
     // Listview Adapter
     public ListViewAdapter recoadapter2;
     // Search EditText
@@ -51,7 +51,6 @@ public class RecoActivity extends Activity {
         recoadapter2 = new ListViewAdapter(this);
         lv = (ListView) findViewById(R.id.listView);
         inputSearch = (EditText) findViewById(R.id.editText);
-
 //        String[] data = new String[productList.size()];
 
 
@@ -83,7 +82,6 @@ public class RecoActivity extends Activity {
                     recoList.add(recoObj);
                 }
             }
-
             lv.setAdapter(recoadapter2);
 
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -109,7 +107,6 @@ public class RecoActivity extends Activity {
     public void textonClick(View v) {
         Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
                 toast.show();
-
         Intent intent = new Intent(RecoActivity.this, SearchActivity.class);
         startActivity(intent);
     }

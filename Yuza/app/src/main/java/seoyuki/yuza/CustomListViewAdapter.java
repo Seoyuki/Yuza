@@ -10,42 +10,62 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-        public class CustomListViewAdapter extends ArrayAdapter<Student> {
-            Context context;
-            public CustomListViewAdapter(Context context, int resourceId, List<Student> items) {
-                super(context, resourceId, items);
-                this.context = context;
-            }
-            /*private view holder class*/
-            private class ViewHolder {
-                ImageView imageView;
-                TextView txtTitle;
 
-            }
+public class CustomListViewAdapter extends ArrayAdapter<Student> {
 
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ViewHolder holder = null;
-                Student student = getItem(position);
-                LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-                if (convertView == null) {
-                    convertView = mInflater.inflate(R.layout.listview_item, null);
-                    holder = new ViewHolder();
-                    holder.txtTitle = (TextView) convertView.findViewById(R.id.mText);
-                    holder.imageView = (ImageView) convertView.findViewById(R.id.mImage);
-                    convertView.setTag(holder);
-                } else {
-        holder = (ViewHolder) convertView.getTag();
 
-        holder.txtTitle.setText(student.getName());
-        holder.imageView.setImageResource(R.drawable.yuza_bike);
+
+    Context context;
+    int layoutResourceId;
+    Student data[] = null;
+
+    public CustomListViewAdapter(Context context, int layoutResourceId, Student[] data) {
+        super(context, layoutResourceId, data);
+        this.layoutResourceId = layoutResourceId;
+        this.context = context;
+        this.data = data;
     }
 
-    return convertView;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = convertView;
+        WeatherHolder holder = null;
 
-}
+        if(row == null)
+        {
+            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            row = inflater.inflate(layoutResourceId, parent, false);
+
+            holder = new WeatherHolder();
+            holder.imgIcon = (ImageView)row.findViewById(R.id.mImage);
+            holder.txtTitle = (TextView)row.findViewById(R.id.mText);
+
+            row.setTag(holder);
+        }
+        else
+        {
+            holder = (WeatherHolder)row.getTag();
+        }
+
+        Student weather = data[position];
+        holder.txtTitle.setText(weather.name);
+        holder.imgIcon.setImageResource(weather.searchImgId);
+
+        return row;
+    }
+
+    static class WeatherHolder
+    {
+        ImageView imgIcon;
+        TextView txtTitle;
+    }
+
 }

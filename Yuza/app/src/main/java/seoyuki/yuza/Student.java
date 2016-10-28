@@ -15,6 +15,7 @@ public class Student {
     public String kyungdo;
     public int id;
     public Drawable imgId; // 이미지
+    public int searchImgId;
     public Student()
     {
         super();
@@ -33,6 +34,10 @@ public class Student {
         this.imgId = imgId;
     }
 
+    public Student(Integer searchImgId, String name) {
+        this.searchImgId = searchImgId;
+        this.name = name;
+    }
     public Student(Drawable imgId, String name) {
         this.imgId = imgId;
         this.name = name;
@@ -89,10 +94,17 @@ public class Student {
         this.id = id;
     }
 
+    public int getSearchImgId() {
+        return searchImgId;
+    }
+
+    public void setSearchImgId(int searchImgId) {
+        this.searchImgId = searchImgId;
+    }
+
     public int getId() {
         return id;
     }
-
     @Override
     public String toString() {
         return name + "\n" + address;
