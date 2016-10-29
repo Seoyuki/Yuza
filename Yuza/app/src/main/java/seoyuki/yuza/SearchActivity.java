@@ -1,249 +1,115 @@
 package seoyuki.yuza;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class SearchActivity extends Activity {
-    ArrayList<Student> list;
-    private ListView mListView = null;
-    private ListViewAdapter mAdapter = null;
-    private TextView searchText;
-    ArrayList<Student> tempList;
-    ArrayList<Student> mlist;
 
+    List<Student> searchList = new ArrayList<Student>();
+
+    // List view
+    private ListView lv;
+    // Listview Adapter
+    public ListViewAdapter searchAdapter;
+    // Search EditText
+    EditText inputSearch;
+
+    private ArrayList<Student> mListData = new ArrayList<Student>();
+    // ArrayList for Listview
+    ArrayList<Student> productList;
+    EditText searchEdit;
+    Bundle extras = new Bundle();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_reco);
 
-
-        mListView = (ListView) findViewById(R.id.listView);
-        searchText = (TextView)findViewById(R.id.editText);
-        mAdapter = new ListViewAdapter(this, mlist);
-
-
-        list = xmlParser();
-        String[] data = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-//            data[i] = list.get(i).getName()+"\n"+list.get(i).getName();
-            mAdapter.addItem(getResources().getDrawable(R.drawable.archive),
-                    list.get(i).getName(),
-                    list.get(i).getAddress());
+        // Listview Data
+        productList = xmlParser();
+        searchEdit = (EditText)findViewById(R.id.editText);
+        searchAdapter = new ListViewAdapter(this);
+        lv = (ListView) findViewById(R.id.listView);
+        inputSearch = (EditText) findViewById(R.id.editText);
+        Student recoObj = null;
+        Drawable image = null;
+        for (int i = 0; i < productList.size(); i++) {
+            recoObj = productList.get(i);
+            if (i % 2 == 0)  {
+                image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+            recoObj.setIcon(image);
+            } else {
+                image = getResources().getDrawable(R.drawable.archivebtn);
+                recoObj.setIcon(image);
+            }
+            searchAdapter.addItem(recoObj);
+            searchList.add(recoObj);
         }
-        mListView.setTextFilterEnabled(true);
-        mListView.setAdapter(mAdapter);
-        searchText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        lv.setAdapter(searchAdapter);
 
-            }
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().equalsIgnoreCase("")) {
-                    SearchActivity.this.mAdapter.getFilter().filter(s);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                setVisibiltyList();
-            }
-        });
-
-
-        //listView.setAdapter(arrad);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id){
-                Student mData = mAdapter.mListData.get(position);
-                Student data = list.get(position);
-                // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
-                Bundle extras = new Bundle();
-                extras.putString("name", data.getName());
-                extras.putString("address", data.getAddress());
-                extras.putString("content", data.getContent());
-                extras.putString("image", data.getImage());
-                // 인텐트를 생성한다.
-                // 컨텍스트로 현재 액티비티를, 생성할 액티비티로 DetailActivity 를 지정한다.
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Student getrecoList = searchList.get(i);
+                extras.putString("name", getrecoList.getName());
+                extras.putString("address", getrecoList.getAddress());
+                extras.putString("content", getrecoList.getContent());
+                extras.putString("image", getrecoList.getImage());
+                extras.putString("wido", getrecoList.getWido());
+                extras.putString("kyungdo", getrecoList.getKyungdo());
                 Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-                // 위에서 만든 Bundle을 인텐트에 넣는다.
                 intent.putExtras(extras);
-                // 액티비티를 생성한다.
                 startActivity(intent);
             }
         });
+        //검색창
+        searchEdit.addTextChangedListener(new TextWatcher() {
 
-    }
-    public void setVisibiltyList() {
-        if (searchText.getText().toString().equals("")) {
-            mListView.setVisibility(View.GONE);
-        } else {
-            mListView.setVisibility(View.VISIBLE);
-        }
-    }
+            @Override
+            public void afterTextChanged(Editable arg0) {
 
-    public void textonClick(View v) {
-        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
-        toast.show();
-        mListView.setAdapter(mAdapter);
-    }
-    private class ViewHolder {
-        public ImageView mIcon;
-
-        public TextView mText;
-
-        public TextView mDate;
-    }
-
-    private class ListViewAdapter extends BaseAdapter implements Filterable {
-        private Context mContext = null;
-        private ArrayList<Student> mListData = new ArrayList<Student>();
-        Activity context;
-
-        public ListViewAdapter(Activity context, ArrayList<Student> list) {
-            super();
-            this.context = context;
-            mlist = list;
-        }
-
-        @Override
-        public int getCount() {
-            return mListData.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mListData.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public void addItem(Drawable icon, String mTitle, String mDate){
-            Student addInfo = null;
-            addInfo = new Student();
-            addInfo.imgId = icon;
-            addInfo.name = mTitle;
-            addInfo.address = mDate;
-
-            mListData.add(addInfo);
-        }
-
-        public void remove(int position){
-            mListData.remove(position);
-            dataChange();
-        }
-
-        public void dataChange(){
-            mAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView == null) {
-                holder = new ViewHolder();
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.listview_item, null);
-
-                holder.mIcon = (ImageView) convertView.findViewById(R.id.mImage);
-                holder.mText = (TextView) convertView.findViewById(R.id.mText);
-
-                convertView.setTag(holder);
-            }else{
-                holder = (ViewHolder) convertView.getTag();
+//                String text = searchEdit.getText().toString()
+//                        .toLowerCase(Locale.getDefault());
+//                searchAdapter.filter(text);
             }
 
-            Student mData = mListData.get(position);
-
-            if (mData.imgId != null) {
-                holder.mIcon.setVisibility(View.VISIBLE);
-                holder.mIcon.setImageDrawable(mData.imgId);
-            }else{
-                holder.mIcon.setVisibility(View.GONE);
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+                // TODO Auto-generated method stub
             }
 
-            holder.mText.setText(mData.getName());
-
-            return convertView;
-        }
-        public Filter getFilter() {
-            Filter filter = new Filter() {
-
-                @SuppressWarnings("unchecked")
-                @Override
-                protected void publishResults(CharSequence constraint,
-                                              Filter.FilterResults results) {
-                    mlist = (ArrayList<Student>) results.values;
-                    notifyDataSetChanged();
-                }
-
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    FilterResults results = new FilterResults();
-                    ArrayList<Student> FilteredList = new ArrayList<Student>();
-                    if (constraint == null || constraint.length() == 0) {
-                        // No filter implemented we return all the list
-                        results.values = mlist;
-                        results.count = mlist.size();
-
-                    } else {
-
-                        for (int i = 0; i < mlist.size(); i++) {
-                            String data = mlist.get(i).name;
-
-                            if (data.toLowerCase().contains(
-                                    constraint.toString().toLowerCase())) {
-                                FilteredList.add(mlist.get(i));
-                            }
-                        }
-                        results.values = FilteredList;
-                        results.count = FilteredList.size();
-                    }
-
-                    return results;
-                }
-            };
-
-            return filter;
-        }
-
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                      int arg3) {
+                Toast toast = Toast.makeText(SearchActivity.this, arg0.toString(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
+    public void searchOnclick(View v) {
 
     }
     //xmlParser를 사용해 xml 파싱하기

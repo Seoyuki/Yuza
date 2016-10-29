@@ -15,8 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-        //추천지 리스트를 뿌려주기 위한 ListViewAdapter
+//추천지 리스트를 뿌려주기 위한 ListViewAdapter
              class ListViewAdapter extends BaseAdapter {
             Activity context;
                     private ArrayList<Student> mListData = new ArrayList<Student>();
@@ -82,4 +83,5 @@ import java.util.ArrayList;
 
                             return convertView;
                 }
+
         }

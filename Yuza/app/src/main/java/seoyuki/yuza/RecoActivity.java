@@ -105,8 +105,6 @@ public class RecoActivity extends Activity {
         }
 
     public void textonClick(View v) {
-        Toast toast = Toast.makeText(this, "안녕하세요", Toast.LENGTH_LONG);
-                toast.show();
         Intent intent = new Intent(RecoActivity.this, SearchActivity.class);
         startActivity(intent);
     }
