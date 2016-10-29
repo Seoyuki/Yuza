@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +19,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -50,8 +49,7 @@ public class ArchiveActivity extends AppCompatActivity {
 
     private final int YUZA_MAX_NUMBER = 99;
     private int archiveNumber = 0;
-    private String imageURL = "";
-    private String decodeStr = "";
+    private String decodeImageURL = "";
 
     private TextView archiveNumberView;
     private TextView archiveTitleText;
@@ -115,7 +113,7 @@ public class ArchiveActivity extends AppCompatActivity {
                 null, // 커서 팩토리
                 1); // 버전 번호
 
-        List<YuzaRanking> archiveList = select(); // 현재 완료한 곳 리스트 불러오기
+        final List<YuzaRanking> archiveList = select(); // 현재 완료한 곳 리스트 불러오기
         archiveNumber = archiveList.size();
 
         mArchiveStudentList = xmlParser();
@@ -141,7 +139,7 @@ public class ArchiveActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 
-                Student data = mArchiveStudentList.get(position);
+                Student data = mArchiveStudentList.get((mArchiveListData.get(position).getYuza_id())-1);
                 // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
                 Bundle extras = new Bundle();
                 extras.putString("name", data.getName());
@@ -284,7 +282,7 @@ public class ArchiveActivity extends AppCompatActivity {
             // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
             int tid = c.getInt(c.getColumnIndex("tid"));
             String name = c.getString(c.getColumnIndex("name"));
-            // int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+            int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
             String time = c.getString(c.getColumnIndex("ret_time"));
             float km = c.getInt(c.getColumnIndex("ret_km"));
             String date = c.getString(c.getColumnIndex("ret_date"));
@@ -292,6 +290,7 @@ public class ArchiveActivity extends AppCompatActivity {
             YuzaRanking tmp = new YuzaRanking();
             tmp.setTid(tid);
             tmp.setName(name);
+            tmp.setYuza_id(yuzaid);
             tmp.setRet_km(km);
             tmp.setRet_time(time);
             tmp.setRet_date(date);
@@ -300,8 +299,8 @@ public class ArchiveActivity extends AppCompatActivity {
         }
 
         for (int i=0 ; i < yuzaRanking.size() ; i++) {
-            Log.i("db", "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
-                    + ", time : " + yuzaRanking.get(i).getRet_km());
+            Log.i("db", "tid: " + yuzaRanking.get(i).getTid() + ", name : " + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getYuza_id()
+                    + ", time : " + yuzaRanking.get(i).getRet_time());
 
         }
         return yuzaRanking;
@@ -317,11 +316,12 @@ public class ArchiveActivity extends AppCompatActivity {
         private TextView mArchiveTime;
 
         private TextView mArchiveDistance;
+
+        //private int id;
     }
 
     private class ListViewAdapter extends BaseAdapter implements Filterable {
         Activity context;
-        boolean isYellow = true;
 
         public ListViewAdapter(Activity context) {
             super();
@@ -372,7 +372,6 @@ public class ArchiveActivity extends AppCompatActivity {
                 holder.mArchiveDate = (TextView) convertView.findViewById(R.id.archiveDate);
                 holder.mArchiveTime = (TextView) convertView.findViewById(R.id.archiveTime);
                 holder.mArchiveDistance = (TextView) convertView.findViewById(R.id.archiveDistance);
-
 //                if (isYellow) {
 //                    convertView.setBackgroundColor(getColor(R.color.colorPrimaryLight));
 //                    isYellow = !isYellow;
@@ -387,26 +386,19 @@ public class ArchiveActivity extends AppCompatActivity {
                 holder = (ArchiveActivity.ViewHolder) convertView.getTag();
             }
 
-            imageURL = mArchiveStudentList.get(position).getImage();
+            if (mData != null) {
+                decodeImageURL = URLDecoder.decode(mArchiveStudentList.get(mData.getYuza_id()-1).getImage());
+                Glide.with(getBaseContext()).load(decodeImageURL).into(holder.mArchiveImageIcon);
 
-            try {
-                decodeStr = URLDecoder.decode(imageURL, "UTF-8");
-                //image를 디코딩한다.
-            } catch(Exception e) {
+                holder.mArchiveName.setText(mData.getName());
+                holder.mArchiveDate.setText(mData.getRet_date() + "분에");
+                holder.mArchiveTime.setText(mData.getRet_time() + "동안");
+                holder.mArchiveDistance.setText(String.valueOf(mData.getRet_km()) + "km 달림");
 
-            }
-
-            if (mData.name != null) {
-                holder.mArchiveImageIcon.setVisibility(View.VISIBLE);
-                new ImageDownloader(holder.mArchiveImageIcon).execute(decodeStr);
             }else{
                 holder.mArchiveImageIcon.setVisibility(View.GONE);
             }
 
-            holder.mArchiveName.setText(mData.getName());
-            holder.mArchiveDate.setText(mData.getRet_date() + "분에");
-            holder.mArchiveTime.setText(mData.getRet_time() + "동안");
-            holder.mArchiveDistance.setText(String.valueOf(mData.getRet_km()) + "km 달림");
 
 
             return convertView;
@@ -536,32 +528,6 @@ public class ArchiveActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return arrayList;
-    }
-
-    class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-        //AsyncTask를 사용해 url 이미지 보여주기
-        ImageView bmImage;
-        public ImageDownloader(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            String url = params[0];
-            Bitmap mIcon = null;
-            try {
-                InputStream is = new java.net.URL(url).openStream();
-                mIcon = BitmapFactory.decodeStream(is);
-                //디코딩된 소스를 비트맵에 넣는다.
-            } catch (Exception e) {
-            }
-            return mIcon;
-        }
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-            //결과를 비트맵에 저장한다.
-        }
     }
 
 }
