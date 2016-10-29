@@ -170,7 +170,10 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
                 //랜덤 인설트
                 case R.id.insertBtn1:
                     int t =  (int) (Math.random() * 10000) + 1;
-                    insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                  //  insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                    insert(1,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                    insert(2,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+
                     yuzaRanking =   select();
                     listStr = "";
                     for (int i=0 ; i < yuzaRanking.size() ; i++) {

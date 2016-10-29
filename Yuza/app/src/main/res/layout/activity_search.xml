@@ -1,5 +1,5 @@
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,7 +12,6 @@
         android:maxLines="1"
         android:maxLength="30"
         android:lines="1"
-        android:onClick="searchOnClick"
         tools:layout_constraintTop_creator="1"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="8dp"

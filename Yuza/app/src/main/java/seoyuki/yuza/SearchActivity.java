@@ -2,10 +2,13 @@ package seoyuki.yuza;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,45 +30,78 @@ import java.util.Locale;
 
 public class SearchActivity extends Activity {
 
-    List<Student> searchList = new ArrayList<Student>();
-
+    List<Student> searchList = null;
+    boolean isAllList = true;
     // List view
     private ListView lv;
     // Listview Adapter
     public ListViewAdapter searchAdapter;
-    // Search EditText
-    EditText inputSearch;
 
-    private ArrayList<Student> mListData = new ArrayList<Student>();
-    // ArrayList for Listview
-    ArrayList<Student> productList;
+    List<Student> productList;
     EditText searchEdit;
     Bundle extras = new Bundle();
 
+    SQLiteDatabase db;
+    SqlLiteYuzaOpenHelper helper;
+    List<YuzaRanking> yuzaRanking;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reco);
+        helper = new SqlLiteYuzaOpenHelper(this, // 현재 화면의 context
+                "yuza.db", // 파일명
+                null, // 커서 팩토리
+                1); // 버전 번호
+        db = helper.getReadableDatabase(); // db객체를 얻어온다. 읽기 전용
+        Cursor c = db.query("yuzaranking", null, null, null, null, null, null);
+        yuzaRanking = new ArrayList<>();
+        while (c.moveToNext()) {
+            // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
+            int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+            YuzaRanking tmp = new YuzaRanking();
+            tmp.setYuza_id(yuzaid);
+            yuzaRanking.add(tmp);
+
+        }
 
         // Listview Data
         productList = xmlParser();
+
         searchEdit = (EditText)findViewById(R.id.editText);
         searchAdapter = new ListViewAdapter(this);
         lv = (ListView) findViewById(R.id.listView);
-        inputSearch = (EditText) findViewById(R.id.editText);
+
+
+        int r1 = (int) (Math.random() * productList.size()) + 1;
+        int r2 = (int) (Math.random() * productList.size()) + 1;
+        int r3 = (int) (Math.random() * productList.size()) + 1;
+
         Student recoObj = null;
         Drawable image = null;
+
+        searchList = new ArrayList<Student>();
         for (int i = 0; i < productList.size(); i++) {
             recoObj = productList.get(i);
-            if (i % 2 == 0)  {
+            if (r1 == i) {
                 image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
-            recoObj.setIcon(image);
-            } else {
-                image = getResources().getDrawable(R.drawable.archivebtn);
                 recoObj.setIcon(image);
+                searchAdapter.addItem(recoObj);
+                searchList.add(recoObj);
             }
-            searchAdapter.addItem(recoObj);
-            searchList.add(recoObj);
+            if (r2 == i) {
+                image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                recoObj.setIcon(image);
+                searchAdapter.addItem(recoObj);
+                searchList.add(recoObj);
+            }
+            if (r3 == i) {
+                image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                recoObj.setIcon(image);
+                searchAdapter.addItem(recoObj);
+                searchList.add(recoObj);
+            }
+
+
         }
         lv.setAdapter(searchAdapter);
 
@@ -84,15 +120,51 @@ public class SearchActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        //에디터 클릭시
+        searchEdit.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {//모두 뿌리기위해
+                if(isAllList){//최초 한번을위해
+
+                    Log.d("yuza","listAll");
+                    Student recoObj;
+                    Drawable image ;
+                    searchList = new ArrayList<Student>();
+                    searchAdapter  = new ListViewAdapter(SearchActivity.this);
+                    for (int i = 0; i < productList.size(); i++) {
+                        recoObj = productList.get(i);
+
+                        image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                        recoObj.setIcon(image);
+                        for (int j = 0; j < yuzaRanking.size(); j++) {
+
+                            if (yuzaRanking.get(j).getYuza_id() == recoObj.getId())  {//비교
+                                Log.d("yuza",""+yuzaRanking.get(j).getYuza_id());
+                                image = getResources().getDrawable(R.drawable.yuza_stamp_archive);
+                                recoObj.setIcon(image);
+                            }
+
+                        }
+                        productList.get(i).setIcon(image);
+                        searchAdapter.addItem(recoObj);
+                        searchList.add(recoObj);
+                    }
+                    lv.setAdapter(searchAdapter);
+                    isAllList = false;
+                }
+
+            }
+
+        });
+
         //검색창
         searchEdit.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable arg0) {
 
-//                String text = searchEdit.getText().toString()
-//                        .toLowerCase(Locale.getDefault());
-//                searchAdapter.filter(text);
             }
 
             @Override
@@ -104,14 +176,27 @@ public class SearchActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
-                Toast toast = Toast.makeText(SearchActivity.this, arg0.toString(), Toast.LENGTH_SHORT);
-                toast.show();
+                String searchWord = arg0.toString();
+
+                Student recoObj;
+                Drawable image ;
+                searchList = new ArrayList<Student>();
+                searchAdapter  = new ListViewAdapter(SearchActivity.this);
+
+                for (int i = 0; i < productList.size(); i++) {
+                    recoObj = productList.get(i);
+                    String objName = recoObj.getName();
+                    if (objName.contains(searchWord))  {
+                        searchAdapter.addItem(recoObj);
+                        searchList.add(recoObj);
+                    }
+                }
+                lv.setAdapter(searchAdapter);
             }
         });
     }
-    public void searchOnclick(View v) {
 
-    }
+
     //xmlParser를 사용해 xml 파싱하기
     private ArrayList<Student> xmlParser() {
         ArrayList<Student> arrayList = new ArrayList<Student>();

@@ -129,7 +129,7 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             //검색기능
             case R.id.searchBtn:
                 Log.d("yuja", "searchBtn start: ");
-                intent = new Intent(getApplicationContext(), RecoActivity.class);
+                intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
 
                 break;
