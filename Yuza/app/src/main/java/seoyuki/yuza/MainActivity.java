@@ -332,7 +332,6 @@ int yuzaid=0;
         img2.invalidate();
         img3.invalidate();
         img4.invalidate();
-        distance=100.6021562;
         double spe = Double.parseDouble(String.format("%.1f", speed));
 
         Double dis = Double.parseDouble(distance+"");
@@ -514,7 +513,7 @@ int yuzaid=0;
         intent.putExtra("wido", wido);                                                      //선택한 마커의 위도
         intent.putExtra("kyungdo", kyungdo);                                                //선택한 마커의 경도를 EXTRA에 담는다
         startActivity(intent);                                                                  //intent실행
-        finish();                                                                                //메인 종료
+                                                                                        //메인 종료
 
     }
 
@@ -879,7 +878,7 @@ int yuzaid=0;
 
     public void alertDialogCancelClick(View v) { // alertDialog(도착 얼럿)의 취소 버튼 클릭 메소드
 
-      return;
+        finish();
 
     }
 //
