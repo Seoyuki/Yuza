@@ -119,6 +119,12 @@ public class DetailActivity extends Activity {
 
         super.onDestroy();
     }
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(DetailActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
 
 

@@ -30,7 +30,7 @@
 			android:layout_weight="1">
 
 			<TextView
-                android:text="현재 속도"
+                android:text="속도(KM/h)"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/speedMsg"
@@ -65,7 +65,7 @@
 			android:layout_weight="1">
 
 			<TextView
-				android:text="이동 거리"
+				android:text="거리(KM)"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/distanceMsg"

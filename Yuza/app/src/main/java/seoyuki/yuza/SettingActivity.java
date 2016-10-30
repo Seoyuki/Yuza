@@ -138,4 +138,5 @@ public class SettingActivity extends AppCompatActivity {
 
         super.onDestroy();
     }
+
 }

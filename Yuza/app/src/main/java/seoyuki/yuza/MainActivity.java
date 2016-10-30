@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -158,27 +159,31 @@ int yuzaid=0;
        //뷰에 셋팅
        addView(mMapView);
        configureMapView();
+       //다른 엑티비티에서 온 위도 경도
+       mokswido = getIntent().getStringExtra("mokwido");            //목적지 위도를 담는다
+       mokskyungdo = getIntent().getStringExtra("mokkyungdo");     //목적지 경도를 담는다
+
+       mMarkerID = 0;                                                                                  //초기화
+       showMarkerPoint();                                                                              //마커를 찍는다
+       mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);        //tmap 로고위치  변경
+       mMapView.setBicycleInfo(true);                                                      //자전거 도로표시
+       mMapView.setBicycleFacilityInfo(true);                                              //자전거 시설물 표시 여부
+
+
+
+       mMapView.setZoomLevel(17);                                                              //지도 확대 레벨
+       mMapView.setIconVisibility(true);
 
    }catch (Exception e){
-       e.printStackTrace();
+      // e.printStackTrace();
    }
+        helper = new SqlLiteYuzaOpenHelper(MainActivity.this, // 현재 화면의 context
+                "yuza.db", // 파일명
+                null, // 커서 팩토리
+                1); // 버전 번호
 
 
-
-        //다른 엑티비티에서 온 위도 경도
-        mokswido = getIntent().getStringExtra("mokwido");            //목적지 위도를 담는다
-        mokskyungdo = getIntent().getStringExtra("mokkyungdo");     //목적지 경도를 담는다
-
-        mMarkerID = 0;                                                                                  //초기화
-        showMarkerPoint();                                                                              //마커를 찍는다
-        mMapView.setTMapLogoPosition(TMapView.TMapLogoPositon.POSITION_BOTTOMRIGHT);        //tmap 로고위치  변경
-        mMapView.setBicycleInfo(true);                                                      //자전거 도로표시
-        mMapView.setBicycleFacilityInfo(true);                                              //자전거 시설물 표시 여부
-
-
-
-        mMapView.setZoomLevel(17);                                                              //지도 확대 레벨
-        mMapView.setIconVisibility(true);                                                       //현재위치 표시 여부
+                                                     //현재위치 표시 여부
 
 
         wido2 = getIntent().getStringExtra("mokwido");                                          //목적지 위도를 받음
@@ -196,8 +201,8 @@ int yuzaid=0;
                 gpsListener);
 
 
-        Log.d("yuza", "locationManager.getLastKnownLocation GPS_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-        Log.d("yuza", "locationManager.getLastKnownLocation NETWORK_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+        //Log.d("yuza", "locationManager.getLastKnownLocation GPS_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+       // Log.d("yuza", "locationManager.getLastKnownLocation NETWORK_PROVIDER : "+locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
         if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null || locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {//gps가 켜저 있으면
             Location  lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);      //gps로 위치 검색
             if (lastLocation == null) {                                                                 //gps가 잡히지 않을때
@@ -209,8 +214,6 @@ int yuzaid=0;
             twi = latitude;
             tky = longitude;
             Log.d("yuza", " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
-            Toast.makeText(getBaseContext(), " 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
-                    Toast.LENGTH_SHORT).show();
             mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
             mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
 
@@ -353,7 +356,6 @@ int yuzaid=0;
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
                 restart();
             }
         });
@@ -362,7 +364,6 @@ int yuzaid=0;
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
 
 
 
@@ -373,7 +374,6 @@ int yuzaid=0;
         img3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
                 stop();
             }
         });
@@ -382,7 +382,6 @@ int yuzaid=0;
         img4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -417,8 +416,6 @@ int yuzaid=0;
         mMapView.setSightVisible(true);                                                         //시야 표출여부
         TMapPoint point1 = new TMapPoint(wi, kyu);                                              //목적지 설정
         TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
-        Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
 
         TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
         tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
@@ -519,7 +516,7 @@ int yuzaid=0;
         intent.putExtra("wido", wido);                                                      //선택한 마커의 위도
         intent.putExtra("kyungdo", kyungdo);                                                //선택한 마커의 경도를 EXTRA에 담는다
         startActivity(intent);                                                                  //intent실행
-                                                                                        //메인 종료
+        finish();                                                                  //메인 종료
 
     }
 
@@ -720,11 +717,28 @@ int yuzaid=0;
         stop();
         final String id = getIntent().getStringExtra("mokid");
         int ids = Integer.parseInt(id);
-        helper = new SqlLiteYuzaOpenHelper(MainActivity.this, // 현재 화면의 context
-                "yuza.db", // 파일명
-                null, // 커서 팩토리
-                1); // 버전 번호
-        insert(ids,name,dd,"",strDate+" \n~ " +endDate);
+
+
+        db = helper.getReadableDatabase(); // db객체를 얻어온다. 읽기 전용
+        Cursor c = db.query("yuzaranking", null, null, null, null, null, null);
+        boolean isData = true;
+        while (c.moveToNext()) {
+            // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
+            int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+          if(ids == yuzaid){
+              isData = false;
+          }
+
+        }
+        if(isData){
+            insert(ids,name,dd,"",strDate+" \n~ " +endDate);
+        }else{
+            ContentValues values = new ContentValues();
+            values.put("ret_km", dd);    //age 값을 수정
+            values.put("ret_date", strDate+" \n~ " +endDate);    //age 값을 수정
+            db.update("yuzaranking", values, "yuza_id=?", new String[]{String.valueOf(ids)});
+        }
+
        finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -948,7 +962,14 @@ int yuzaid=0;
                 locationB.setLatitude(twi);
                 locationB.setLongitude(tky);
                 double distanceMeters=0.0;
+                TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
+                TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+                double spe = Double.parseDouble(String.format("%.1f", speed));
 
+                Double dis = Double.parseDouble(distance+"");
+                double d = Double.parseDouble(String.format("%.1f", dis));
+                speedTextView.setText(String.valueOf(spe));
+                distanceTextView.setText(String.valueOf(d));
                 if(locationA!=locationB) {                                                          //이동했을 때
                     distanceMeters = locationA.distanceTo(locationB);
                 }
