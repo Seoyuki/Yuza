@@ -15,7 +15,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="4dp"
         android:orientation="vertical" >
 
         <TextView
@@ -25,15 +25,16 @@
             android:text="Text"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginTop="6dp" />
 
         <TextView
             android:id="@+id/mDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp" />
 
     </LinearLayout>
 
