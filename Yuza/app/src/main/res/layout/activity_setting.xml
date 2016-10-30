@@ -81,7 +81,7 @@
       android:textSize="18sp" />
 
   <Button
-      android:text="업적\n초기화"
+      android:text="기록\n초기화"
       android:id="@+id/settingBtn1"
       android:layout_marginLeft="16dp"
       android:layout_marginRight="16dp"
