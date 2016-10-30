@@ -72,6 +72,8 @@
     <string name="showRet_time">%s동안</string>
     <string name="showRet_km">%.1fkm 달림</string>
 
+    <string name="sorry">이런!\n무슨 문제가 생겼나봐요. ㅠㅠ\n죄송합니다. 많이 놀라셨죠?\n다시 실행해보시겠어요?</string>
+
 </resources>
 
 
