@@ -709,8 +709,9 @@ int yuzaid=0;
         View dialogView = inflater.inflate(dialog, null);
         alertDialog.setView(dialogView);
         alertDialog.create();
-
-      int dis = distance.intValue()/1000;
+        Double dis = Double.parseDouble(distance+"");
+        double d = Double.parseDouble(String.format("%.1f", dis));
+        float dd = Float.parseFloat(d+"");
         Bundle extras = new Bundle();
         stop();
         final String id = getIntent().getStringExtra("mokid");
@@ -719,7 +720,7 @@ int yuzaid=0;
                 "yuza.db", // 파일명
                 null, // 커서 팩토리
                 1); // 버전 번호
-        insert(ids,name,dis,"",strDate+" \n~ " +endDate);
+        insert(ids,name,dd,"",strDate+" \n~ " +endDate);
        finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
