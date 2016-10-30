@@ -172,7 +172,6 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
     private void setArchiveNumberView(int number) {
-        Log.e("dd", String.valueOf(number));
         archiveNumberView.setText(String.valueOf(number)); // 전체 도착 개수 출력
     }
 
@@ -426,7 +425,7 @@ public class ArchiveActivity extends AppCompatActivity {
                         }
                         if (startTag.equals("id")) {
                             assert student != null;
-                            student.setId(parser.next());
+                            student.setId(Integer.valueOf(parser.nextText()));
                         }
                         if (startTag.equals("name")) {
                             assert student != null;

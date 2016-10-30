@@ -36,7 +36,6 @@ public class SearchActivity extends Activity {
     private ListView lv;
     // Listview Adapter
     public ListViewAdapter searchAdapter;
-
     List<Student> productList;
     EditText searchEdit;
     Bundle extras = new Bundle();
@@ -58,8 +57,10 @@ public class SearchActivity extends Activity {
         while (c.moveToNext()) {
             // c의 int가져와라 ( c의 컬럼 중 id) 인 것의 형태이다.
             int yuzaid = c.getInt(c.getColumnIndex("yuza_id"));
+            int tid = c.getInt(c.getColumnIndex("tid"));
             YuzaRanking tmp = new YuzaRanking();
             tmp.setYuza_id(yuzaid);
+            tmp.setTid(tid);
             yuzaRanking.add(tmp);
 
         }
@@ -127,25 +128,19 @@ public class SearchActivity extends Activity {
             @Override
             public void onClick(View v) {//모두 뿌리기위해
                 if(isAllList){//최초 한번을위해
-
-                    Log.d("yuza","listAll");
-                    Student recoObj;
+                    Student recoObj = null;
                     Drawable image ;
                     searchList = new ArrayList<Student>();
                     searchAdapter  = new ListViewAdapter(SearchActivity.this);
                     for (int i = 0; i < productList.size(); i++) {
                         recoObj = productList.get(i);
-
                         image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
                         recoObj.setIcon(image);
                         for (int j = 0; j < yuzaRanking.size(); j++) {
-
                             if (yuzaRanking.get(j).getYuza_id() == recoObj.getId())  {//비교
-                                Log.d("yuza",""+yuzaRanking.get(j).getYuza_id());
                                 image = getResources().getDrawable(R.drawable.yuza_stamp_archive);
                                 recoObj.setIcon(image);
                             }
-
                         }
                         productList.get(i).setIcon(image);
                         searchAdapter.addItem(recoObj);
@@ -154,7 +149,6 @@ public class SearchActivity extends Activity {
                     lv.setAdapter(searchAdapter);
                     isAllList = false;
                 }
-
             }
 
         });
@@ -217,7 +211,7 @@ public class SearchActivity extends Activity {
                             student = new Student();
                         }
                         if (startTag.equals("id")) {
-                            student.setId(parser.next());
+                            student.setId(Integer.valueOf(parser.nextText()));;
                         }
                         if (startTag.equals("name")) {
                             student.setName(parser.nextText());

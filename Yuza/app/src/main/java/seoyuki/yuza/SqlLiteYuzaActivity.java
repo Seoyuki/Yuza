@@ -160,19 +160,19 @@ public class SqlLiteYuzaActivity extends AppCompatActivity {
             settingButton.setOnClickListener(listener);
         }
     }
-    class testgOnClickListener implements View.OnClickListener {
 
+    class testgOnClickListener implements View.OnClickListener {
         String listStr = "";
         public void onClick(View v) {
-
             switch (v.getId()) {
 
                 //랜덤 인설트
                 case R.id.insertBtn1:
-                    int t =  (int) (Math.random() * 10000) + 1;
-                  //  insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
-                    insert(1,"유적지"+t,100+t,"120분","2016-10-10 20:00");
-                    insert(2,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                    int t =  (int) (Math.random() * 99) + 1;
+//                    insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+                    //int yuzaid, String name, float km, String time,String ret_date
+                    insert(t,"유적지"+t,100+t,"120분","2016-10-10 20:00");
+//                    insert(30,"유적지"+t,100+t,"120분","2016-10-10 20:00");
 
                     yuzaRanking =   select();
                     listStr = "";

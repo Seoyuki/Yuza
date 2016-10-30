@@ -16,41 +16,40 @@ public class Student {
     public int id;
     public Drawable imgId; // 이미지
     public int searchImgId;
-    public Student()
-    {
+
+    public Student() {
         super();
     }
 
-    public Student(int id)
-    {
+    public Student(int id) {
         super();
-        this.name = name;
-        this.address = address;
-        this.image = image;
-        this.content = content;
-        this.wido = wido;
-        this.kyungdo = kyungdo;
         this.id = id;
-        this.imgId = imgId;
     }
 
     public Student(Integer searchImgId, String name) {
         this.searchImgId = searchImgId;
         this.name = name;
     }
+
     public Student(Drawable imgId, String name) {
         this.imgId = imgId;
         this.name = name;
     }
-    public String getImage() { return image; }
 
-    public void setImage(String image) {this.image = image;}
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Drawable getIcon() {
-        return this.imgId ;
+        return this.imgId;
     }
+
     public void setIcon(Drawable icon) {
-        imgId = icon ;
+        imgId = icon;
     }
 
     public String getAddress() {
@@ -72,6 +71,7 @@ public class Student {
     public String getContent() {
         return content;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -79,6 +79,7 @@ public class Student {
     public void setWido(String wido) {
         this.wido = wido;
     }
+
     public String getWido() {
         return wido;
     }
@@ -90,6 +91,7 @@ public class Student {
     public String getKyungdo() {
         return kyungdo;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -104,9 +106,5 @@ public class Student {
 
     public int getId() {
         return id;
-    }
-    @Override
-    public String toString() {
-        return name + "\n" + address;
     }
 }
