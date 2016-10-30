@@ -8,18 +8,17 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
+        android:layout_below="@id/infoFlipper"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp">
     </LinearLayout>
 
     <ViewFlipper
         android:id="@+id/infoFlipper"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_above="@+id/infoBtnLayout"
         android:layout_centerHorizontal="true"
-        android:layout_centerInParent="false"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="60dp">
     </ViewFlipper>
 
 </RelativeLayout>

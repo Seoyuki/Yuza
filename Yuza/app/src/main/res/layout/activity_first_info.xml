@@ -4,6 +4,23 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_seoul" >
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <seoyuki.yuza.FirstInfoViewFlipper
+            android:id="@+id/screen"
+            android:layout_width="match_parent"
+            android:layout_height="502dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true" >
+
+        </seoyuki.yuza.FirstInfoViewFlipper>
+    </FrameLayout>
+
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -13,14 +30,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:soundEffectsEnabled="false"
-        android:src="@drawable/firstinfo_start" />
+        android:src="@drawable/firstinfo_start"
+        android:layout_weight="1" />
 
-    <seoyuki.yuza.FirstInfoViewFlipper
-        android:id="@+id/screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
 </RelativeLayout>
