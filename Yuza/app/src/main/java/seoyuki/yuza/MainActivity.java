@@ -696,6 +696,7 @@ int yuzaid=0;
         SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
         Date date = new Date();
 
+        String endDate = dateFormat.format(date);
 
         // 도착 완료 화면(얼럿) 코드, dialog.xml과 혼동되지 않도록 변수명을 alertDialog
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
