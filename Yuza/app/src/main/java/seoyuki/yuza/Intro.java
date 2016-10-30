@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
@@ -21,7 +20,7 @@ public class Intro extends AppCompatActivity {
         setContentView(R.layout.activity_intro);
 
         final SharedPreferences checkFirstInfoEnd = getSharedPreferences("checkFirstInfoEnd", MODE_PRIVATE);
-
+        
         // 배경을 주황색으로
         RelativeLayout introLayout = (RelativeLayout) findViewById(R.id.intro_layout);
         introLayout.setBackgroundColor(Color.rgb(255, 127, 0));
@@ -52,6 +51,9 @@ public class Intro extends AppCompatActivity {
                     } else {
                         Intent intent = new Intent(Intro.this, FirstInfoActivity.class);
                         startActivity(intent);
+                        SharedPreferences.Editor editor = checkFirstInfoEnd.edit();
+                        editor.putBoolean("isFirstInfoEnd", true);
+                        editor.commit();
                     }
 
                     finish(); // 인트로 종료

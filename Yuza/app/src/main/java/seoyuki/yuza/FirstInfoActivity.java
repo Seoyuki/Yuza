@@ -17,10 +17,12 @@ public class FirstInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_first_info);
 
         final SharedPreferences checkFirstInfoEnd = getSharedPreferences("checkFirstInfoEnd", MODE_PRIVATE);
+        SharedPreferences.Editor editor = checkFirstInfoEnd.edit();
+        editor.putBoolean("isFirstInfoEnd", true);
+        editor.commit();
 
         ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
+        actionBar.setTitle("반가워요!");
 
         ImageView firstInfoStartImage = (ImageView) findViewById(R.id.firstInfoStartImage);
         firstInfoStartImage.setOnClickListener(new View.OnClickListener() {
@@ -29,9 +31,6 @@ public class FirstInfoActivity extends AppCompatActivity {
                 Log.d("yuza", "main start: ");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
-
-                SharedPreferences.Editor editor = checkFirstInfoEnd.edit();
-                editor.putBoolean("isFirstInfoEnd", true);
             }
         });
 
