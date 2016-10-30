@@ -1,6 +1,7 @@
 package seoyuki.yuza;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -291,10 +292,11 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
+                    restart();
                 }
             });
 
-            //검색
+
             img2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -304,7 +306,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                 }
             });
 
-            //설정
+
             img3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -314,7 +316,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                 }
             });
 
-            //현재위치
+
             img4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -339,9 +341,57 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
     }
     public void restart(){
+
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
+        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
+
         Double wi = Double.parseDouble(wido2);                                                  //변수 변환
         Double kyu = Double.parseDouble(kyungdo2);
+        img1.setImageResource(R.drawable.yuza_bike);
+        img2.setImageResource(R.drawable.yuza_bike);
+        img3.setImageResource(R.drawable.yuza_bike_recommendation);
+        img4.setImageResource(R.drawable.yuza_bike_recommendation);
+        img1.invalidate();
+        img2.invalidate();
+        img3.invalidate();
+        img4.invalidate();
+        img1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
+            }
+        });
 
+
+        img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "취소", To ast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+
+        img3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+
+        img4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
+
+            }
+        });
         mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
         mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
         mMapView.setSightVisible(true);                                                         //시야 표출여부
@@ -395,20 +445,37 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        // locationManager.removeUpdates();
-        if (mOverlayList != null) {
-            mOverlayList.clear();
-        }
+        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+        alert_confirm.setMessage("프로그램을 종료 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                                super.onDestroy();
+                        // locationManager.removeUpdates();
+                        if (mOverlayList != null) {
+                            mOverlayList.clear();
+                        }
 
-        if (mArriveDialog != null) { // 얼럿 화면 null 처리
-            mArriveDialog.dismiss();
-            mArriveDialog = null;
-        }
-        try {
+                        if (mArriveDialog != null) { // 얼럿 화면 null 처리
+                            mArriveDialog.dismiss();
+                            mArriveDialog = null;
+                        }
+                        try {
 
-            unregisterReceiver(receivers);//실행했던 리시버 삭제
-        }catch(IllegalArgumentException e){}
+                            unregisterReceiver(receivers);//실행했던 리시버 삭제
+                        }catch(IllegalArgumentException e){}
+                            
+                }).setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                                // 'No'
+                            return;
+                            }
+                });
+        AlertDialog alert = alert_confirm.create();
+        alert.show();
+
     }
 
     //xmlParser를 사용해 xml 파싱하기
