@@ -41,7 +41,8 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
             R.id.searchBtn,
             R.id.settingBtn,
             R.id.sqlBtn,
-            R.id.archiveBtn
+            R.id.archiveBtn,
+            R.id.firstInfoBtn
     };
 
     /**
@@ -59,7 +60,7 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             //메인으로가기
             case R.id.mainBtn:
-                Log.d("yuja", "main start: ");
+                Log.d("yuza", "main start: ");
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 break;
@@ -86,12 +87,12 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onCompleted(JSONObject user, GraphResponse response) {
                                 if (response.getError() != null) {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                                    Log.i("yuza", "user: " + user.toString());
+                                    Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
 
                                 } else {
-                                    Log.i("yuja", "user: " + user.toString());
-                                    Log.i("yuja", "AccessToken: " + result.getAccessToken().getToken());
+                                    Log.i("yuza", "user: " + user.toString());
+                                    Log.i("yuza", "AccessToken: " + result.getAccessToken().getToken());
                                     setResult(RESULT_OK);
                                     finish();
                                     Intent intent = new Intent(
@@ -109,7 +110,7 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
 
                     @Override
                     public void onError(FacebookException error) {
-                        Log.e("yuja", "Error: " + error);
+                        Log.e("yuza", "Error: " + error);
                         finish();
                     }
 
@@ -121,34 +122,40 @@ public class TestBtnActivity extends Activity implements View.OnClickListener {
                 break;
             //카메라기능
             case R.id.cameraBtn:
-                Log.d("yuja", "cameraBtn start: ");
+                Log.d("yuza", "cameraBtn start: ");
                 intent = new Intent(getApplicationContext(), CameraActivity.class);
                 startActivity(intent);
 
                 break;
             //검색기능
             case R.id.searchBtn:
-                Log.d("yuja", "searchBtn start: ");
+                Log.d("yuza", "searchBtn start: ");
                 intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
 
                 break;
             //설정화면
             case R.id.settingBtn:
-                Log.d("yuja", "settingBtn start: ");
+                Log.d("yuza", "settingBtn start: ");
                 intent = new Intent(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
 
                 break;
             case R.id.sqlBtn:
-                Log.d("yuja", "sqlBtn start: ");
+                Log.d("yuza", "sqlBtn start: ");
                 intent = new Intent(getApplicationContext(), SqlLiteYuzaActivity.class);
                 startActivity(intent);
 
                 break;
             case R.id.archiveBtn:
-                Log.d("yuja", "archiveBtn start: ");
+                Log.d("yuza", "archiveBtn start: ");
                 intent = new Intent(getApplicationContext(), ArchiveActivity.class);
+                startActivity(intent);
+
+                break;
+            case R.id.firstInfoBtn:
+                Log.d("yuza", "firstInfoBtn start: ");
+                intent = new Intent(getApplicationContext(), FirstInfoActivity.class);
                 startActivity(intent);
 
                 break;

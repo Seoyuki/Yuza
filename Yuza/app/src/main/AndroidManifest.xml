@@ -11,18 +11,19 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/AppTheme"> <!-- 세로화면 고정시키기 -->
 
         <meta-data
@@ -54,17 +55,22 @@
         <activity android:name=".FaceBookActivity" />
         <activity android:name=".Test" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".DetailActivity"/>
-        <activity android:name=".SqlLiteYuzaActivity"/>
-        <activity android:name=".DevMsgActivity"/>
-        <activity android:name=".RecoActivity"/>
-        <activity android:name=".SearchActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <activity android:name=".DetailActivity" />
+        <activity android:name=".SqlLiteYuzaActivity" />
+        <activity android:name=".DevMsgActivity" />
+        <activity android:name=".RecoActivity" />
+        <activity android:name=".SearchActivity" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <activity android:name=".SettingActivity"/>
-        <activity android:name=".ArchiveActivity"/>
+
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".ArchiveActivity" />
+        <activity android:name=".FirstInfoActivity"></activity>
     </application>
 
 </manifest>

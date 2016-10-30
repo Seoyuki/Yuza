@@ -1,6 +1,7 @@
 package seoyuki.yuza;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ public class Intro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+
+        final SharedPreferences checkFirstInfoEnd = getSharedPreferences("checkFirstInfoEnd", MODE_PRIVATE);
 
         // 배경을 주황색으로
         RelativeLayout introLayout = (RelativeLayout) findViewById(R.id.intro_layout);
@@ -35,8 +38,16 @@ public class Intro extends AppCompatActivity {
             public void run() {
                 // 메인 액티비티로 넘어가기
                 // 일단 테스트로
-                Intent intent = new Intent(Intro.this, TestBtnActivity.class);
-                startActivity(intent);
+
+                boolean isFirstInfoEnd = checkFirstInfoEnd.getBoolean("isFirstInfoEnd", false);
+
+                if (isFirstInfoEnd) {
+                    Intent intent = new Intent(Intro.this, TestBtnActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Intro.this, FirstInfoActivity.class);
+                    startActivity(intent);
+                }
 
                 finish(); // 인트로 종료
             }
