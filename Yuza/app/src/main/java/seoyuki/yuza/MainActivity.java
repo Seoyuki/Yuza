@@ -155,13 +155,14 @@ int yuzaid=0;
         mContext = MainActivity.this;
    try {
        mMapView = new TMapView(mContext);
+       //뷰에 셋팅
+       addView(mMapView);
+       configureMapView();
+
    }catch (Exception e){
        e.printStackTrace();
    }
 
-        //뷰에 셋팅
-        addView(mMapView);
-        configureMapView();
 
 
         //다른 엑티비티에서 온 위도 경도
@@ -528,7 +529,9 @@ int yuzaid=0;
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
+
         // locationManager.removeUpdates();
         if (mOverlayList != null) {
             mOverlayList.clear();
@@ -543,6 +546,7 @@ int yuzaid=0;
             unregisterReceiver(receivers);//실행했던 리시버 삭제
         }catch(IllegalArgumentException e){}
 
+        super.onDestroy();
     }
 
     //xmlParser를 사용해 xml 파싱하기
@@ -677,7 +681,7 @@ int yuzaid=0;
             Double wi =Double.parseDouble(mokswido);                                                //목적지 변수
             Double ky = Double.parseDouble(mokskyungdo);                                             //목적지 변수
             locationManager.addProximityAlert(wi,ky
-                    , 1000, -1,
+                    , 30, -1,
                     proximityIntent);
 
             /*================================================================*/
@@ -949,8 +953,8 @@ int yuzaid=0;
                     distanceMeters = locationA.distanceTo(locationB);
                 }
                 distance = distance  +distanceMeters;                                               //거리를 누적시킨다
-                Toast.makeText(getBaseContext(), "이동 거리 : "+distance + " 만큼이동  " ,
-                        Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getBaseContext(), "이동 거리 : "+distance + " 만큼이동  " ,
+                //        Toast.LENGTH_SHORT).show();
                 twi = latitude1;                                                                    //이전 위치를 현재 위치로
                 tky = longitude1;                                                                    //이전 위치를 현재 위치로
 //                Toast.makeText(getBaseContext(), "onLocationChanged 안의 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,

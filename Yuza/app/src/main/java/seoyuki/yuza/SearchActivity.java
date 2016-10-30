@@ -265,4 +265,11 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
+
+        super.onDestroy();
+    }
 }

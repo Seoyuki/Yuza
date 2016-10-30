@@ -469,4 +469,12 @@ public class ArchiveActivity extends AppCompatActivity {
         return arrayList;
     }
 
+
+    @Override
+    protected void onDestroy() {
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
+
+        super.onDestroy();
+    }
 }

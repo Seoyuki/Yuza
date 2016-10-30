@@ -110,6 +110,15 @@ public class DetailActivity extends Activity {
 
         detailBottomMsg.setText("여행할 목적지가 있다는 것은 좋은 일이다.\n그러나 중요한 것은 여행 자체다.\n\n어슐러 K. 르 귄(Ursula Kroeber Le Guin)");
     }
+
+
+    @Override
+    protected void onDestroy() {
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
+
+        super.onDestroy();
+    }
 }
 
 

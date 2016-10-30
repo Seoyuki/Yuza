@@ -130,4 +130,12 @@ public class SettingActivity extends AppCompatActivity {
         alert.setIcon(R.mipmap.ic_launcher);
         alert.show();
     }
+
+    @Override
+    protected void onDestroy() {
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
+
+        super.onDestroy();
+    }
 }
