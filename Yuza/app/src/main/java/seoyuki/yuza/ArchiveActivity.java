@@ -28,13 +28,10 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Administrator on 2016-10-16.
- */
 
 public class ArchiveActivity extends AppCompatActivity {
 
@@ -42,23 +39,16 @@ public class ArchiveActivity extends AppCompatActivity {
     SqlLiteYuzaOpenHelper helper;
     List<YuzaRanking> yuzaRanking;
 
-    private ListView mArchiveListView = null;
     private ArchiveActivity.ListViewAdapter mArchiveAdapter = null;
-    ArrayList<Student> mArchiveStudentList = new ArrayList<Student>();
-    private ArrayList<YuzaRanking> mArchiveListData = new ArrayList<YuzaRanking>();
+    ArrayList<Student> mArchiveStudentList = new ArrayList<>();
+    private ArrayList<YuzaRanking> mArchiveListData = new ArrayList<>();
 
-    private final int YUZA_MAX_NUMBER = 99;
-    private int archiveNumber = 0;
-    private String decodeImageURL = "";
+
 
     private TextView archiveNumberView;
     private TextView archiveTitleText;
     private TextView archiveCheerText;
 
-    private ImageView archiveNoImg;
-    private TextView archiveNoMsg;
-
-    private int n;
     private StringBuilder stringBuilder = new StringBuilder();
     private final String ARCHIVE_TITLE_STRING[] = {
             "설레는 시작!",
@@ -93,15 +83,21 @@ public class ArchiveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_archive);
 
+        int archiveNumber = 0;
+        ImageView archiveNoImg;
+        TextView archiveNoMsg;
+        ListView mArchiveListView;
+
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
+
 
         mArchiveListView = (ListView) findViewById(R.id.archiveListView);
         // searchText = (TextView)findViewById(R.id.archiveText);
         mArchiveAdapter = new ListViewAdapter(this);
 
-        archiveNumberView = (TextView) findViewById(R.id.archiveNumber);
+        archiveNumberView = (TextView) findViewById(archiveNumber);
         archiveTitleText = (TextView) findViewById(R.id.archiveTitleText);
         archiveCheerText = (TextView) findViewById(R.id.archiveCheerText);
 
@@ -116,7 +112,7 @@ public class ArchiveActivity extends AppCompatActivity {
         final List<YuzaRanking> archiveList = select(); // 현재 완료한 곳 리스트 불러오기
         archiveNumber = archiveList.size();
 
-        mArchiveStudentList = xmlParser();
+        mArchiveStudentList = xmlParser(); // 전체 유적 데이터 가져오기
 
         // 도착한 곳이 있으면 archiveNoImg, archiveNoMsg를 숨기고 archiveRecord는 보여준다
         if (archiveNumber != 0) {
@@ -129,17 +125,24 @@ public class ArchiveActivity extends AppCompatActivity {
         setArchiveTitleTextView(archiveNumber);
         setArchiveCheerTextView(archiveNumber);
 
+        // DB에서 불러온 데이터(도착완료한 유적들)을 하나씩 mArchiveAdapter에 넣어준다
         for (YuzaRanking i : archiveList) {
             mArchiveAdapter.addItem(i); }
 
+        // 리스트뷰 만들기
         mArchiveListView.setAdapter(mArchiveAdapter);
 
+        // 각 리스트뷰마다 리스너 달아주기, DetailActivity로 넘어간다
         mArchiveListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id){
 
+                // 각 리스트뷰가 가지고 있는 유적 데이터(mArchiveListData.get(position))에서
+                // 그 유적 데이터의 yuza_id를 전체 유적 데이터(mArchiveStudentList)에서 가져온다.
+                // 전체 유적 데이터의 id(xml상의 id)는 1부터 시작하기 때문에 0부터 시작하는 list 특성상 검색 인덱스에 -1 필요하다.
                 Student data = mArchiveStudentList.get((mArchiveListData.get(position).getYuza_id())-1);
+
                 // 다음 액티비티로 넘길 Bundle 데이터를 만든다.
                 Bundle extras = new Bundle();
                 extras.putString("name", data.getName());
@@ -158,74 +161,7 @@ public class ArchiveActivity extends AppCompatActivity {
             }
         });
 
-
-
-//        // 1. 데이터 저장
-//        this.insert(1,"유적지",100,"2016-10-10 20:00");
-//        this.insert(2,"유적지2",100,"2016-10-10 20:00");
-//        //insert("유저2", 28, "각기도");
-//        //insert("유저3", 28, "각도기");
-//
-//        //일단주석
-//        // 2. 수정하기
-//        //update("유저1", 58); // 나이만 수정하기
-//
-//        // 3. 삭제하기
-//        delete("유저2");
-//
-//        // 4. 조회하기
-//        List<YuzaRanking> list =   select();
-//        String listStr = "";
-//        for (int i=0 ; i < yuzaRanking.size() ; i++){
-//            listStr += "\n tid: " + yuzaRanking.get(i).getTid() + ", name : "
-//                    + yuzaRanking.get(i).getName() + ", yuzaid : " + yuzaRanking.get(i).getRet_time()
-//                    + ", time : " + yuzaRanking.get(i).getRet_km();
-//        }
-//        sqlText = (TextView) findViewById(R.id.textSql);
-//        sqlText.setText(listStr);
     }
-
-//    // insert
-//    public void insert(int yuzaid, String name, float km, String time, String date) {
-//        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
-//
-//        ContentValues values = new ContentValues();
-//        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-//        // 데이터의 삽입은 put을 이용한다.
-//        values.put("yuza_id", yuzaid);
-//        values.put("name", name);
-//        values.put("ret_km", km);
-//        values.put("ret_time", time);
-//        values.put("ret_date", date);
-//        db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-//        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
-//    }
-//
-//    // update 일단 주석
-//  /*  public void update (String name, int age) {
-//        db = helper.getWritableDatabase(); //db 객체를 얻어온다. 쓰기가능
-//
-//        ContentValues values = new ContentValues();
-//        values.put("age", age);    //age 값을 수정
-//        db.update("student", values, "name=?", new String[]{name});
-//
-//          new String[] {name} 이런 간략화 형태가 자바에서 가능하다
-//          당연하지만, 별도로 String[] asdf = {name} 후 사용하는 것도 동일한 결과가 나온다.
-//
-//
-//
-//         public int update (String table,
-//         ContentValues values, String whereClause, String[] whereArgs)
-//
-//    }*/
-//
-//
-//    // delete
-//    public void delete (String yuzaid) {
-//        db = helper.getWritableDatabase();
-//        db.delete("yuzaranking", "yuza_id=?", new String[]{yuzaid});
-//        Log.i("db", yuzaid + "정상적으로 삭제 되었습니다.");
-//    }
 
     private void setArchiveNumberView(int number) {
         archiveNumberView.setText(String.valueOf(number)); // 전체 도착 개수 출력
@@ -236,6 +172,8 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
     private void setArchiveCheerTextView(int number) {
+        final int YUZA_MAX_NUMBER = 99;
+        int n;
 
         stringBuilder.append("단계 ").append((number/15)).append(", ");
         stringBuilder.append(ARCHIVE_GRADE_STRING[number/15]);
@@ -322,8 +260,9 @@ public class ArchiveActivity extends AppCompatActivity {
 
     private class ListViewAdapter extends BaseAdapter implements Filterable {
         Activity context;
+        private String decodeImageURL = "";
 
-        public ListViewAdapter(Activity context) {
+        ListViewAdapter(Activity context) {
             super();
             this.context = context;
         }
@@ -343,17 +282,8 @@ public class ArchiveActivity extends AppCompatActivity {
             return position;
         }
 
-        public void addItem(YuzaRanking yuzaRanking){
+        void addItem(YuzaRanking yuzaRanking){
             mArchiveListData.add(yuzaRanking);
-        }
-
-        public void remove(int position){
-            mArchiveStudentList.remove(position);
-            dataChange();
-        }
-
-        public void dataChange(){
-            mArchiveAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -387,13 +317,25 @@ public class ArchiveActivity extends AppCompatActivity {
             }
 
             if (mData != null) {
-                decodeImageURL = URLDecoder.decode(mArchiveStudentList.get(mData.getYuza_id()-1).getImage());
+
+                // URLDecoder.decode(string)은 deprecated
+                // 아래와 같이 코드 수정
+                // 참고 : https://github.com/WPIRoboticsProjects/GRIP/issues/594
+                try {
+                    decodeImageURL = URLDecoder.decode(mArchiveStudentList.get(mData.getYuza_id()-1).getImage(), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                // 이미지 캐시 처리 및 이미지 로딩 효과를 위해 Glide 라이브러리 사용
                 Glide.with(getBaseContext()).load(decodeImageURL).into(holder.mArchiveImageIcon);
 
+                // 코드 품질 향상을 위해 strings.xml 사용
+                // 참고 : http://stackoverflow.com/questions/33164886/android-textview-do-not-concatenate-text-displayed-with-settext
                 holder.mArchiveName.setText(mData.getName());
-                holder.mArchiveDate.setText(mData.getRet_date() + "분에");
-                holder.mArchiveTime.setText(mData.getRet_time() + "동안");
-                holder.mArchiveDistance.setText(String.valueOf(mData.getRet_km()) + "km 달림");
+                holder.mArchiveDate.setText(getString(R.string.showRet_date, mData.getRet_date()));
+                holder.mArchiveTime.setText(getString(R.string.showRet_time, mData.getRet_time()));
+                holder.mArchiveDistance.setText(getString(R.string.showRet_km, mData.getRet_km()));
 
             }else{
                 holder.mArchiveImageIcon.setVisibility(View.GONE);
@@ -404,7 +346,8 @@ public class ArchiveActivity extends AppCompatActivity {
             return convertView;
         }
         public Filter getFilter() {
-            Filter filter = new Filter() {
+
+            return new Filter() {
 
 
                 @Override
@@ -418,8 +361,8 @@ public class ArchiveActivity extends AppCompatActivity {
                     }
                     String word = constraint.toString();
 
-                    ArrayList<Student> FilteredList = new ArrayList<Student>();
-                    if (constraint == null || constraint.length() == 0) {
+                    ArrayList<Student> FilteredList = new ArrayList<>();
+                    if (constraint.length() == 0) {
                         // No filter implemented we return all the list
                         results.values = mArchiveStudentList;
                         results.count = mArchiveStudentList.size();
@@ -445,8 +388,9 @@ public class ArchiveActivity extends AppCompatActivity {
 
                 @Override
                 protected void publishResults(CharSequence constraint,
-                                              Filter.FilterResults results) {
+                                              FilterResults results) {
                     Log.d("yuza","ret publishResults()"+results);
+                    // 지네릭스 사용이 필요하지만 코드가 너무 많이 바뀔 것 같아 그냥 놔둠
                     mArchiveListData = (ArrayList<YuzaRanking>) results.values;
                     if(mArchiveListData != null){
                         for (int i = 0; i < mArchiveListData.size(); i++) {
@@ -458,8 +402,6 @@ public class ArchiveActivity extends AppCompatActivity {
                 }
 
             };
-
-            return filter;
         }
 
 
