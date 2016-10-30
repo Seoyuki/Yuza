@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Yuza</string>
+    <string name="app_name">유자</string>
 
     <string name="facebook_app_id">1112123538868081</string>
     <string name="fb_login_protocol_scheme">1112123538868081</string>
