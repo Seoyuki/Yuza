@@ -21,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -169,8 +170,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         kyungdo2 = getIntent().getStringExtra("mokkyungdo");                                    //목적지 경도를 받음
 
 
-    //LocationManager 설정 및 탐색
-         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        //LocationManager 설정 및 탐색
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         GpsListener gpsListener = new GpsListener();
 
         locationManager.requestLocationUpdates(
@@ -278,7 +279,49 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
             Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
             Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
+            img1.setImageResource(R.drawable.yuza_bike);
+            img2.setImageResource(R.drawable.yuza_bike);
+            img3.setImageResource(R.drawable.yuza_bike_recommendation);
+            img4.setImageResource(R.drawable.yuza_bike_recommendation);
+            img1.invalidate();
+            img2.invalidate();
+            img3.invalidate();
+            img4.invalidate();
+            img1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
+                }
+            });
 
+            //검색
+            img2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
+
+
+                }
+            });
+
+            //설정
+            img3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
+
+
+                }
+            });
+
+            //현재위치
+            img4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
+
+                }
+            });
             TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
             tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
                     new TMapData.FindPathDataListenerCallback() {
@@ -287,15 +330,38 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                             mMapView.addTMapPath(polyLine);
                         }
                     });
-          //  for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
-          //      String imsy = String.format(count + "", mMarkerID++);
-          //      mMapView.removeAllMarkerItem();                                                         //마커를 지운다
-          //  }
+            //  for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
+            //      String imsy = String.format(count + "", mMarkerID++);
+            //      mMapView.removeAllMarkerItem();                                                         //마커를 지운다
+            //  }
 
         }
 
     }
+    public void restart(){
+        Double wi = Double.parseDouble(wido2);                                                  //변수 변환
+        Double kyu = Double.parseDouble(kyungdo2);
 
+        mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
+        mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
+        mMapView.setSightVisible(true);                                                         //시야 표출여부
+        TMapPoint point1 = new TMapPoint(wi, kyu);                                              //목적지 설정
+        TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
+        Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
+
+        TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
+                new TMapData.FindPathDataListenerCallback() {
+                    @Override
+                    public void onFindPathData(TMapPolyLine polyLine) {
+                        mMapView.addTMapPath(polyLine);
+                    }
+                });
+    }
+    public void stop(){
+
+    }
     public void onResume() {
         super.onResume();
     }
@@ -330,7 +396,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // locationManager.removeUpdates();
+        // locationManager.removeUpdates();
         if (mOverlayList != null) {
             mOverlayList.clear();
         }
@@ -477,7 +543,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             Double wi =Double.parseDouble(mokswido);                                                //목적지 변수
             Double ky = Double.parseDouble(mokskyungdo);                                             //목적지 변수
             locationManager.addProximityAlert(wi,ky
-                    , 1000, 1000000,
+                    , 150, -1,
                     proximityIntent);
 
             /*================================================================*/
@@ -515,6 +581,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         // 액티비티를 생성한다.
         startActivity(intent);
         finish();
+        unregisterReceiver(receivers);//실행했던 리시버 삭제
         mArriveDialog = alertDialog.show(); // DialogInterface에 alertDialog를 담아서 보여준다. 수명주기 코드를 위해 필요하다.
         showMarkerPoint();
     }
@@ -527,8 +594,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             // 지피에스 위치가 변해서 127, 37.5 로 되면 DDMS 에 아래 로그가 찍힘으로 확인 가능
             Log.d("도착", "실패ㅠㅠㅠ");
             Toast.makeText(context, "목표 지점에 접근중..", Toast.LENGTH_SHORT).show();
-          //  SqlLiteYuzaActivity sql = new SqlLiteYuzaActivity();
-           showalert();
+            //  SqlLiteYuzaActivity sql = new SqlLiteYuzaActivity();
+            showalert();
         }
 
     }
