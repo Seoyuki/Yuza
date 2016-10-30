@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             @Override
             public void onClick(View v) {
                 Log.d("yuza", "searchBtn start: ");
-                Intent intent = new Intent(getApplicationContext(), RecoActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 startActivity(intent);
 
 
@@ -368,7 +368,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         img2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "취소", To ast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -445,36 +445,20 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
     @Override
     protected void onDestroy() {
-        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
-        alert_confirm.setMessage("프로그램을 종료 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
-                new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                                super.onDestroy();
-                        // locationManager.removeUpdates();
-                        if (mOverlayList != null) {
-                            mOverlayList.clear();
-                        }
+        super.onDestroy();
+        // locationManager.removeUpdates();
+        if (mOverlayList != null) {
+            mOverlayList.clear();
+        }
 
-                        if (mArriveDialog != null) { // 얼럿 화면 null 처리
-                            mArriveDialog.dismiss();
-                            mArriveDialog = null;
-                        }
-                        try {
+        if (mArriveDialog != null) { // 얼럿 화면 null 처리
+            mArriveDialog.dismiss();
+            mArriveDialog = null;
+        }
+        try {
 
-                            unregisterReceiver(receivers);//실행했던 리시버 삭제
-                        }catch(IllegalArgumentException e){}
-                            
-                }).setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                                // 'No'
-                            return;
-                            }
-                });
-        AlertDialog alert = alert_confirm.create();
-        alert.show();
+            unregisterReceiver(receivers);//실행했던 리시버 삭제
+        }catch(IllegalArgumentException e){}
 
     }
 
