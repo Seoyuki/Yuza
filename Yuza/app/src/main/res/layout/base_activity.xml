@@ -23,33 +23,75 @@
 		android:layout_height="50dp"
 		android:layout_marginTop="8dp">
 
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/herebtn"
-			android:id="@+id/hereImageView"
-			android:layout_weight="1" />
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
 
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/searchbtn"
-			android:id="@+id/searchImageView"
-			android:layout_weight="1" />
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/speedTextView"
+                android:layout_weight="1" />
 
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/archivebtn"
-			android:id="@+id/achievementImageView"
-			android:layout_weight="1" />
+			<ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/herebtn"
+                android:id="@+id/hereImageView"
+                android:layout_weight="1" />
+		</LinearLayout>
 
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/settingbtn"
-			android:id="@+id/settingImageView"
-			android:layout_weight="1" />
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
+
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/distanceTextView"
+                android:layout_weight="1" />
+
+			<ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/searchbtn"
+                android:id="@+id/searchImageView"
+                android:layout_weight="1"
+                android:adjustViewBounds="false" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
+
+			<ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/archivebtn"
+                android:id="@+id/achievementImageView"
+                android:layout_weight="1" />
+
+		</LinearLayout>
+
+		<LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+			<ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/settingbtn"
+                android:id="@+id/settingImageView"
+                android:layout_weight="1" />
+		</LinearLayout>
 	</LinearLayout>
 
 

@@ -10,15 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="seoyuki.yuza.MainActivity">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/sorry"
-        android:id="@+id/sorryImageView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
-
     <TextView
         android:text="@string/sorry"
         android:layout_width="wrap_content"
@@ -39,4 +30,5 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/sorryYuzaCopy"
         android:layout_marginBottom="40dp" />
+
 </RelativeLayout>

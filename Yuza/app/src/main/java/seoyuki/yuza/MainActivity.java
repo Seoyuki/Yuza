@@ -19,11 +19,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -227,6 +228,12 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
         ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
 
+        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
+        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+
+        speedTextView.setVisibility(View.GONE);
+        distanceTextView.setVisibility(View.GONE);
+
         //업적
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -284,14 +291,29 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
             Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
             Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
-            img1.setImageResource(R.drawable.yuza_bike);
-            img2.setImageResource(R.drawable.yuza_bike);
-            img3.setImageResource(R.drawable.yuza_bike_recommendation);
-            img4.setImageResource(R.drawable.yuza_bike_recommendation);
+
+            // 4-2-1-3 순서 : 속도 / 거리 / 재검색 / 취소 순서
+
+            img1.setImageResource(R.drawable.searchagainbtn); // 재검색
+            img2.setVisibility(View.INVISIBLE);
+            img3.setImageResource(R.drawable.canclebtn); // 취소
+            img4.setVisibility(View.INVISIBLE);
             img1.invalidate();
             img2.invalidate();
             img3.invalidate();
             img4.invalidate();
+
+            // 전체 화면 너비 구하기
+            DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+            int width = dm.widthPixels;
+
+            speedTextView.setText("속도는?");
+            distanceTextView.setText("거리는?");
+            
+            speedTextView.setVisibility(View.VISIBLE);
+            distanceTextView.setVisibility(View.VISIBLE);
+
+
             img1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -304,7 +326,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             img2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
+
 
 
                 }
@@ -314,8 +337,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             img3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
 
                 }
             });
