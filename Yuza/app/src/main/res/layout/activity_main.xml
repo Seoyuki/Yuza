@@ -11,18 +11,6 @@
     tools:context="seoyuki.yuza.MainActivity">
 
     <TextView
-        android:text="@string/sorry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sorryText"
-        android:lineSpacingExtra="8dip"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:layout_below="@+id/sorryImageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp" />
-
-    <TextView
         android:text="행복한 자전거를 꿈꾸는 Yuza 드림"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,5 +18,28 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/sorryYuzaCopy"
         android:layout_marginBottom="40dp" />
+
+    <TextView
+        android:text="@string/sorry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sorryText"
+        android:lineSpacingExtra="8dip"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_marginTop="230dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="ㅠ.ㅠ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="90dp"
+        android:id="@+id/sorryEmoji"
+        android:textSize="50sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
