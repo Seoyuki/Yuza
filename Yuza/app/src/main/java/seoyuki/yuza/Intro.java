@@ -96,10 +96,13 @@ public class Intro extends AppCompatActivity {
 
                     if (isFirstInfoEnd) {
                         Intent intent = new Intent(Intro.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
 
                     } else {
                         Intent intent = new Intent(Intro.this, FirstInfoActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                         SharedPreferences.Editor editor = checkFirstInfoEnd.edit();
                         editor.putBoolean("isFirstInfoEnd", true);
