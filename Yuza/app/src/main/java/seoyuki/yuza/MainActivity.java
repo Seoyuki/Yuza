@@ -72,6 +72,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      */
     int count = 0;
     float speed;
+    float maxspeed;
     Double distance =0.0;
     Double twi;
     Double tky;
@@ -340,6 +341,25 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
         }
 
+    }
+    @Override
+    public void onBackPressed(){
+        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+        alert_confirm.setMessage("프로그램을 종료 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        AlertDialog alert = alert_confirm.create();
+        alert.show();
     }
     public void restart(){
 
@@ -646,6 +666,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         Bundle extras = new Bundle();
         extras.putString("mokjuckji", name);
         extras.putString("mokdistance",distan.toString());
+        String mspeed = maxspeed+"";
+        extras.putString("mokmaxspeed",mspeed);
         Intent intent = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
         // 위에서 만든 Bundle을 인텐트에 넣는다.
         intent.putExtras(extras);
@@ -653,6 +675,19 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         startActivity(intent);
         finish();
         unregisterReceiver(receivers);//실행했던 리시버 삭제
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
+        locationManager.removeProximityAlert(proximityIntent);
         mArriveDialog = alertDialog.show(); // DialogInterface에 alertDialog를 담아서 보여준다. 수명주기 코드를 위해 필요하다.
         showMarkerPoint();
     }
@@ -832,6 +867,10 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             latitude = latitude1;                                                     //현재위치 위도
             longitude = longitude1;                                                  //현재 위치 경도
             speed = location.getSpeed();
+            if(maxspeed<speed){
+                maxspeed=speed;
+            }
+
             Log.d("yuza", " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude);
 //            Toast.makeText(getBaseContext(), " onLocationChanged 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
 //                    Toast.LENGTH_SHORT).show();
@@ -839,7 +878,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
             mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
 
             if (wido2 != null) {
-
+                speed = location.getSpeed();
                 Location locationA = new Location("point A");                                       //현재 위치
                 locationA.setLatitude(latitude);
                 locationA.setLongitude(longitude);
