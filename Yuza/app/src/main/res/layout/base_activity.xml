@@ -33,7 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/speedTextView"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+				android:visibility="gone" />
 
 			<ImageView
                 android:layout_width="match_parent"
@@ -53,7 +54,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/distanceTextView"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+				android:visibility="gone" />
 
 			<ImageView
                 android:layout_width="match_parent"

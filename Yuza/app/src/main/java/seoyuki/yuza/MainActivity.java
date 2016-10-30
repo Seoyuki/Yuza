@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     boolean finished = false;
-
+    SqlLiteYuzaActivity sqlLiteYuzaActivity = new SqlLiteYuzaActivity();
     int count = 0;
     float speed;
     float maxspeed;
@@ -88,12 +88,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
     Double latitude = 0.0;                         //현재 위치를 담는 변수
     Double longitude = 0.0;                        //현재 위치를 담는 변수
     Calendar now = Calendar.getInstance();          //현재 시간
-    int hour = 0;                                   //시
-    int min = 0;                                    //분
-    int sec = 0;                                    //초
-    int hours = 0;                                  //도착 시간
-    int mins = 0;                                   //도착 분
-    int secs = 0;                                   //도착 초
+int yuzaid=0;
     private static final String PROX_ALERT_INTENT = "com.javacodegeeks.android.lbs.ProximityAlert"; //목적지 도착 알림에 쓰이는 변수
     private static final long POINT_RADIUS = 1000; // in Meters                                           //목적지 도착 알림시 범위
     private static final long PROX_ALERT_EXPIRATION = -1;                                               //목적지 도착 알림창 띄우는 시간
@@ -283,7 +278,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
             Double wi = Double.parseDouble(wido2);                                                  //변수 변환
             Double kyu = Double.parseDouble(kyungdo2);
-
+            buttonchange();
             mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
             mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
             mMapView.setSightVisible(true);                                                         //시야 표출여부
@@ -294,62 +289,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
             // 4-2-1-3 순서 : 속도 / 거리 / 재검색 / 취소 순서
 
-            img1.setImageResource(R.drawable.searchagainbtn); // 재검색
-            img2.setVisibility(View.INVISIBLE);
-            img3.setImageResource(R.drawable.canclebtn); // 취소
-            img4.setVisibility(View.INVISIBLE);
-            img1.invalidate();
-            img2.invalidate();
-            img3.invalidate();
-            img4.invalidate();
 
-            // 전체 화면 너비 구하기
-            DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
-            int width = dm.widthPixels;
-
-            speedTextView.setText("속도는?");
-            distanceTextView.setText("거리는?");
-            
-            speedTextView.setVisibility(View.VISIBLE);
-            distanceTextView.setVisibility(View.VISIBLE);
-
-
-            img1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
-                    restart();
-                }
-            });
-
-
-            img2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
-
-
-
-                }
-            });
-
-
-            img3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
-
-                }
-            });
-
-
-            img4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
-
-                }
-            });
             TMapData tmapdata = new TMapData();                                                        //길찾기를 위한
             tmapdata.findPathDataWithType(TMapData.TMapPathType.BICYCLE_PATH, point2, point1,           //주어진 출도착지도 자전거길을 찾는다
                     new TMapData.FindPathDataListenerCallback() {
@@ -365,6 +305,70 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
         }
 
+    }
+    public void buttonchange(){
+        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
+        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
+        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
+        img1.setImageResource(R.drawable.searchagainbtn); // 재검색
+        img2.setVisibility(View.INVISIBLE);
+        img3.setImageResource(R.drawable.canclebtn); // 취소
+        img4.setVisibility(View.INVISIBLE);
+        img1.invalidate();
+        img2.invalidate();
+        img3.invalidate();
+        img4.invalidate();
+
+        // 전체 화면 너비 구하기
+        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
+
+        speedTextView.setText("현재 속도 : " + speed);
+        distanceTextView.setText("총 이동 거리" + distance);
+
+        speedTextView.setVisibility(View.VISIBLE);
+        distanceTextView.setVisibility(View.VISIBLE);
+
+
+        img1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
+                restart();
+            }
+        });
+
+
+        img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+        });
+
+
+        img3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
+                stop();
+            }
+        });
+
+
+        img4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
     @Override
     public void onBackPressed(){
@@ -388,56 +392,9 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
     }
     public void restart(){
 
-        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
-        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
-        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
-        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
-
         Double wi = Double.parseDouble(wido2);                                                  //변수 변환
         Double kyu = Double.parseDouble(kyungdo2);
-        img1.setImageResource(R.drawable.yuza_bike);
-        img2.setImageResource(R.drawable.yuza_bike);
-        img3.setImageResource(R.drawable.yuza_bike_recommendation);
-        img4.setImageResource(R.drawable.yuza_bike_recommendation);
-        img1.invalidate();
-        img2.invalidate();
-        img3.invalidate();
-        img4.invalidate();
-        img1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "경로재검색", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show();
-
-
-            }
-        });
-
-
-        img3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "거리확인", Toast.LENGTH_SHORT).show();
-
-
-            }
-        });
-
-
-        img4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "속도확인", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+        buttonchange();
         mMapView.setCompassMode(true);                                                          //나침반 모드 실행(지도가 돌아간다)
         mMapView.setTrackingMode(true);                                                         //지도가 현재 위치를 중심으로 변경
         mMapView.setSightVisible(true);                                                         //시야 표출여부
@@ -456,7 +413,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                 });
     }
     public void stop(){
-
+        mMapView.removeTMapPath();
     }
     public void onResume() {
         super.onResume();
@@ -668,17 +625,13 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         alertDialog.setView(dialogView);
         alertDialog.create();
         final String name = getIntent().getStringExtra("mokname ");
-        Double distan = distance;
+      int dis = distance.intValue();
         Bundle extras = new Bundle();
-//        extras.putString("mokjuckji", name);
-//        extras.putString("mokdistance",distan.toString());
-//        String mspeed = maxspeed+"";
-//        extras.putString("mokmaxspeed",mspeed);
-//        Intent intent = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
-//        // 위에서 만든 Bundle을 인텐트에 넣는다.
-//        intent.putExtras(extras);
-//        // 액티비티를 생성한다.
-//        startActivity(intent);
+        stop();
+        final String id = getIntent().getStringExtra("mokid");
+        int ids = Integer.parseInt(id);
+        sqlLiteYuzaActivity.insert(ids,name,dis,"100분",Calendar.DATE+"");
+        Toast.makeText(getApplicationContext(), "저장합니다 id"+ids+": 이름"+name+"거리"+dis+"날짜"+Calendar.DATE+""+"입니다", Toast.LENGTH_SHORT).show();
        finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -704,9 +657,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         public void onReceive(Context context, Intent intent) {
             //방송을 잘 잡으면 밑에 로그 한번 찍어줌.
             // 지피에스 위치가 변해서 127, 37.5 로 되면 DDMS 에 아래 로그가 찍힘으로 확인 가능
-            Log.d("도착", "실패ㅠㅠㅠ");
-            Toast.makeText(context, "목표 지점에 접근중..", Toast.LENGTH_SHORT).show();
-            //  SqlLiteYuzaActivity sql = new SqlLiteYuzaActivity();
+
             showalert();
         }
 
