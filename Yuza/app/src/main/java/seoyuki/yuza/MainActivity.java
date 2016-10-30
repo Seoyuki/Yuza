@@ -132,6 +132,9 @@ int yuzaid=0;
     TMapGpsManager tmapgps;
     TMapPoint tpoint;
 
+    ImageView img1, img2, img3, img4;
+    TextView speedMsg, speedTextView, distanceMsg, distanceTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,16 +238,20 @@ int yuzaid=0;
 
 
 
-        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
-        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
-        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
-        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
+        img1 = (ImageView) findViewById(R.id.achievementImageView);
+        img2 = (ImageView) findViewById(R.id.searchImageView);
+        img3 = (ImageView) findViewById(R.id.settingImageView);
+        img4 = (ImageView) findViewById(R.id.hereImageView);
 
-        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
-        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+        speedTextView = (TextView) findViewById(R.id.speedTextView);
+        distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+        speedMsg = (TextView) findViewById(R.id.speedMsg);
+        distanceMsg = (TextView) findViewById(R.id.distanceMsg);
 
         speedTextView.setVisibility(View.GONE);
         distanceTextView.setVisibility(View.GONE);
+        speedMsg.setVisibility(View.GONE);
+        distanceMsg.setVisibility(View.GONE);
 
         //업적
         img1.setOnClickListener(new View.OnClickListener() {
@@ -324,15 +331,6 @@ int yuzaid=0;
 
     }
     public void buttonchange(){
-        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
-        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
-        TextView speedMsg = (TextView) findViewById(R.id.speedMsg);
-        TextView distanceMsg = (TextView) findViewById(R.id.distanceMsg);
-
-        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
-        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
-        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
-        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
         img1.setImageResource(R.drawable.searchagainbtn); // 재검색
         img2.setVisibility(View.GONE);
         img3.setImageResource(R.drawable.canclebtn); // 취소
@@ -431,24 +429,16 @@ int yuzaid=0;
         mMapView.setCompassMode(false);
         mMapView.setTrackingMode(false);
         showMarkerPoint();
-        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
-        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
-        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
-        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
         img2.setVisibility(View.VISIBLE);
         img4.setVisibility(View.VISIBLE);
         img2.setImageResource(R.drawable.searchbtn); // 재검색
         img4.setImageResource(R.drawable.herebtn); // 재검색
         img1.setImageResource(R.drawable.archivebtn); // 재검색
         img3.setImageResource(R.drawable.settingbtn); // 재검색
-        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
-        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
-        TextView speedTextViewmsg = (TextView) findViewById(R.id.speedMsg);
-        TextView distanceTextViewmsg = (TextView) findViewById(R.id.distanceMsg);
         speedTextView.setVisibility(View.GONE);
         distanceTextView.setVisibility(View.GONE);
-        speedTextViewmsg.setVisibility(View.GONE);
-        distanceTextViewmsg.setVisibility(View.GONE);
+        speedMsg.setVisibility(View.GONE);
+        distanceMsg.setVisibility(View.GONE);
 
         //업적
         img1.setOnClickListener(new View.OnClickListener() {
@@ -465,6 +455,7 @@ int yuzaid=0;
             public void onClick(View v) {
                 Log.d("yuza", "searchBtn start: ");
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
 
@@ -476,6 +467,7 @@ int yuzaid=0;
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
 
@@ -962,8 +954,6 @@ int yuzaid=0;
                 locationB.setLatitude(twi);
                 locationB.setLongitude(tky);
                 double distanceMeters=0.0;
-                TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
-                TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
                 double spe = Double.parseDouble(String.format("%.1f", speed));
 
                 Double dis = Double.parseDouble(distance+"");
