@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +90,16 @@ public class ArchiveActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
+
+        ImageView archiveLeaf = (ImageView) findViewById(R.id.archiveLeaf);
+
+        // 전체 화면 너비 구하기
+        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
+
+        // archiveLeaf의 크기는 전체 화면 너비의 1/3로
+        // archiveLeaf의 너비가 activity_archive.xml의 전체 화면구조를 잡는 구조(constraintLayout)
+        archiveLeaf.getLayoutParams().width = width/3;
 
         mArchiveListView = (ListView) findViewById(R.id.archiveListView);
         // searchText = (TextView)findViewById(R.id.archiveText);
@@ -329,7 +340,7 @@ public class ArchiveActivity extends AppCompatActivity {
             }else{
                 holder.mArchiveImageIcon.setVisibility(View.GONE);
             }
-            
+
             return convertView;
         }
         public Filter getFilter() {
