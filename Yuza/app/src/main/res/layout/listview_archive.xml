@@ -42,7 +42,7 @@
             android:layout_marginTop="6dp" />
 
         <TextView
-            android:id="@+id/archiveDate"
+            android:id="@+id/archiveDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
@@ -51,24 +51,24 @@
             android:layout_marginTop="4dp" />
 
         <TextView
-            android:id="@+id/archiveTime"
+            android:id="@+id/archiveDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
-            android:layout_below="@+id/archiveDate"
+            android:layout_below="@+id/archiveDistance"
             android:layout_alignParentStart="true"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp" />
 
         <TextView
-            android:id="@+id/archiveDistance"
+            android:id="@+id/archiveTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Date"
             android:layout_weight="1"
-            android:layout_alignBaseline="@+id/archiveTime"
-            android:layout_alignBottom="@+id/archiveTime"
-            android:layout_toEndOf="@+id/archiveTime"
+            android:layout_alignBaseline="@+id/archiveDate"
+            android:layout_alignBottom="@+id/archiveDate"
+            android:layout_toEndOf="@+id/archiveDate"
             android:layout_marginLeft="4dp" />
 
     </RelativeLayout>
