@@ -43,15 +43,11 @@
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
-<<<<<<< HEAD
-  <component name="SvnConfiguration">
-    <configuration>C:\Users\guitarhyo\AppData\Roaming\Subversion</configuration>
-  </component>
   <component name="masterDetails">
     <states>
       <state key="ProjectJDKs.UI">
         <settings>
-          <last-edited>1.7</last-edited>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -74,6 +70,4 @@
       </state>
     </states>
   </component>
-=======
->>>>>>> origin/master
 </project>
