@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+    int count = 0;
     float speed;
     Double distance =0.0;
     Double twi;
@@ -445,20 +446,39 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        // locationManager.removeUpdates();
-        if (mOverlayList != null) {
-            mOverlayList.clear();
+        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+        alert_confirm.setMessage("프로그램을 종료 하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       count=count+1;
+                    }
+                }).setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        AlertDialog alert = alert_confirm.create();
+        alert.show();
+        if(count==1){
+            super.onDestroy();
+            // locationManager.removeUpdates();
+            if (mOverlayList != null) {
+                mOverlayList.clear();
+            }
+
+            if (mArriveDialog != null) { // 얼럿 화면 null 처리
+                mArriveDialog.dismiss();
+                mArriveDialog = null;
+            }
+            try {
+
+                unregisterReceiver(receivers);//실행했던 리시버 삭제
+            }catch(IllegalArgumentException e){}
         }
 
-        if (mArriveDialog != null) { // 얼럿 화면 null 처리
-            mArriveDialog.dismiss();
-            mArriveDialog = null;
-        }
-        try {
-
-            unregisterReceiver(receivers);//실행했던 리시버 삭제
-        }catch(IllegalArgumentException e){}
 
     }
 
