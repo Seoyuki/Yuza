@@ -710,7 +710,7 @@ int yuzaid=0;
         alertDialog.setView(dialogView);
         alertDialog.create();
         Double dis = Double.parseDouble(distance+"");
-        double d = Double.parseDouble(String.format("%.1f", dis));
+        double d = Double.parseDouble(String.format("%.1f", dis/1000));
         float dd = Float.parseFloat(d+"");
         Bundle extras = new Bundle();
         stop();
