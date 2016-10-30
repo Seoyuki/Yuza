@@ -70,6 +70,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+    boolean finished = false;
+
     int count = 0;
     float speed;
     float maxspeed;
@@ -646,16 +648,16 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
         final String name = getIntent().getStringExtra("mokname ");
         Double distan = distance;
         Bundle extras = new Bundle();
-        extras.putString("mokjuckji", name);
-        extras.putString("mokdistance",distan.toString());
-        String mspeed = maxspeed+"";
-        extras.putString("mokmaxspeed",mspeed);
-        Intent intent = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
-        // 위에서 만든 Bundle을 인텐트에 넣는다.
-        intent.putExtras(extras);
-        // 액티비티를 생성한다.
-        startActivity(intent);
-        finish();
+//        extras.putString("mokjuckji", name);
+//        extras.putString("mokdistance",distan.toString());
+//        String mspeed = maxspeed+"";
+//        extras.putString("mokmaxspeed",mspeed);
+//        Intent intent = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
+//        // 위에서 만든 Bundle을 인텐트에 넣는다.
+//        intent.putExtras(extras);
+//        // 액티비티를 생성한다.
+//        startActivity(intent);
+       finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -880,10 +882,9 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
                 tky = longitude1;                                                                    //이전 위치를 현재 위치로
 //                Toast.makeText(getBaseContext(), "onLocationChanged 안의 초기 셋팅 위도 : "+latitude + "  경도 :  " + longitude,
 //                        Toast.LENGTH_SHORT).show();
-
-                setupProximityAlert();
-                Log.d("yuza", longitude + " :ee " + latitude);
-                LogManager.printLog(longitude + " :qq " + latitude);
+                if(finished==false) {
+                    setupProximityAlert();
+                }
             }
         }
 
