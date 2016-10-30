@@ -81,7 +81,7 @@ public class ArchiveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_archive);
 
-        int archiveNumber = 0;
+        int archiveNumber;
         ImageView archiveNoImg;
         TextView archiveNoMsg;
         ListView mArchiveListView;
@@ -252,8 +252,6 @@ public class ArchiveActivity extends AppCompatActivity {
         private TextView mArchiveTime;
 
         private TextView mArchiveDistance;
-
-        //private int id;
     }
 
     private class ListViewAdapter extends BaseAdapter implements Filterable {
@@ -300,13 +298,6 @@ public class ArchiveActivity extends AppCompatActivity {
                 holder.mArchiveDate = (TextView) convertView.findViewById(R.id.archiveDate);
                 holder.mArchiveTime = (TextView) convertView.findViewById(R.id.archiveTime);
                 holder.mArchiveDistance = (TextView) convertView.findViewById(R.id.archiveDistance);
-//                if (isYellow) {
-//                    convertView.setBackgroundColor(getColor(R.color.colorPrimaryLight));
-//                    isYellow = !isYellow;
-//                } else {
-//                    convertView.setBackgroundColor(getColor(android.R.color.white));
-//                    isYellow = !isYellow;
-//                }
 
                 convertView.setTag(holder);
 
@@ -338,9 +329,7 @@ public class ArchiveActivity extends AppCompatActivity {
             }else{
                 holder.mArchiveImageIcon.setVisibility(View.GONE);
             }
-
-
-
+            
             return convertView;
         }
         public Filter getFilter() {
