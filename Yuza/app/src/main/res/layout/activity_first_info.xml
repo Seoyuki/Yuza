@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_seoul" >
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/background_seoul"
+        android:id="@+id/imageView4"
+        android:scaleType="fitEnd" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -11,7 +19,7 @@
         <seoyuki.yuza.FirstInfoViewFlipper
             android:id="@+id/screen"
             android:layout_width="match_parent"
-            android:layout_height="502dp"
+            android:layout_height="417dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_alignParentTop="true"
@@ -19,6 +27,7 @@
             android:layout_alignParentBottom="true" >
 
         </seoyuki.yuza.FirstInfoViewFlipper>
+
     </FrameLayout>
 
     <ImageView
