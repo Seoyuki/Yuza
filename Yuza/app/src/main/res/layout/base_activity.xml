@@ -30,11 +30,25 @@
 			android:layout_weight="1">
 
 			<TextView
+                android:text="현재 속도"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/speedMsg"
+                android:layout_weight="1"
+				android:layout_marginLeft="16dp"
+				android:visibility="gone" />
+
+			<TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/speedTextView"
                 android:layout_weight="1"
-				android:visibility="gone" />
+				android:visibility="gone"
+				android:layout_marginLeft="16dp"
+				android:layout_marginTop="0dp"
+				android:textSize="24sp"
+				android:textStyle="bold"
+				android:textColor="@color/colorPrimary" />
 
 			<ImageView
                 android:layout_width="match_parent"
@@ -51,11 +65,25 @@
 			android:layout_weight="1">
 
 			<TextView
+				android:text="이동 거리"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/distanceMsg"
+				android:layout_weight="1"
+				android:layout_marginLeft="16dp"
+				android:visibility="gone" />
+
+			<TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/distanceTextView"
                 android:layout_weight="1"
-				android:visibility="gone" />
+				android:visibility="gone"
+				android:layout_marginLeft="16dp"
+				android:layout_marginTop="0dp"
+				android:textSize="24sp"
+				android:textStyle="bold"
+				android:textColor="@color/colorPrimaryDark" />
 
 			<ImageView
                 android:layout_width="match_parent"

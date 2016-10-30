@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -309,29 +308,29 @@ int yuzaid=0;
     public void buttonchange(){
         TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
         TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+        TextView speedMsg = (TextView) findViewById(R.id.speedMsg);
+        TextView distanceMsg = (TextView) findViewById(R.id.distanceMsg);
+
         ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
         ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
         ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
         ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
         img1.setImageResource(R.drawable.searchagainbtn); // 재검색
-        img2.setVisibility(View.INVISIBLE);
+        img2.setVisibility(View.GONE);
         img3.setImageResource(R.drawable.canclebtn); // 취소
-        img4.setVisibility(View.INVISIBLE);
+        img4.setVisibility(View.GONE);
         img1.invalidate();
         img2.invalidate();
         img3.invalidate();
         img4.invalidate();
 
-        // 전체 화면 너비 구하기
-        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
-        int width = dm.widthPixels;
+        speedTextView.setText(String.valueOf(speed));
+        distanceTextView.setText(String.valueOf(distance));
 
-        speedTextView.setText("현재 속도 : " + speed);
-        distanceTextView.setText("총 이동 거리" + distance);
-
+        speedMsg.setVisibility(View.VISIBLE);
+        distanceMsg.setVisibility(View.VISIBLE);
         speedTextView.setVisibility(View.VISIBLE);
         distanceTextView.setVisibility(View.VISIBLE);
-
 
         img1.setOnClickListener(new View.OnClickListener() {
             @Override
