@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends AppCompatActivity {
 
     List<Student> searchList = null;
     boolean isAllList = true;
@@ -47,6 +51,10 @@ public class SearchActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reco);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("유적 찾아보기");
+
         helper = new SqlLiteYuzaOpenHelper(this, // 현재 화면의 context
                 "yuza.db", // 파일명
                 null, // 커서 팩토리
@@ -67,7 +75,6 @@ public class SearchActivity extends Activity {
 
         // Listview Data
         productList = xmlParser();
-
         searchEdit = (EditText)findViewById(R.id.editText);
         searchAdapter = new ListViewAdapter(this);
         lv = (ListView) findViewById(R.id.listView);
@@ -79,7 +86,6 @@ public class SearchActivity extends Activity {
 
         Student recoObj = null;
         Drawable image = null;
-
         searchList = new ArrayList<Student>();
         for (int i = 0; i < productList.size(); i++) {
             recoObj = productList.get(i);
@@ -101,8 +107,6 @@ public class SearchActivity extends Activity {
                 searchAdapter.addItem(recoObj);
                 searchList.add(recoObj);
             }
-
-
         }
         lv.setAdapter(searchAdapter);
 
@@ -171,19 +175,26 @@ public class SearchActivity extends Activity {
             public void onTextChanged(CharSequence arg0, int arg1, int arg2,
                                       int arg3) {
                 String searchWord = arg0.toString();
-
-                Student recoObj;
+                Student recoObj = null;
                 Drawable image ;
                 searchList = new ArrayList<Student>();
                 searchAdapter  = new ListViewAdapter(SearchActivity.this);
-
                 for (int i = 0; i < productList.size(); i++) {
                     recoObj = productList.get(i);
                     String objName = recoObj.getName();
-                    if (objName.contains(searchWord))  {
+                    if (objName.contains(searchWord)) {
                         searchAdapter.addItem(recoObj);
                         searchList.add(recoObj);
                     }
+                    image = getResources().getDrawable(R.drawable.ic_launcher);
+                    recoObj.setIcon(image);
+                    for (int j = 0; j < yuzaRanking.size(); j++) {
+                        if (yuzaRanking.get(j).getYuza_id() == recoObj.getId())  {//비교
+                            image = getResources().getDrawable(R.drawable.yuza_stamp_archive);
+                            recoObj.setIcon(image);
+                        }
+                    }
+                    productList.get(i).setIcon(image);
                 }
                 lv.setAdapter(searchAdapter);
             }
@@ -252,4 +263,6 @@ public class SearchActivity extends Activity {
         }
         return arrayList;
     }
+
+
 }
