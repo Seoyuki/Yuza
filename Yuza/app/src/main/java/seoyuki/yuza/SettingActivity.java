@@ -125,7 +125,7 @@ public class SettingActivity extends AppCompatActivity {
                 });
         AlertDialog alert = alt_bld.create();
         // Title for AlertDialog
-        alert.setTitle("업적 초기화");
+        alert.setTitle("기록 초기화");
         // Icon for AlertDialog
         alert.setIcon(R.mipmap.ic_launcher);
         alert.show();
