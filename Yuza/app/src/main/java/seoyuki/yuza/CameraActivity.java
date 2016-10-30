@@ -301,7 +301,7 @@ public class CameraActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Toast.makeText(this, "카메라 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "카메라 권한을 승인받았어요. 고마워요!\n잘 안되면 한번만 뒤로 갔다가 와주세요. ^^", Toast.LENGTH_LONG).show();
 
                 } else {
 
@@ -317,7 +317,8 @@ public class CameraActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Toast.makeText(this, "저장소 읽기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "저장소 읽기 권한을 승인받았어요. 고마워요!\n" +
+                            "잘 안되면 한번만 뒤로 갔다가 와주세요. ^^", Toast.LENGTH_LONG).show();
 
                 } else {
 
@@ -333,7 +334,8 @@ public class CameraActivity extends Activity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Toast.makeText(this, "저장소 쓰기 권한을 승인받았어요. 고마워요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "저장소 쓰기 권한을 승인받았어요. 고마워요!\n" +
+                            "잘 안되면 한번만 뒤로 갔다가 와주세요. ^^", Toast.LENGTH_LONG).show();
 
                 } else {
 
