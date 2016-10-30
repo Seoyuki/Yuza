@@ -30,7 +30,7 @@ import java.util.Locale;
                     public ImageView mIcon;
 
                     public TextView mText;
-
+                    public TextView mDate;
                 }
                     @Override
             public int getCount() {
@@ -64,7 +64,7 @@ import java.util.Locale;
 
                                     holder.mIcon = (ImageView) convertView.findViewById(R.id.mImage);
                             holder.mText = (TextView) convertView.findViewById(R.id.mText);
-
+                            holder.mDate = (TextView) convertView.findViewById(R.id.mDate);
                                     convertView.setTag(holder);
                         }else{
                             holder = (ViewHolder) convertView.getTag();
@@ -80,7 +80,7 @@ import java.util.Locale;
                         }
 
                             holder.mText.setText(mData.getName());
-
+                            holder.mDate.setText(mData.getAddress());
                             return convertView;
                 }
 
