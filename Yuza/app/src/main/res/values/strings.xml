@@ -70,7 +70,7 @@
 
     <string name="showRet_date">%s분에</string>
     <string name="showRet_time">%s동안</string>
-    <string name="showRet_km">%fkm 달림</string>
+    <string name="showRet_km">%.1fkm 달림</string>
 
 </resources>
 

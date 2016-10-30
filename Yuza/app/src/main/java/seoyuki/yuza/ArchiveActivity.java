@@ -43,8 +43,6 @@ public class ArchiveActivity extends AppCompatActivity {
     ArrayList<Student> mArchiveStudentList = new ArrayList<>();
     private ArrayList<YuzaRanking> mArchiveListData = new ArrayList<>();
 
-
-
     private TextView archiveNumberView;
     private TextView archiveTitleText;
     private TextView archiveCheerText;
@@ -92,12 +90,11 @@ public class ArchiveActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.hide();
 
-
         mArchiveListView = (ListView) findViewById(R.id.archiveListView);
         // searchText = (TextView)findViewById(R.id.archiveText);
         mArchiveAdapter = new ListViewAdapter(this);
 
-        archiveNumberView = (TextView) findViewById(archiveNumber);
+        archiveNumberView = (TextView) findViewById(R.id.archiveNumber);
         archiveTitleText = (TextView) findViewById(R.id.archiveTitleText);
         archiveCheerText = (TextView) findViewById(R.id.archiveCheerText);
 
@@ -164,6 +161,7 @@ public class ArchiveActivity extends AppCompatActivity {
     }
 
     private void setArchiveNumberView(int number) {
+        Log.e("dd", String.valueOf(number));
         archiveNumberView.setText(String.valueOf(number)); // 전체 도착 개수 출력
     }
 
