@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,11 +10,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="seoyuki.yuza.MainActivity">
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="메인액티비티"
-        android:id="@+id/textView"
+        app:srcCompat="@drawable/sorry"
+        android:id="@+id/sorryImageView"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
+
+    <TextView
+        android:text="@string/sorry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sorryText"
+        android:lineSpacingExtra="8dip"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_below="@+id/sorryImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp" />
+
+    <TextView
+        android:text="행복한 자전거를 꿈꾸는 Yuza 드림"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/sorryYuzaCopy"
+        android:layout_marginBottom="40dp" />
 </RelativeLayout>
