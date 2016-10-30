@@ -4,11 +4,13 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -56,9 +58,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -70,8 +74,11 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+    SQLiteDatabase db;
+    SqlLiteYuzaOpenHelper helper;
+   String name ;
     boolean finished = false;
-    SqlLiteYuzaActivity sqlLiteYuzaActivity = new SqlLiteYuzaActivity();
+    SqlLiteYuzaActivity sqlLiteYuzaActivity ;
     int count = 0;
     float speed;
     float maxspeed;
@@ -144,7 +151,12 @@ int yuzaid=0;
 
         //Tmap 초기 셋팅
         mContext = MainActivity.this;
-        mMapView = new TMapView(mContext);
+   try {
+       mMapView = new TMapView(mContext);
+   }catch (Exception e){
+       e.printStackTrace();
+   }
+
         //뷰에 셋팅
         addView(mMapView);
         configureMapView();
@@ -168,7 +180,7 @@ int yuzaid=0;
 
         wido2 = getIntent().getStringExtra("mokwido");                                          //목적지 위도를 받음
         kyungdo2 = getIntent().getStringExtra("mokkyungdo");                                    //목적지 경도를 받음
-
+        name = getIntent().getStringExtra("mokname");
 
         //LocationManager 설정 및 탐색
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -273,8 +285,7 @@ int yuzaid=0;
 
 
         //길찾기 시 아래 로직으로 경로 실행 시킨다
-        if (wido2 != null) {                                                                        //목적지 정보가 있을때
-
+        if (wido2 != null) {                                                                        //목적지 정보가 있을
             Double wi = Double.parseDouble(wido2);                                                  //변수 변환
             Double kyu = Double.parseDouble(kyungdo2);
             buttonchange();
@@ -283,8 +294,6 @@ int yuzaid=0;
             mMapView.setSightVisible(true);                                                         //시야 표출여부
             TMapPoint point1 = new TMapPoint(wi, kyu);                                              //목적지 설정
             TMapPoint point2 = new TMapPoint(latitude, longitude);                                  //출발지 설정
-            Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 시작"+wi+":"+kyu, Toast.LENGTH_SHORT).show();
-            Toast.makeText(getApplicationContext(), "목적지 길찾기 합니다. 종료"+latitude+":"+longitude, Toast.LENGTH_SHORT).show();
 
             // 4-2-1-3 순서 : 속도 / 거리 / 재검색 / 취소 순서
 
@@ -297,10 +306,10 @@ int yuzaid=0;
                             mMapView.addTMapPath(polyLine);
                         }
                     });
-            //  for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
-            //      String imsy = String.format(count + "", mMarkerID++);
-            //      mMapView.removeAllMarkerItem();                                                         //마커를 지운다
-            //  }
+              for (int count = 0; count < marker.size(); count++) {                                       //현재 마커수만큼
+                  String imsy = String.format(count + "", mMarkerID++);
+                  mMapView.removeAllMarkerItem();                                                         //마커를 지운다
+              }
 
         }
 
@@ -323,9 +332,13 @@ int yuzaid=0;
         img2.invalidate();
         img3.invalidate();
         img4.invalidate();
+        distance=100.6021562;
+        double spe = Double.parseDouble(String.format("%.1f", speed));
 
-        speedTextView.setText(String.valueOf(speed));
-        distanceTextView.setText(String.valueOf(distance));
+        Double dis = Double.parseDouble(distance+"");
+        double d = Double.parseDouble(String.format("%.1f", dis));
+        speedTextView.setText(String.valueOf(spe));
+        distanceTextView.setText(String.valueOf(d));
 
         speedMsg.setVisibility(View.VISIBLE);
         distanceMsg.setVisibility(View.VISIBLE);
@@ -372,7 +385,7 @@ int yuzaid=0;
     @Override
     public void onBackPressed(){
         AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
-        alert_confirm.setMessage("정말 종료 하시겠습니까? 기다리고 있을께요").setCancelable(false).setPositiveButton("확인",
+        alert_confirm.setMessage("정말 종료할까요?").setCancelable(false).setPositiveButton("확인",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -413,6 +426,70 @@ int yuzaid=0;
     }
     public void stop(){
         mMapView.removeTMapPath();
+        mMapView.setCompassMode(false);
+        mMapView.setTrackingMode(false);
+        showMarkerPoint();
+        ImageView img1 = (ImageView) findViewById(R.id.achievementImageView);
+        ImageView img2 = (ImageView) findViewById(R.id.searchImageView);
+        ImageView img3 = (ImageView) findViewById(R.id.settingImageView);
+        ImageView img4 = (ImageView) findViewById(R.id.hereImageView);
+        img2.setVisibility(View.VISIBLE);
+        img4.setVisibility(View.VISIBLE);
+        img2.setImageResource(R.drawable.searchbtn); // 재검색
+        img4.setImageResource(R.drawable.herebtn); // 재검색
+        img1.setImageResource(R.drawable.archivebtn); // 재검색
+        img3.setImageResource(R.drawable.settingbtn); // 재검색
+        TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
+        TextView distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+        TextView speedTextViewmsg = (TextView) findViewById(R.id.speedMsg);
+        TextView distanceTextViewmsg = (TextView) findViewById(R.id.distanceMsg);
+        speedTextView.setVisibility(View.GONE);
+        distanceTextView.setVisibility(View.GONE);
+        speedTextViewmsg.setVisibility(View.GONE);
+        distanceTextViewmsg.setVisibility(View.GONE);
+
+        //업적
+        img1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ArchiveActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //검색
+        img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("yuza", "searchBtn start: ");
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+        //설정
+        img3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+        //현재위치
+        img4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMapView.setCenterPoint(longitude, latitude);                                               //지도의 중앙을 현재위치로
+                mMapView.setLocationPoint(longitude, latitude);                                              //해당위치로 표시
+
+            }
+        });
     }
     public void onResume() {
         super.onResume();
@@ -559,7 +636,7 @@ int yuzaid=0;
             item2.setID(imsy1);
             bitmap_i = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.i_go);
             item2.setCalloutRightButtonImage(bitmap_i);
-            bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.end);
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.marker_nonvisit);
             item2.setIcon(bitmap);
             strID = String.format(stu[count].getId() + "", mMarkerID++);
             mMapView.addMarkerItem(strID, item2);
@@ -596,7 +673,7 @@ int yuzaid=0;
             Double wi =Double.parseDouble(mokswido);                                                //목적지 변수
             Double ky = Double.parseDouble(mokskyungdo);                                             //목적지 변수
             locationManager.addProximityAlert(wi,ky
-                    , 150, -1,
+                    , 1000, -1,
                     proximityIntent);
 
             /*================================================================*/
@@ -612,6 +689,10 @@ int yuzaid=0;
     }
 
     public void showalert() {
+        SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+        Date date = new Date();
+        String strDate = dateFormat.format(date);
+
         // 도착 완료 화면(얼럿) 코드, dialog.xml과 혼동되지 않도록 변수명을 alertDialog
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = getLayoutInflater();
@@ -623,14 +704,17 @@ int yuzaid=0;
         View dialogView = inflater.inflate(dialog, null);
         alertDialog.setView(dialogView);
         alertDialog.create();
-        final String name = getIntent().getStringExtra("mokname ");
+
       int dis = distance.intValue();
         Bundle extras = new Bundle();
         stop();
         final String id = getIntent().getStringExtra("mokid");
         int ids = Integer.parseInt(id);
-        sqlLiteYuzaActivity.insert(ids,name,dis,"100분",Calendar.DATE+"");
-        Toast.makeText(getApplicationContext(), "저장합니다 id"+ids+": 이름"+name+"거리"+dis+"날짜"+Calendar.DATE+""+"입니다", Toast.LENGTH_SHORT).show();
+        helper = new SqlLiteYuzaOpenHelper(MainActivity.this, // 현재 화면의 context
+                "yuza.db", // 파일명
+                null, // 커서 팩토리
+                1); // 버전 번호
+        insert(ids,name,dis,"100분",strDate);
        finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -649,7 +733,20 @@ int yuzaid=0;
         mArriveDialog = alertDialog.show(); // DialogInterface에 alertDialog를 담아서 보여준다. 수명주기 코드를 위해 필요하다.
         showMarkerPoint();
     }
+    public void insert(int yuzaid, String name, float km, String time,String ret_date) {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
 
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("yuza_id", yuzaid);
+        values.put("name", name);
+        values.put("ret_km", km);
+        values.put("ret_time", time);
+        values.put("ret_date", ret_date);
+        db.insert("yuzaranking", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
+    }
     class LocationReceiver extends BroadcastReceiver {
 
         @Override
@@ -782,9 +879,7 @@ int yuzaid=0;
 
     public void alertDialogCancelClick(View v) { // alertDialog(도착 얼럿)의 취소 버튼 클릭 메소드
 
-        Intent ints = new Intent(MainActivity.this, SqlLiteYuzaActivity.class);
-
-        startActivity(ints);
+      return;
 
     }
 //
