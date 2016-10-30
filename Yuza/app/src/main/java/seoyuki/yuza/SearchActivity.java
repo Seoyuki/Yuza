@@ -134,7 +134,7 @@ public class SearchActivity extends Activity {
                     searchAdapter  = new ListViewAdapter(SearchActivity.this);
                     for (int i = 0; i < productList.size(); i++) {
                         recoObj = productList.get(i);
-                        image = getResources().getDrawable(R.drawable.yuza_bike_recommendation);
+                        image = getResources().getDrawable(R.drawable.ic_launcher);
                         recoObj.setIcon(image);
                         for (int j = 0; j < yuzaRanking.size(); j++) {
                             if (yuzaRanking.get(j).getYuza_id() == recoObj.getId())  {//비교
