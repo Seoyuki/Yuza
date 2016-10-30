@@ -31,6 +31,7 @@ public class FirstInfoActivity extends AppCompatActivity {
                 Log.d("yuza", "main start: ");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
