@@ -74,6 +74,8 @@ public class MainActivity extends BaseActivity implements  TMapView.OnCalloutRig
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
+
+    String strDate;
     SQLiteDatabase db;
     SqlLiteYuzaOpenHelper helper;
    String name ;
@@ -285,7 +287,10 @@ int yuzaid=0;
 
 
         //길찾기 시 아래 로직으로 경로 실행 시킨다
-        if (wido2 != null) {                                                                        //목적지 정보가 있을
+        if (wido2 != null) {
+            SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
+            Date date = new Date();
+            strDate = dateFormat.format(date);
             Double wi = Double.parseDouble(wido2);                                                  //변수 변환
             Double kyu = Double.parseDouble(kyungdo2);
             buttonchange();
@@ -688,9 +693,9 @@ int yuzaid=0;
     }
 
     public void showalert() {
-        SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+        SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
         Date date = new Date();
-        String strDate = dateFormat.format(date);
+
 
         // 도착 완료 화면(얼럿) 코드, dialog.xml과 혼동되지 않도록 변수명을 alertDialog
         android.support.v7.app.AlertDialog.Builder alertDialog = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
@@ -704,7 +709,7 @@ int yuzaid=0;
         alertDialog.setView(dialogView);
         alertDialog.create();
 
-      int dis = distance.intValue();
+      int dis = distance.intValue()/1000;
         Bundle extras = new Bundle();
         stop();
         final String id = getIntent().getStringExtra("mokid");
@@ -713,7 +718,7 @@ int yuzaid=0;
                 "yuza.db", // 파일명
                 null, // 커서 팩토리
                 1); // 버전 번호
-        insert(ids,name,dis,"100분",strDate);
+        insert(ids,name,dis,"",strDate+" \n~ " +endDate);
        finished = true;
         unregisterReceiver(receivers);//실행했던 리시버 삭제
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
