@@ -391,8 +391,10 @@ int yuzaid=0;
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                      onDestroy();
                         finish();
+                        System.runFinalizersOnExit(true);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        return;
                     }
                 }).setNegativeButton("취소",
                 new DialogInterface.OnClickListener() {
@@ -423,6 +425,7 @@ int yuzaid=0;
                         mMapView.addTMapPath(polyLine);
                     }
                 });
+        Toast.makeText(mContext, "이제 출발해볼까요?", Toast.LENGTH_LONG).show();
     }
     public void stop(){
         mMapView.removeTMapPath();
@@ -518,8 +521,7 @@ int yuzaid=0;
 
     @Override
     protected void onDestroy() {
-        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
-        System.gc();
+
 
         // locationManager.removeUpdates();
         if (mOverlayList != null) {
@@ -534,6 +536,9 @@ int yuzaid=0;
 
             unregisterReceiver(receivers);//실행했던 리시버 삭제
         }catch(IllegalArgumentException e){}
+
+        RecycleUtils.recursiveRecycle(getWindow().getDecorView());
+        System.gc();
 
         super.onDestroy();
     }

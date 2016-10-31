@@ -65,7 +65,7 @@
 			android:layout_weight="1">
 
 			<TextView
-				android:text="거리(KM)"
+				android:text="거리(M)"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/distanceMsg"
